@@ -16,6 +16,18 @@
 
   <div id="container">
     <strong class="capitalize">{{ folder }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <div *ngIf="folder==='Bejelentkezés'">
+      <ion-item>
+        <ion-label>Neptun-kód</ion-label>
+        <ion-input [value]="neptunId"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Jelszó</ion-label>
+        <ion-input type="password"></ion-input>
+      </ion-item>
+      <ion-button (click)="signIn()">Bejelentkezés</ion-button>
+      <div>{{ error }}</div>
+    </div>
+
   </div>
 </ion-content>
