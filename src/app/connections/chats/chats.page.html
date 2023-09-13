@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Chats</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-list-header>
+<!--      <ion-label>Video Games</ion-label>-->
+      <ion-searchbar [(ngModel)]="filter" animated="true" placeholder="Search" ></ion-searchbar>
+    </ion-list-header>
+    <ion-item *ngFor="let chat of chats | filter:filter">
+      <ion-label>{{ chat.userName }}</ion-label>
+      <ng-container [ngSwitch]="chat.type">
+        <ion-icon *ngSwitchCase="'personal'" name="person-circle-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="'group'" name="people-circle-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="'eventGroup'" name="calendar-clear-outline"></ion-icon>
+      </ng-container>
+    </ion-item>
+  </ion-list>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

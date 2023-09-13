@@ -17,10 +17,13 @@ export class FolderPage implements OnInit {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id');
     switch (this.folder) {
       case 'Profile': this.folder = 'Profil'; break;
+      case 'Games': this.folder = 'Játékok'; break;
       case 'Events': this.folder = 'Események'; break;
-      case 'Substitution': this.folder = 'Pótlás'; break;
+      case 'Creation': this.folder = 'Alkotás'; break;
+      case 'Friends': this.folder = 'Ismerősök'; break;
+      case 'Chats': this.folder = 'Csevegések'; break;
+      case 'Calendar': this.folder = 'Naptár'; break;
       case 'SignIn': this.folder = 'Bejelentkezés'; break;
-      case 'Regist': this.folder = 'Regisztráció'; break;
     }
   }
   signIn() {
