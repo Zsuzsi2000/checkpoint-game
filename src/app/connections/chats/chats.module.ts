@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ChatsPageRoutingModule } from './chats-routing.module';
 import { ChatsPage } from './chats.page';
-import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import {SharedModule} from '../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -12,8 +12,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     FormsModule,
     IonicModule,
     ChatsPageRoutingModule,
-    Ng2SearchPipeModule
+    SharedModule
   ],
-  declarations: [ChatsPage]
+    declarations: [ChatsPage]
 })
 export class ChatsPageModule {}

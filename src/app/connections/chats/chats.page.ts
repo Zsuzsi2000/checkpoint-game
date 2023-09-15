@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ConnectionsService} from '../connections.service';
+import {Chat} from '../../interfaces/Chat';
+import {ChatType} from '../../enums/ChatType';
+import {TypeOfListingUsers} from '../../enums/TypeOfListingUsers';
 
 @Component({
   selector: 'app-chats',
@@ -7,15 +11,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatsPage implements OnInit {
 
-  filter = '';
-  chats = [
-    { userName: 'Roli', type: 'personal' },
-    { userName: 'Noémi', type: 'group' },
-    { userName: 'Virág', type: 'eventGroup' },
-  ]
-  constructor() { }
+  currentTypeOfListingUsers = TypeOfListingUsers.chats;
+  chats: Chat[] = [];
+  constructor(private connectionsService: ConnectionsService) { }
 
   ngOnInit() {
+    this.chats = this.connectionsService.getChats(0);
   }
 
 }
