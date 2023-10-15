@@ -1,9 +1,20 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Connections - Friends</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Connections</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <app-list-of-users [currentTypeOfListingUsers]="currentTypeOfListingUsers" [list]="friends"></app-list-of-users>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button>
+      <ion-icon name="swap-horizontal" [routerLink]="['/','connections', 'tabs', 'friends', 'requests']"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button>
+      <ion-icon name="add" [routerLink]="['/','connections', 'tabs', 'friends', 'new']"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TypeOfListingUsers} from '../../../enums/TypeOfListingUsers';
 import {Chat} from '../../../interfaces/Chat';
-import {Friend} from '../../../interfaces/Friend';
+import {User} from '../../../interfaces/User';
 import {ChatType} from '../../../enums/ChatType';
 
 @Component({
@@ -12,7 +12,7 @@ import {ChatType} from '../../../enums/ChatType';
 export class ListOfUsersComponent implements OnInit {
 
   @Input() currentTypeOfListingUsers: TypeOfListingUsers;
-  @Input() list: Chat[] | Friend[]  = [];
+  @Input() list: Chat[] | User[]  = [];
   filter = '';
   chatType = ChatType;
   typeOfListingUsers = TypeOfListingUsers;

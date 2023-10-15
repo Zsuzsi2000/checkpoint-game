@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {TypeOfListingUsers} from '../../enums/TypeOfListingUsers';
-import {Friend} from '../../interfaces/Friend';
+import {User} from '../../interfaces/User';
 import {ConnectionsService} from '../connections.service';
 
 @Component({
@@ -11,11 +11,11 @@ import {ConnectionsService} from '../connections.service';
 export class FriendsPage implements OnInit {
 
   currentTypeOfListingUsers = TypeOfListingUsers.friends;
-  friends: Friend[] = [];
+  friends: User[] = [];
   constructor(private connectionsService: ConnectionsService) { }
 
   ngOnInit() {
-    this.friends = this.connectionsService.getFriends(0);
+    this.friends = this.connectionsService.getFriends('0');
   }
 
 }

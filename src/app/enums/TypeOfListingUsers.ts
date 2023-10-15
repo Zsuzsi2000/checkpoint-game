@@ -1,7 +1,6 @@
 export enum TypeOfListingUsers {
   friends,
-  markedUsers,
-  followRequests,
+  requests,
   newFriends,
   chats,
   createChats

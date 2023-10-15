@@ -6,7 +6,18 @@ import { GamesPage } from './games.page';
 const routes: Routes = [
   {
     path: '',
-    component: GamesPage
+    component: GamesPage,
+    pathMatch: "full",
+    // children: [
+    //   {
+    //     path: ':gameId',
+    //     loadChildren: () => import('./game-details/game-details.module').then( m => m.GameDetailsPageModule)
+    //   }
+    // ]
+  },
+  {
+    path: ':gameId',
+    loadChildren: () => import('./game-details/game-details.module').then( m => m.GameDetailsPageModule)
   }
 ];
 

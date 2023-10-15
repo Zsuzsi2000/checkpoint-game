@@ -5,6 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { FriendsPageRoutingModule } from './friends-routing.module';
 import { FriendsPage } from './friends.page';
 import {SharedModule} from '../../shared/shared.module';
+import {NewPage} from './new/new.page';
+import {RequestsPage} from './requests/requests.page';
 
 @NgModule({
   imports: [
@@ -14,6 +16,6 @@ import {SharedModule} from '../../shared/shared.module';
     FriendsPageRoutingModule,
     SharedModule
   ],
-  declarations: [FriendsPage]
+  declarations: [FriendsPage, NewPage, RequestsPage]
 })
 export class FriendsPageModule {}

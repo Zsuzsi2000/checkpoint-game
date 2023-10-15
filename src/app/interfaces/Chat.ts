@@ -1,6 +1,7 @@
 import {ChatType} from '../enums/ChatType';
 
 export interface Chat {
-  userName: string;
+  userEmail: string;
+  partnerName: string;
   type: ChatType;
 }

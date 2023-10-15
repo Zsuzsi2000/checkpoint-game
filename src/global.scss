@@ -24,3 +24,32 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+body {
+  //font-family: "Comic Sans MS", serif;
+}
+
+.games ion-button {
+  --ion-background-color: white;
+  --ion-text-color: #04724d;
+}
+
+.background-image-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.background-image {
+  opacity: 0.4;
+  flex: 1;
+  width: auto;
+  height: 100%;
+  object-fit: cover;
+}

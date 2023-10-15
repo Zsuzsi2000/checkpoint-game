@@ -1,11 +1,15 @@
+<ion-searchbar [(ngModel)]="filter" ngDefaultControl animated="true" placeholder="Search" ></ion-searchbar>
 <ion-list>
-  <ion-list-header>
-    <ion-searchbar [(ngModel)]="filter" ngDefaultControl animated="true" placeholder="Search" ></ion-searchbar>
+  <ion-list-header *ngIf="currentTypeOfListingUsers===typeOfListingUsers.friends">
+    <ion-label>Friends</ion-label>
+  </ion-list-header>
+  <ion-list-header *ngIf="currentTypeOfListingUsers===typeOfListingUsers.chats">
+    <ion-label>Chats</ion-label>
   </ion-list-header>
   <ion-item *ngFor="let element of list | filter:filter">
     <ng-container [ngSwitch]="currentTypeOfListingUsers">
       <ng-container *ngSwitchCase="typeOfListingUsers.chats">
-        <ion-label>{{ element.userName }}</ion-label>
+        <ion-label>{{ element.partnerName }}</ion-label>
         <ng-container [ngSwitch]="element.type">
           <ion-icon *ngSwitchCase="chatType.personal" name="person-circle-outline"></ion-icon>
           <ion-icon *ngSwitchCase="chatType.group" name="people-circle-outline"></ion-icon>
@@ -13,6 +17,9 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="typeOfListingUsers.friends">
+        <ion-label>{{ element.userName }}</ion-label>
+      </ng-container>
+      <ng-container *ngSwitchCase="typeOfListingUsers.newFriends">
         <ion-label>{{ element.userName }}</ion-label>
       </ng-container>
     </ng-container>
