@@ -1,9 +1,11 @@
+import {Checkpoint} from "./checkpoint.model";
+
 export class Game {
   public id: string;
   public name: string;
   public creatorName: string;
   public country: string;
-  public pointOfDeparture;
+  public pointOfDeparture: string;
   public category: string;
   public quiz: boolean;
   public description: string;
@@ -11,21 +13,26 @@ export class Game {
   public numberOfAttempts: number;
   public distance: number;
   public duration: number;
-  public checkpoints: string[];
+  public creationDate: Date;
+  public itIsPublic: boolean;
+  public checkpoints: Checkpoint[];
   public ratings: string[];
+  public userId: string;
 
   constructor(
     id: string,
     name: string,
     creatorName: string,
     country: string,
-    pointOfDeparture,
+    pointOfDeparture: string,
     category: string,
     quiz: boolean,
     description: string,
     imgUrl: string,
     distance: number,
-    duration: number
+    duration: number,
+    itIsPublic: boolean,
+    userId: string
   ) {
     this.id = id;
     this.name = name;
@@ -39,9 +46,14 @@ export class Game {
     this.imgUrl = imgUrl;
     this.distance = distance;
     this.duration = duration;
+    this.creationDate = new Date();
     this.checkpoints = [];
     this.ratings = [];
+    this.itIsPublic = itIsPublic;
+    this.userId = userId;
 
   }
 
 }
+
+

@@ -1,9 +1,9 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {BehaviorSubject, from} from "rxjs";
+import {BehaviorSubject, from, interval} from "rxjs";
 import {User} from "../models/user.model";
-import {map, take, tap} from "rxjs/operators";
+import {map, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {Plugins} from "@capacitor/core";
 
 export interface AuthResponseData {
@@ -33,6 +33,16 @@ export class AuthService implements OnDestroy {
     }));
   }
 
+  get user() {
+    return this._user.asObservable().pipe(map(user => {
+      if (user) {
+        return user;
+      } else {
+        return null;
+      }
+    }));
+  }
+
   get userId() {
     return this._user.asObservable().pipe(map(user => {
       if (user) {
@@ -53,20 +63,30 @@ export class AuthService implements OnDestroy {
     }));
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   autoLogin() {
     return from(Plugins.Storage.get({key: 'authData'})).pipe(
       map(storedData => {
-        if (!storedData || !(storedData as {key: string; value: string}).value) {
+        if (!storedData || !(storedData as { key: string; value: string }).value) {
           return null;
         }
-        const parsedData = JSON.parse((storedData as {key: string; value: string}).value) as { userId: string; token: string; tokenExpirationDate: string; email: string};
+        const parsedData = JSON.parse((storedData as { key: string; value: string }).value) as {
+          id: string;
+          email: string;
+          username: string;
+          country: string;
+          picture: string;
+          token: string;
+          tokenExpirationDate: string;
+        };
         const expirationTime = new Date(parsedData.tokenExpirationDate);
         if (expirationTime <= new Date()) {
           return null;
         }
-        return new User(parsedData.userId, parsedData.email, parsedData.token, expirationTime);
+        return new User(parsedData.id, parsedData.email, parsedData.username, parsedData.country,
+          parsedData.picture, [], parsedData.token, expirationTime);
       }),
       tap(user => {
         if (user) {
@@ -80,13 +100,22 @@ export class AuthService implements OnDestroy {
     );
   }
 
+  // signup(email: string, password: string, username: string, country: string, picture: string) {
+  //   return this.http.post<AuthResponseData>(
+  //     `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${
+  //       environment.firebaseAPIKey
+  //     }`,
+  //     {email, password, returnSecureToken: true}
+  //   ).pipe(tap(this.setUserData.bind(this, username, country, picture)));
+  // }
+
   signup(email: string, password: string) {
     return this.http.post<AuthResponseData>(
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${
         environment.firebaseAPIKey
       }`,
-      { email, password, returnSecureToken: true }
-    ).pipe(tap(this.setUserData.bind(this)));
+      {email, password, returnSecureToken: true}
+    )
   }
 
   login(email: string, password: string) {
@@ -95,20 +124,8 @@ export class AuthService implements OnDestroy {
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${
         environment.firebaseAPIKey
       }`,
-      { email, password, returnSecureToken: true }
-    ).pipe(tap(resData => {
-        if (resData.idToken) {
-          this.getUserData(resData.idToken).subscribe(users => {
-            console.log("users", users, users[0].emailVerified);
-            const emailVerified = (users[0] && users[0].emailVerified) ? users[0].emailVerified : false;
-            if (!emailVerified) {
-              throw new Error("EMAIL_IS_NOT_VERIFIED");
-            }
-            this.setUserData.bind(this);
-          })
-        }
-      })
-    );
+      {email, password, returnSecureToken: true}
+    )
   }
 
   loginAsAGuest() {
@@ -116,7 +133,7 @@ export class AuthService implements OnDestroy {
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${
         environment.firebaseAPIKey
       }`,
-      { returnSecureToken: true }
+      {returnSecureToken: true}
     );
   }
 
@@ -125,7 +142,7 @@ export class AuthService implements OnDestroy {
       `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${
         environment.firebaseAPIKey
       }`,
-      { requestType: 'PASSWORD_RESET', email }
+      {requestType: 'PASSWORD_RESET', email}
     );
   }
 
@@ -137,19 +154,16 @@ export class AuthService implements OnDestroy {
       `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${
         environment.firebaseAPIKey
       }`,
-      { idToken: token, email: newEmail, returnSecureToken: true }
+      {idToken: token, email: newEmail, returnSecureToken: true}
     );
   }
 
   sendEmailVerification(token: string) {
-    // const token = this.token.pipe(take(1)).subscribe(t => {
-    //   return t;
-    // });
     return this.http.post<AuthResponseData>(
       `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${
         environment.firebaseAPIKey
       }`,
-      { requestType: 'VERIFY_EMAIL', idToken: token }
+      {requestType: 'VERIFY_EMAIL', idToken: token}
     );
   }
 
@@ -158,7 +172,7 @@ export class AuthService implements OnDestroy {
       `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${
         environment.firebaseAPIKey
       }`,
-      { idToken: token }
+      {idToken: token}
     );
   }
 
@@ -174,7 +188,7 @@ export class AuthService implements OnDestroy {
       `https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${
         environment.firebaseAPIKey
       }`,
-      { idToken: token }
+      {idToken: token}
     );
   }
 
@@ -197,9 +211,31 @@ export class AuthService implements OnDestroy {
     }, duration)
   }
 
-  private setUserData(userData: AuthResponseData) {
+  createUser(userData: AuthResponseData, username: string, country: string, imgUrl: string) {
+    console.log("createUser");
+
     const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
-    const user = new User(userData.localId, userData.email, userData.idToken, expirationTime);
+    const user = new User(userData.localId, userData.email, username, country, imgUrl, [], userData.idToken, expirationTime);
+
+    let generatedId: string;
+    return this.http.post<{name: string}>('https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/users.json',
+      { ...user, id: null})
+      .pipe(
+        switchMap( resData => {
+          generatedId = resData.name;
+          return this.user;
+        }),
+        take(1),
+        tap(user => {
+          user.id = generatedId;
+        })
+      )
+  }
+
+  setUserData(userData: AuthResponseData, username: string, country: string, picture: string) {
+    console.log("setUserData");
+    const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
+    const user = new User(userData.localId, userData.email, username, country, picture, [], userData.idToken, expirationTime);
     this._user.next(user);
 
     this.autoLogout(user.tokenDuration);
@@ -209,7 +245,7 @@ export class AuthService implements OnDestroy {
     // this.storeAuthData(userData.localId, userData.idToken, expirationTime.toISOString(), userData.email);
   }
 
-  private storeAuthData(userId: string, token: string, tokenExpirationDate: string, email: string ) {
+  private storeAuthData(userId: string, token: string, tokenExpirationDate: string, email: string) {
     const data = JSON.stringify({
       userId: userId,
       token: token,
@@ -217,7 +253,7 @@ export class AuthService implements OnDestroy {
       email: email
     });
     //TODO: Plugins itt mit jelent, működni fog?
-    Plugins.Storage.set({ key: 'authData', value: data })
+    Plugins.Storage.set({key: 'authData', value: data})
   }
 
   ngOnDestroy(): void {

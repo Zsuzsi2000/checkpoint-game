@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, SharedModule, HttpClientModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule, SharedModule, HttpClientModule],
   // imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule, IonicModule, RouterLink, RouterLinkActive],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

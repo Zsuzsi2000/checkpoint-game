@@ -3,10 +3,81 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/games"></ion-back-button>
     </ion-buttons>
-    <ion-title>game-details</ion-title>
+    <ion-title>{{ game.name }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button><ion-icon name="heart-outline"></ion-icon></ion-button>
+      <ion-button><ion-icon name="share-social"></ion-icon></ion-button>
+      <ion-button><ion-icon name="settings-outline"></ion-icon></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-grid class="ion-no-padding">
+    <ion-row id="img-container">
+      <ion-col>
+        <ion-img id="game-img" [src]="game.imgUrl"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list lines="none" class="ion-no-padding">
+          <ion-item>
+            <ion-avatar slot="start">
+              <img alt="Profile picture" [src]="game.imgUrl"/>
+            </ion-avatar>
+            <ion-label>{{ game.creatorName }}</ion-label>
+            <ion-icon name="people" slot="end"></ion-icon>
+            <ion-badge slot="end" color="secondary">{{ game.numberOfAttempts }}</ion-badge>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="grid"></ion-icon>
+            <ion-label>{{ game.category }}</ion-label>
+            <ion-chip slot="end">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="map"></ion-icon>
+            <ion-label>{{ game.country }}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="location-sharp"></ion-icon>
+            <ion-label>{{ game.pointOfDeparture }}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="footsteps"></ion-icon>
+            <ion-label>{{ game.distance }}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="hourglass"></ion-icon>
+            <ion-label>{{ game.duration }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-padding">
+      <ion-col class="ion-no-padding">
+        <p>{{ game.description }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-padding">
+      <ion-col class="ion-no-padding">
+        <p>Rating</p>
+        <p>{{ game.ratings.length }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-padding">
+      <ion-col class="ion-no-padding">
+        <ion-buttons class="ion-justify-content-between">
+          <ion-button color="secondary" fill="solid" size="small" shape="round" [routerLink]="['/', 'events', 'create-event']">
+            Create event
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          </ion-button>
+          <ion-button color="secondary" fill="solid" size="small" shape="round" [routerLink]="['/', 'game-mode']">
+            Play
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

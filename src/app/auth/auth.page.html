@@ -1,124 +1,87 @@
-<!--<ion-content class="ion-padding" >-->
-<!--  <ion-img [src]="'assets/logo.png'" alt="Logo"></ion-img>-->
-<!--</ion-content>-->
-<ion-img [src]="'assets/logo.png'" alt="Logo"></ion-img>
-
-<ion-content class="ion-padding">
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)">
-    <ion-grid>
-      <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
-          <ion-list>
-            <ion-item>
-              <ion-label position="floating">E-mail</ion-label>
-              <ion-input
-                type="email"
-                ngModel
-                name="email"
-                required
-                email
-                labelPlacement="floating"
-                placeholder="Type your email here"
-                #emailCtrl="ngModel"
-              ></ion-input>
-            </ion-item>
-            <ion-item *ngIf="!isLogin">
-              <ion-label position="floating">Username</ion-label>
-              <ion-input
-                type="text"
-                ngModel
-                name="username"
-                required
-                labelPlacement="floating"
-                placeholder="Enter a username"
-                #usernameCtrl="ngModel"
-              ></ion-input>
-            </ion-item>
-            <ion-item
-              *ngIf="!emailCtrl.valid && emailCtrl.touched"
-              lines="none"
-            >
-              <ion-label>
-                Should be a valid email address.
-              </ion-label>
-            </ion-item>
-            <ion-item>
-              <ion-label position="floating">Password</ion-label>
-              <ion-input
-                type="password"
-                ngModel
-                name="password"
-                required
-                minlength="6"
-                labelPlacement="floating"
-                placeholder="Type your password here"
-                #passwordCtrl="ngModel"
-              ></ion-input>
-            </ion-item>
-            <ion-item
-              *ngIf="!passwordCtrl.valid && passwordCtrl.touched"
-              lines="none"
-            >
-              <ion-label>
-                Should at least be 6 characters long.
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
-          <ion-button
-            type="submit"
-            color="primary"
-            expand="block"
-            [disabled]="!f.valid"
-          >
-            {{ isLogin ? 'Login' : 'Signup' }}
-          </ion-button>
-          <ng-container *ngIf="isLogin">
-            <ion-button
-              type="submit"
-              color="primary"
-              expand="block"
-              (click)="logInAsAGuest()">
-              Log in as a guest
-            </ion-button>
-            <ion-item>
-              <ion-label>Forgot your password?</ion-label>
-            </ion-item>
-            <ion-button
-              type="submit"
-              color="primary"
-              expand="block"
-              (click)="setNewPassword()"
-            >
-              Set new password
-            </ion-button>
+<ion-content [ngSwitch]="status" class="ion-no-padding ion-align-items-center ion-text-center">
+  <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center">
+    <ion-row class="ion-align-items-center full-fill">
+      <ion-col class="ion-align-items-center">
+        <ion-grid class="ion-no-padding ion-no-margin ion-align-items-center ion-text-center full-fill">
+          <ion-row>
+            <ion-col size-xs="8" offset-xs="2" size-sm="6" offset-sm="3" size-md="4" offset-md="4">
+              <ion-img [src]="'assets/logo.png'" alt="Logo" [ngClass]="status === AuthStatus.modeSelection ? 'logo-img-big-botton-padding' : 'logo-img-height'"></ion-img>
+            </ion-col>
+          </ion-row>
+          <ng-container *ngSwitchCase="AuthStatus.modeSelection">
+            <ion-row class="ion-no-padding ion-no-margin">
+              <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+                <ion-button
+                  class="modeSelectionButtons"
+                  color="primary"
+                  expand="full"
+                  (click)="updateStatus(AuthStatus.login)">
+                  Login
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-no-padding ion-no-margin">
+              <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+                <ion-button
+                  class="modeSelectionButtons"
+                  color="primary"
+                  expand="full"
+                  (click)="updateStatus(AuthStatus.loginAsGuest)">
+                  Login as a guest
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-no-padding ion-no-margin">
+              <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3" class="big-bottom-padding">
+                <ion-button
+                  class="modeSelectionButtons"
+                  color="primary"
+                  expand="full"
+                  (click)="updateStatus(AuthStatus.signup)">
+                  Sign up
+                </ion-button>
+              </ion-col>
+            </ion-row>
           </ng-container>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size-sm="6" offset-sm="3">
-          <ion-item>
-            <ion-label>
-              {{ isLogin ? "Don't have an account yet?" : "Already have an account?" }}
-            </ion-label>
-          </ion-item>
-          <ion-button
-            type="submit"
-            color="primary"
-            expand="block"
-            (click)="onSwitchAuthMode()"
-          >
-            Switch to {{ isLogin ? 'Signup' : 'Login' }}
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </form>
-  <div class="ion-text-center">
-    <ion-spinner color="primary" *ngIf="isLoading"></ion-spinner>
-  </div>
+          <ion-row *ngSwitchCase="AuthStatus.login">
+            <ion-col size-sm="6" offset-sm="3">
+              <app-login></app-login>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngSwitchCase="AuthStatus.login">
+            <ion-col size-sm="6" offset-sm="3">
+              <ion-item class="ion-text-center" lines="none">
+                <ion-label class="custom-margin-for-label">Don't have an account yet?</ion-label>
+              </ion-item>
+              <ion-button
+                class="ion-no-margin"
+                color="primary"
+                (click)="updateStatus(AuthStatus.signup)">
+                Switch to signup
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngSwitchCase="AuthStatus.signup">
+            <ion-col size-sm="6" offset-sm="3">
+              <app-signup></app-signup>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngSwitchCase="AuthStatus.signup">
+            <ion-col size-sm="6" offset-sm="3">
+              <ion-item class="ion-text-center" lines="none">
+                <ion-label class="custom-margin-for-label">Already have an account?</ion-label>
+              </ion-item>
+              <ion-button
+                class="ion-no-margin"
+                color="primary"
+                (click)="updateStatus(AuthStatus.login)">
+                Switch to login
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
 
