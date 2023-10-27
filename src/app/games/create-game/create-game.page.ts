@@ -3,6 +3,7 @@ import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {GamesService} from "../games.service";
 import {CountryService} from "../../services/country.service";
 import {IonModal} from "@ionic/angular";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-game',
@@ -18,42 +19,56 @@ export class CreateGamePage implements OnInit {
   countries = [];
   selectedCountry: string = "";
 
-  constructor(private gamesService: GamesService, private countryService: CountryService) { }
+  constructor(private gamesService: GamesService,
+              private countryService: CountryService,
+              private router: Router) { }
 
   ngOnInit() {
     this.countries = ["1", "2", "3", "4", "5", "6", "7"];
     this.gameForm = new FormGroup({
-      name: new FormControl(null, { updateOn: "blur", validators: [Validators.required]}),
-      category: new FormControl(null, { updateOn: "blur", validators: [Validators.required]}),
-      description: new FormControl(null, { updateOn: "blur", validators: [Validators.required]}),
+      name: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
+      category: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
+      newCategory: new FormControl(null, { updateOn: "change" }),
+      description: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
       quiz: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
       hasALocation: new FormControl(null, { updateOn: "change" }),
-      pointOfDeparture: new FormControl(null, { updateOn: "blur" }),
-      imgUrl: new FormControl(null, { updateOn: "blur"}),
-      distance: new FormControl(null, { updateOn: "blur", validators: [Validators.required]}),
-      duration: new FormControl(null, { updateOn: "blur", validators: [Validators.required]}),
+      pointOfDeparture: new FormControl(null, { updateOn: "change" }),
+      imgUrl: new FormControl(null, { updateOn: "change"}),
+      distance: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
+      duration: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
       itIsPublic: new FormControl(null, { updateOn: "change" }),
     })
   }
 
   creatGame() {
     console.log("game", this.gameForm);
+    let category: string;
+    if (this.gameForm.value.category === 'otherCategory') {
+      category = this.gameForm.value.newCategory;
+      //TODO: add new category
+    } else {
+      category = this.gameForm.value.category;
+    }
     if (!this.gameForm.valid) {
       return;
     }
-    this.gamesService.addGame(
+    this.gamesService.createGame(
       this.gameForm.value.name,
+      this.gameForm.value.hasALocation,
       this.selectedCountry,
       this.gameForm.value.pointOfDeparture,
-      this.gameForm.value.category,
+      category,
       this.gameForm.value.quiz === "quiz",
       this.gameForm.value.description,
       this.gameForm.value.imgUrl,
       this.gameForm.value.distance,
       this.gameForm.value.duration,
-      this.gameForm.value.itIsPublic === "true"
-    );
-    // this.gameForm.reset();
+      this.gameForm.value.itIsPublic
+    ).subscribe(game => {
+      console.log("game", game);
+      // this.router.navigate(['/','games', 'details' ])
+      this.gameForm.reset();
+    });
   }
 
   countrySelectionChanged(country: string) {

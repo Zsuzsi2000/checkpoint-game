@@ -25,13 +25,7 @@ export class ChatsPage implements OnInit {
   }
 
   deleteAccount() {
-    this.authService.deleteAccount().subscribe(
-      resData => {
-        console.log("deleteAccount",resData);
-      },
-      errRes => {
-        console.log("error", errRes.error.error.message);
-      });;
+
   }
 
 }

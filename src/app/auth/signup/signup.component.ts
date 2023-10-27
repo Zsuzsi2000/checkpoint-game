@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {NgForm, ValidatorFn} from "@angular/forms";
 import {interval, Observable} from "rxjs";
 import {AuthResponseData, AuthService} from "../auth.service";
@@ -7,6 +7,7 @@ import {AlertController, IonModal, LoadingController} from "@ionic/angular";
 import {CountryService} from "../../services/country.service";
 import {concatMap, first, switchMap, take, takeUntil, takeWhile} from "rxjs/operators";
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {UserService} from "../../services/user.service";
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password').value;
@@ -22,6 +23,7 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
 })
 export class SignupComponent implements OnInit {
 
+  @Output() switchToLogIn = new EventEmitter<null>();
   @ViewChild('modal', {static: true}) modal!: IonModal;
 
   profileForm: FormGroup;
@@ -33,6 +35,7 @@ export class SignupComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private countryService: CountryService,
+    private userService: UserService,
     private router: Router,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
@@ -95,12 +98,13 @@ export class SignupComponent implements OnInit {
             if (resData.users && resData.users[0].emailVerified) {
               doItAgain = false;
               console.log("setData");
-              this.authService.createUser(authRes, username, country, picture).subscribe(data => {
-                console.log("user", data);
-              });
               this.isLoading = false;
               loadingEl.dismiss();
               this.showAlert("Email verification was successful!", "Authentication succeeded");
+              this.userService.createUser(authRes, username, country, picture).subscribe(data => {
+                console.log("user", data);
+              });
+              this.switchToLogIn.emit();
             }
           },
           errRes => {

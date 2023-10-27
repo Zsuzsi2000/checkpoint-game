@@ -105,6 +105,11 @@ export class AuthPage implements OnInit {
       });
   }
 
+  logout() {
+    this.authService.logout();
+    this.updateStatus(AuthStatus.modeSelection);
+  }
+
 
   logInAsAGuest() {
     this.authService.loginAsAGuest().subscribe(

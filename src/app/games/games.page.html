@@ -41,7 +41,12 @@
                     </div>
                     <div class="custom-align-item justify-second">
                       <ion-buttons slot="end" class="justify-second">
-                        <ion-button><ion-icon name="heart-outline"></ion-icon></ion-button>
+                        <ng-container *ngIf="checkIsItFavourite(game.id); else favourite">
+                          <ion-button (click)="deleteFromFavourites(game.id)"><ion-icon name="heart"></ion-icon></ion-button>
+                        </ng-container>
+                        <ng-template #favourite>
+                          <ion-button (click)="addToFavourites(game.id)"><ion-icon name="heart-outline"></ion-icon></ion-button>
+                        </ng-template>
                         <ion-button><ion-icon name="share-social"></ion-icon></ion-button>
                         <ion-button disabled class="whiteDisabled"><ion-icon name="people"></ion-icon></ion-button>
                         <ion-badge slot="end" color="secondary">{{ game.numberOfAttempts }}</ion-badge>
@@ -50,12 +55,7 @@
                   </div>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-avatar class="rigt-padding">
-                    <img alt="Silhouette of a person's head"
-                         src="https://ionicframework.com/docs/img/demos/avatar.svg"/>
-                  </ion-avatar>
-                  <ion-label>{{ game.creatorName }}</ion-label>
-                  <ion-chip slot="end">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
+                  <ion-chip slot="start">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
                 </ion-item>
               </ion-card-header>
               <ion-card-content>

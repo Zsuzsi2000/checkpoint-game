@@ -33,8 +33,17 @@
           <ng-container *ngFor="let category of categories">
             <ion-select-option [value]="category">{{ category }}</ion-select-option>
           </ng-container>
-<!--          <ion-select-option value="apple" (click)="addCategory()">Egyéb</ion-select-option>-->
+          <ion-select-option [value]="'otherCategory'">Other category</ion-select-option>
         </ion-select>
+      </ion-item>
+      <ion-item *ngIf="gameForm.get('category').value === 'otherCategory'">
+        <ion-label position="floating">New category</ion-label>
+        <ion-input
+          type="text"
+          labelPlacement="floating"
+          placeholder="Enter a new category"
+          formControlName="newCategory"
+        ></ion-input>
       </ion-item>
       <ion-item>
         <ion-select placeholder="Choose a game type" formControlName="quiz">

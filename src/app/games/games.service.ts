@@ -4,9 +4,27 @@ import {AuthService} from "../auth/auth.service";
 import {filter, map, switchMap, take, tap} from "rxjs/operators";
 import {BehaviorSubject, of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {Checkpoint} from "../models/checkpoint.model";
+import {UserService} from "../services/user.service";
 
 interface GameData {
-  name: string
+  name: string;
+  category: string;
+  description: string;
+  quiz: boolean;
+  hasALocation: boolean;
+  creatorName: string;
+  country: string;
+  pointOfDeparture: string;
+  imgUrl: string;
+  numberOfAttempts: number;
+  distance: number;
+  duration: number;
+  creationDate: Date;
+  itIsPublic: boolean;
+  checkpoints: Checkpoint[];
+  ratings: string[];
+  userId: string;
 }
 
 @Injectable({
@@ -33,20 +51,31 @@ export class GamesService {
     return this._games.asObservable();
   }
 
-  constructor(private authService: AuthService, private http: HttpClient) { }
+  constructor(private authService: AuthService, private userService: UserService, private http: HttpClient) { }
 
   fetchGames() {
     return this.http.get<{[key: string]: GameData}>("https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games.json")
       .pipe(
-        tap(resData => {
-          console.log(resData);
-        }),
         map(data => {
           const games = [];
           for (const key in data) {
             if (data.hasOwnProperty(key)) {
-              games.push(new Game(key, data[key].name, null, null, null,
-                null, null, null, null, null, null, null, null))
+              games.push(new Game(
+                key,
+                data[key].name,
+                data[key].creatorName,
+                data[key].hasALocation,
+                data[key].country,
+                data[key].pointOfDeparture,
+                data[key].category,
+                data[key].quiz,
+                data[key].description,
+                data[key].imgUrl,
+                data[key].distance,
+                data[key].duration,
+                data[key].itIsPublic,
+                data[key].userId
+              ))
             }
           }
           return games;
@@ -58,10 +87,24 @@ export class GamesService {
   }
 
   fetchGame(id: string) {
-    return  this.http.get<GameData>(`https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json`).pipe(
+    return this.http.get<GameData>(`https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json`).pipe(
       map( gameData => {
-        return new Game(id, gameData.name, null, null, null,
-          null, null, null, null, null, null, null, null );
+        return new Game(
+          id,
+          gameData.name,
+          gameData.creatorName,
+          gameData.hasALocation,
+          gameData.country,
+          gameData.pointOfDeparture,
+          gameData.category,
+          gameData.quiz,
+          gameData.description,
+          gameData.imgUrl,
+          gameData.distance,
+          gameData.duration,
+          gameData.itIsPublic,
+          gameData.userId
+        );
       })
     );
   }
@@ -77,7 +120,73 @@ export class GamesService {
     );
   }
 
+  createGame(name: string,
+             hasALocation: boolean,
+             country: string,
+             pointOfDeparture: string,
+             category: string,
+             quiz: boolean,
+             description: string,
+             imgUrl: string,
+             distance: number,
+             duration: number,
+             itIsPublic: boolean) {
+    console.log("createGame");
+
+    let generatedId: string;
+    let fetchedUserId: string;
+    let fetchedUserName: string;
+    let newGame: Game;
+
+    return this.authService.user.pipe(
+      take(1),
+      switchMap(user => {
+        fetchedUserId = user.id;
+        fetchedUserName = user.username;
+        return this.authService.token;
+      }),
+      take(1),
+      switchMap(token => {
+        if (!fetchedUserId) {
+          throw new Error('No user found!');
+        }
+        newGame = new Game(
+          null,
+          name,
+          fetchedUserName,
+          hasALocation,
+          country,
+          pointOfDeparture,
+          category,
+          quiz,
+          description,
+          imgUrl,
+          distance,
+          duration,
+          itIsPublic,
+          fetchedUserId);
+
+        console.log("newGame", newGame);
+        return this.http.post<{ name: string }>(
+          'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games.json',
+          {...newGame, id: null}
+        );
+      }),
+      switchMap(resData => {
+        generatedId = resData.name;
+        return this.games;
+      }),
+      take(1),
+      tap(games => {
+        newGame.id = generatedId;
+        this._games.next(games.concat(newGame));
+      })
+    );
+
+  }
+
   addGame(name: string,
+          hasALocation: boolean,
           country: string,
           pointOfDeparture: string,
           category: string,
@@ -90,8 +199,21 @@ export class GamesService {
     this.authService.userId.pipe(take(1)).subscribe(userId => {
       //TODO: get az user name
       const creatorName = "Elena";
-      const newGame =  new Game(null, name, creatorName, country, pointOfDeparture, category, quiz, description,
-        imgUrl, distance, duration, itIsPublic, userId);
+      const newGame =  new Game(
+        null,
+        name,
+        creatorName,
+        hasALocation,
+        country,
+        pointOfDeparture,
+        category,
+        quiz,
+        description,
+        imgUrl,
+        distance,
+        duration,
+        itIsPublic,
+        userId);
       this.games.pipe(take(1)).subscribe(games => {
         this._games.next(games.concat(newGame));
       })
@@ -110,6 +232,7 @@ export class GamesService {
   updateGame(id: string,
              name: string,
              creatorName: string,
+             hasALocation: boolean,
              country: string,
              pointOfDeparture: string,
              category: string,
@@ -134,7 +257,7 @@ export class GamesService {
         const updatedGameIndex = games.findIndex(g => g.id === id);
         const updatedGames = [...games];
         const old = updatedGames[updatedGameIndex];
-        updatedGames[updatedGameIndex] = new Game(old.id, name, creatorName, country,
+        updatedGames[updatedGameIndex] = new Game(old.id, name, creatorName, hasALocation, country,
           pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId);
         return this.http.put(
           `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json`,
@@ -145,22 +268,70 @@ export class GamesService {
         this._games.next(updatedGames);
       })
     );
+  }
 
-    // return this.games.pipe(take(1), tap(games => {
-    //   const updatedGameIndex = games.findIndex(g => g.id === id);
-    //   const updatedGames = [...games];
-    //   const old = updatedGames[updatedGameIndex];
-    //   updatedGames[updatedGameIndex] = new Game(old.id, name, creatorName, country,
-    //     pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId);
-    //   this._games.next(updatedGames);
-    // }));
+  fetchOwnGames(id: string) {
+    let fetchedUserId: string;
+    return this.userService.getUserById(id).pipe(
+      take(1),
+      switchMap(user => {
+        if (!user) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = user.id;
+        return this.authService.token;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.get<{ [key: string]: GameData }>(
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games.json?orderBy="userId"&equalTo="${fetchedUserId}"&auth=${token}`
+        );
+      }),
+      take(1),
+      map(data => {
+        const games = [];
+        for (const key in data) {
+          if (data.hasOwnProperty(key)) {
+            games.push(new Game(
+              key,
+              data[key].name,
+              data[key].creatorName,
+              data[key].hasALocation,
+              data[key].country,
+              data[key].pointOfDeparture,
+              data[key].category,
+              data[key].quiz,
+              data[key].description,
+              data[key].imgUrl,
+              data[key].distance,
+              data[key].duration,
+              data[key].itIsPublic,
+              data[key].userId
+            ))
+          }
+        }
+        return games;
+      }),
+      tap(games => {
+        this._games.next(games);
+      })
+    );
   }
 
   deleteGame(id: string) {
-    return this.games.pipe(
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        return this.http.delete(
+          `https://ionic-angular-course.firebaseio.com/games/${id}.json?auth=${token}`
+        );
+      }),
+      switchMap(() => {
+        return this.games;
+      }),
       take(1),
       tap(games => {
-        this._games.next(games.filter(g => g.id !== id))
+        this._games.next(games.filter(b => b.id !== id));
       })
     );
   }

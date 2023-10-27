@@ -4,6 +4,7 @@ export class Game {
   public id: string;
   public name: string;
   public creatorName: string;
+  public hasALocation: boolean;
   public country: string;
   public pointOfDeparture: string;
   public category: string;
@@ -23,6 +24,7 @@ export class Game {
     id: string,
     name: string,
     creatorName: string,
+    hasALocation: boolean,
     country: string,
     pointOfDeparture: string,
     category: string,
@@ -37,6 +39,7 @@ export class Game {
     this.id = id;
     this.name = name;
     this.creatorName = creatorName;
+    this.hasALocation = hasALocation;
     this.country = country;
     this.pointOfDeparture = pointOfDeparture;
     this.category = category;

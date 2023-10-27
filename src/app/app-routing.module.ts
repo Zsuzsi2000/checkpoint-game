@@ -25,7 +25,7 @@ const routes: Routes = [
     loadChildren: () => import('./connections/connections.module').then( m => m.ConnectionsPageModule),
   },
   {
-    path: 'profile',
+    path: 'profile/:userId',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule),
     canLoad: [AuthGuard]
   },

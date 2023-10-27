@@ -4,6 +4,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AlertController, NavController} from "@ionic/angular";
 import {GamesService} from "../games.service";
 import {Subscription} from "rxjs";
+import {AuthService} from "../../auth/auth.service";
+import {User} from "../../models/user.model";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-game-details',
@@ -14,10 +17,13 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   game: Game;
   gameSub: Subscription;
+  isLoading = false;
+  user: User;
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
               private gamesService: GamesService,
+              private authService: AuthService,
               private alertController: AlertController,
               private router: Router) {
   }
@@ -27,22 +33,18 @@ export class GameDetailsPage implements OnInit, OnDestroy {
       if (!paramMap.has('gameId')) {
         this.navCtrl.pop();
       }
-      this.gamesService.getGame(paramMap.get('gameId')).subscribe(game => {
+      this.isLoading = true;
+      this.gamesService.fetchGame(paramMap.get('gameId')).subscribe(game => {
         this.game = game;
+        this.isLoading = false;
+      }, error => {
+        this.showALert();
       })
     }, error => {
-      this.alertController.create({
-        header: 'An error occured',
-        message: 'Game could not be fetched. Please try again later.',
-        buttons: [{
-          text: 'Okay', handler: () => {
-            this.router.navigate(['/games']);
-          }
-        }]
-      })
-        .then(alertEl => {
-          alertEl.present();
-        })
+      this.showALert();
+    });
+    this.authService.user.pipe(take(1)).subscribe(user => {
+      this.user = user;
     })
   }
 
@@ -50,6 +52,23 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     if (this.gameSub) {
       this.gameSub.unsubscribe();
     }
+  }
+
+  showALert() {
+    this.alertController
+      .create(
+        {
+          header: 'An error occured',
+          message: 'Game could not be fetched. Please try again later.',
+          buttons: [{
+            text: 'Okay', handler: () => {
+              this.router.navigate(['/', 'games']);
+            }
+          }]
+        })
+      .then(alertEl => {
+        alertEl.present();
+      });
   }
 
 }

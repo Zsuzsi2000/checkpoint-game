@@ -4,7 +4,9 @@ import {Router} from "@angular/router";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {interval, Observable, throwError} from "rxjs";
 import {NgForm} from "@angular/forms";
-import {catchError, map, switchMap, takeWhile, tap} from "rxjs/operators";
+import {catchError, map, switchMap, take, takeWhile, tap} from "rxjs/operators";
+import {User} from "../../models/user.model";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-login',
@@ -17,6 +19,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController
@@ -58,7 +61,7 @@ export class LoginComponent implements OnInit {
         )
           .subscribe(
             (authResponseData: AuthResponseData) => {
-              this.authService.setUserData(authResponseData, "", "", "");
+              this.setUserData(authResponseData);
               this.isLoading = false;
               loadingEl.dismiss();
               this.router.navigateByUrl('/games');
@@ -91,11 +94,31 @@ export class LoginComponent implements OnInit {
       });
   }
 
+  setUserData(userData: AuthResponseData) {
+    console.log("setUserData");
+    const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
+    this.userService.getUserByEmail(userData.email).pipe(take(1)).subscribe(user => {
+      let currentUser = new User(
+        user.id,
+        user.email,
+        user.username,
+        user.country,
+        user.picture,
+        (user.favouriteGames) ? user.favouriteGames : [],
+        userData.idToken,
+        expirationTime
+      );
+      console.log("currentUser", currentUser);
+      this.authService.setUserWhenLoggedIn(currentUser, userData.idToken, expirationTime);
+    });
+  }
+
   setNewPassword() {
     this.authService.sendPasswordResetEamil("zsuzsi753@gmail.com").subscribe(
       resData => {
         console.log("setNewPassword", resData);
-        this.showAlert("New password sent");
+        this.showAlert("You can set a new password if you follow the instructions in the email",
+          "Password change email has been sent");
       },
       errRes => {
         console.log("error", errRes.error.error.message);
@@ -116,50 +139,15 @@ export class LoginComponent implements OnInit {
   }
 
   verifyEmail(authRes: AuthResponseData) {
-    this.isLoading = true;
-    this.loadingCtrl.create({keyboardClose: true, message: 'Sending an email to you...',}).then(loadingEl => {
-        loadingEl.present();
-        let doItAgain = true;
-
-        this.authService.sendEmailVerification(authRes.idToken).pipe(
-          switchMap(() => {
-            loadingEl.message = "Please verify your email";
-
-            return interval(5000).pipe(
-              switchMap((l) => {
-                return this.authService.getUserData(authRes.idToken);
-              }),
-              takeWhile((resData: { kind: any, users: any }) => (!resData.users[0]?.emailVerified || doItAgain)) // Continue until email is verified
-            );
-          })
-        ).subscribe(
-          (resData: { kind: any, users: any }) => {
-            console.log("users", resData.users)
-            if (resData.users && resData.users[0].emailVerified) {
-              console.log("setData");
-              doItAgain = false;
-              this.authService.setUserData(authRes, "", "", "");
-              this.isLoading = false;
-              loadingEl.dismiss();
-              this.showAlert("Email verification was successful!");
-            }
-          },
-          errRes => {
-            const code = errRes.error.error.message;
-            let message = (code === 'EMAIL_EXISTS')
-              ? 'This email address exists already!'
-              : 'Could not sign you up, please try again.';
-            this.showAlert(message);
-          }
-        );
-      }
-    );
+    this.authService.verifyEmail(authRes.idToken).pipe(take(1)).subscribe(response => {
+      console.log(response);
+    });
   }
 
-  private showAlert(message: string) {
+  private showAlert(message: string, header: string = "Authentication failed") {
     this.alertCtrl
       .create({
-        header: 'Authentication failed',
+        header: header,
         message: message,
         buttons: ['Okay']
       })

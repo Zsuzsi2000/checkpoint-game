@@ -63,7 +63,7 @@
           </ion-row>
           <ion-row *ngSwitchCase="AuthStatus.signup">
             <ion-col size-sm="6" offset-sm="3">
-              <app-signup></app-signup>
+              <app-signup (switchToLogIn)="updateStatus(AuthStatus.login)"></app-signup>
             </ion-col>
           </ion-row>
           <ion-row *ngSwitchCase="AuthStatus.signup">
@@ -76,6 +76,16 @@
                 color="primary"
                 (click)="updateStatus(AuthStatus.login)">
                 Switch to login
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngSwitchCase="AuthStatus.loggedIn">
+            <ion-col size-sm="6" offset-sm="3" class="ion-text-center">
+              <ion-button
+                class="ion-no-margin"
+                color="primary"
+                (click)="logout()">
+                Log out
               </ion-button>
             </ion-col>
           </ion-row>
