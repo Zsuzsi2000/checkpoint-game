@@ -26,7 +26,7 @@
                   class="modeSelectionButtons"
                   color="primary"
                   expand="full"
-                  (click)="updateStatus(AuthStatus.loginAsGuest)">
+                  (click)="logInAsAGuest()">
                   Login as a guest
                 </ion-button>
               </ion-col>
@@ -79,7 +79,27 @@
               </ion-button>
             </ion-col>
           </ion-row>
-          <ion-row *ngSwitchCase="AuthStatus.loggedIn">
+          <ion-row *ngSwitchCase="AuthStatus.signup" class="ion-margin">
+            <ion-col size-sm="6" offset-sm="3">
+              <ion-button
+                class="ion-no-margin"
+                color="primary"
+                (click)="updateStatus(AuthStatus.modeSelection)">
+                Back
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngSwitchCase="AuthStatus.login" class="ion-margin">
+            <ion-col size-sm="6" offset-sm="3">
+              <ion-button
+                class="ion-no-margin"
+                color="primary"
+                (click)="updateStatus(AuthStatus.modeSelection)">
+                Back
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngSwitchCase="AuthStatus.loggedIn" class="ion-margin">
             <ion-col size-sm="6" offset-sm="3" class="ion-text-center">
               <ion-button
                 class="ion-no-margin"

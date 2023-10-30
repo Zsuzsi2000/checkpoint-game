@@ -8,8 +8,8 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="gameForm" (ngSubmit)="creatGame()">
-    <ion-list class="ion-padding">
+  <form [formGroup]="gameForm" (ngSubmit)="createGame()">
+    <ion-list class="ion-padding" lines="none">
       <ion-item>
         <ion-label position="floating">Name of the game *</ion-label>
         <ion-input
@@ -31,7 +31,7 @@
         <ion-select placeholder="Select a category" formControlName="category">
           <div slot="label">Category *</div>
           <ng-container *ngFor="let category of categories">
-            <ion-select-option [value]="category">{{ category }}</ion-select-option>
+            <ion-select-option [value]="category.name">{{ category.name }}</ion-select-option>
           </ng-container>
           <ion-select-option [value]="'otherCategory'">Other category</ion-select-option>
         </ion-select>
@@ -57,7 +57,7 @@
         <ion-toggle formControlName="hasALocation" labelPlacement="start" value="false" color="secondary">It has specific location?</ion-toggle>
       </ion-item>
       <ng-container *ngIf="gameForm.get('hasALocation').value">
-        <ion-item [button]="true" [detail]="false" id="select-country">
+        <ion-item [button]="true" [detail]="false" id="select-game-country">
           <ion-label>Country</ion-label>
           <div slot="end" id="selected-country">{{ selectedCountry }}</div>
         </ion-item>
@@ -143,15 +143,15 @@
       Save the game
     </ion-button>
   </form>
-  <ion-modal trigger="select-country" #modal>
-    <ng-template>
-      <app-pick-a-thing
-        class="ion-page"
-        [countries]="countries"
-        [selectedCountry]="selectedCountry"
-        (selectionChange)="countrySelectionChanged($event)"
-        (selectionCancel)="modal.dismiss()"
-      ></app-pick-a-thing>
-    </ng-template>
-  </ion-modal>
 </ion-content>
+<ion-modal trigger="select-game-country" #modal>
+  <ng-template>
+    <app-pick-a-thing
+      class="ion-page"
+      [countries]="countries"
+      [selectedCountry]="selectedCountry"
+      (selectionChange)="countrySelectionChanged($event)"
+      (selectionCancel)="modal.dismiss()"
+    ></app-pick-a-thing>
+  </ng-template>
+</ion-modal>

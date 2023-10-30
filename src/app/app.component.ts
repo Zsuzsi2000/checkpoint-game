@@ -14,8 +14,6 @@ import {Plugins} from "@capacitor/core";
 export class AppComponent implements OnInit, OnDestroy {
   private authSub: Subscription;
   private previousAuthState = false;
-  userSub: Subscription;
-
   public appPages = [
     { title: 'Játékok', url: '/games', icon: 'game-controller' },
     { title: 'Események', url: '/events', icon: 'calendar' },
@@ -35,12 +33,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.previousAuthState = isAuth;
     });
 
-    this.userSub = this.authService.userId.subscribe(userId => {
-      console.log("authService get user id", );
-      let profilPage = this.appPages.find( page => page.title === "Profil");
-      profilPage.url = `/profile/${userId}`;
-    })
-
     //TODO: megérteni 279.lecke
     // Plugins.App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
   }
@@ -48,9 +40,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.authSub) {
       this.authSub.unsubscribe();
-    }
-    if (this.userSub) {
-      this.userSub.unsubscribe();
     }
   }
 

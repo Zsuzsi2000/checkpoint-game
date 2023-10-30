@@ -4,6 +4,7 @@ import {GamesService} from "../games.service";
 import {CountryService} from "../../services/country.service";
 import {IonModal} from "@ionic/angular";
 import {Router} from "@angular/router";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-create-game',
@@ -15,7 +16,7 @@ export class CreateGamePage implements OnInit {
   @ViewChild('modal', {static: true}) modal!: IonModal;
 
   gameForm: FormGroup;
-  categories: string[] = [ "Sport", "Music", "TV series and movies", "Culture", "Culture", "Logical"];
+  categories: {id: string, name: string}[];
   countries = [];
   selectedCountry: string = "";
 
@@ -37,15 +38,22 @@ export class CreateGamePage implements OnInit {
       distance: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
       duration: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
       itIsPublic: new FormControl(null, { updateOn: "change" }),
+    });
+    this.gamesService.fetchCategories().pipe(take(1)).subscribe(categories => {
+      if (categories) {
+        this.categories = categories;
+        console.log(this.categories, this.categories[0].name)
+      }
     })
   }
 
-  creatGame() {
+  createGame() {
     console.log("game", this.gameForm);
     let category: string;
+    let newCategory = false;
     if (this.gameForm.value.category === 'otherCategory') {
       category = this.gameForm.value.newCategory;
-      //TODO: add new category
+      newCategory = true;
     } else {
       category = this.gameForm.value.category;
     }
@@ -58,16 +66,20 @@ export class CreateGamePage implements OnInit {
       this.selectedCountry,
       this.gameForm.value.pointOfDeparture,
       category,
-      this.gameForm.value.quiz === "quiz",
+      this.gameForm.value.quiz,
       this.gameForm.value.description,
       this.gameForm.value.imgUrl,
       this.gameForm.value.distance,
       this.gameForm.value.duration,
       this.gameForm.value.itIsPublic
-    ).subscribe(game => {
-      console.log("game", game);
-      // this.router.navigate(['/','games', 'details' ])
-      this.gameForm.reset();
+    ).subscribe(gameId => {
+      console.log("game", gameId);
+      this.gamesService.createCategory(category).subscribe(categories => {
+        console.log("categories", categories);
+        this.categories = categories;
+        this.router.navigate(['/','games', 'details', gameId]);
+        this.gameForm.reset();
+      });
     });
   }
 

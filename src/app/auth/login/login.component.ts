@@ -113,8 +113,33 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  setNewPassword() {
-    this.authService.sendPasswordResetEamil("zsuzsi753@gmail.com").subscribe(
+  setNewPasswordAlert() {
+    this.alertCtrl.create({
+      header: "Enter your email address",
+      inputs: [{
+        placeholder: "Eamil",
+        type: "text",
+        name: "email",
+      }],
+      buttons: [
+        {
+          text: "Cancel",
+          role: "cancel"
+        },
+        {
+          text: "Get a new password",
+          handler: (event) => {
+            this.setNewPassword(event.email);
+          }
+        }
+      ]
+    }).then(
+      alertEl => alertEl.present()
+    );
+  }
+
+  setNewPassword(email: string) {
+    this.authService.sendPasswordResetEamil(email).subscribe(
       resData => {
         console.log("setNewPassword", resData);
         this.showAlert("You can set a new password if you follow the instructions in the email",

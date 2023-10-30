@@ -33,6 +33,7 @@ interface GameData {
 export class GamesService {
 
     private _games = new BehaviorSubject<Game[]>([]);
+    private _categories = new BehaviorSubject<{id: string, name: string}[]>([]);
 
   //   private _games = new BehaviorSubject<Game[]>([
   //   new Game(null, 'Demo game', 'Teszt Elek', 'Hungary',
@@ -49,6 +50,10 @@ export class GamesService {
 
   get games() {
     return this._games.asObservable();
+  }
+
+  get categories() {
+    return this._categories.asObservable();
   }
 
   constructor(private authService: AuthService, private userService: UserService, private http: HttpClient) { }
@@ -109,17 +114,6 @@ export class GamesService {
     );
   }
 
-
-  getGame(id: string) {
-    // {... wouldn't edit the original object
-    return  this.games.pipe(
-      take(1),
-      map( games => {
-        return {...games.find(game => game.id === id)};
-      })
-    );
-  }
-
   createGame(name: string,
              hasALocation: boolean,
              country: string,
@@ -174,59 +168,15 @@ export class GamesService {
       }),
       switchMap(resData => {
         generatedId = resData.name;
-        return this.games;
+        return of(generatedId);
       }),
       take(1),
-      tap(games => {
-        newGame.id = generatedId;
-        this._games.next(games.concat(newGame));
+      tap(id => {
+        newGame.id = id;
+        this._games.next([ ...this._games.getValue(), newGame]);
       })
     );
 
-  }
-
-  addGame(name: string,
-          hasALocation: boolean,
-          country: string,
-          pointOfDeparture: string,
-          category: string,
-          quiz: boolean,
-          description: string,
-          imgUrl: string,
-          distance: number,
-          duration: number,
-          itIsPublic: boolean) {
-    this.authService.userId.pipe(take(1)).subscribe(userId => {
-      //TODO: get az user name
-      const creatorName = "Elena";
-      const newGame =  new Game(
-        null,
-        name,
-        creatorName,
-        hasALocation,
-        country,
-        pointOfDeparture,
-        category,
-        quiz,
-        description,
-        imgUrl,
-        distance,
-        duration,
-        itIsPublic,
-        userId);
-      this.games.pipe(take(1)).subscribe(games => {
-        this._games.next(games.concat(newGame));
-      })
-    });
-
-    // if we would like to simulate loading in the other side 192.lecke
-    // return this.authService.userId.pipe(take(1), tap(userId => {
-    //   const newGame =  new Game(id, name, creatorName, country, pointOfDeparture, category, quiz, description,
-    //     imgUrl, distance, duration, userId);
-    //   this.games.pipe(take(1)).subscribe(games => {
-    //     this._games.next(games.concat(newGame));
-    //   })
-    // }));
   }
 
   updateGame(id: string,
@@ -311,9 +261,6 @@ export class GamesService {
           }
         }
         return games;
-      }),
-      tap(games => {
-        this._games.next(games);
       })
     );
   }
@@ -323,7 +270,7 @@ export class GamesService {
       take(1),
       switchMap(token => {
         return this.http.delete(
-          `https://ionic-angular-course.firebaseio.com/games/${id}.json?auth=${token}`
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json?auth=${token}`
         );
       }),
       switchMap(() => {
@@ -332,6 +279,60 @@ export class GamesService {
       take(1),
       tap(games => {
         this._games.next(games.filter(b => b.id !== id));
+      })
+    );
+  }
+
+  fetchCategories() {
+    return this.http.get<{[key: string]: GameData}>("https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/categories.json")
+      .pipe(
+        map(data => {
+          const categories = [];
+          for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+              categories.push({id: key, name: data[key].name});
+            }
+          }
+          return categories;
+        }),
+        tap(categories => {
+          this._categories.next(categories);
+        })
+      );
+  }
+
+  createCategory(newCat: string) {
+    console.log("createCategory");
+    let generatedId: string;
+
+    return this.http.post<{ name: string }>('https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/categories.json',
+      { name: newCat })
+      .pipe(
+        switchMap(resData => {
+          generatedId = resData.name;
+          return this.categories;
+        }),
+        take(1),
+        tap(categories => {
+          this._categories.next(categories.concat({id: generatedId, name: newCat}));
+        })
+      );
+  }
+
+  deleteCategory(id: string) {
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        return this.http.delete(
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/categories/${id}.json?auth=${token}`
+        );
+      }),
+      switchMap(() => {
+        return this.categories;
+      }),
+      take(1),
+      tap(categories => {
+        this._categories.next(categories.filter(b => b.id !== id));
       })
     );
   }

@@ -1,6 +1,15 @@
 ion-toolbar {
   --background: var(--color-profile);
   --color: white;
+
+  ion-icon {
+    color: white;
+  }
+}
+
+ion-spinner {
+  width: 80px;
+  height: 80px;
 }
 
 ion-col {
@@ -12,8 +21,15 @@ ion-col {
   height: 6rem;
 }
 
+.absolute-position {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 ion-segment-button {
   --color-checked: var(--color-profile);
+  max-width: 100%;
 }
 
 ion-list {
@@ -25,13 +41,47 @@ ion-item > ion-button {
   --color: black;
 }
 
-ion-icon {
-  color: white;
-}
-
 ion-chip {
   background-color: white;
   color: black;
+}
+
+.header {
+  border-bottom: 2px solid var(--color-profile);
+  background-color: #f8f8f8;
+
+  ion-icon {
+    color: #1a1a1a;
+  }
+}
+
+.segment-container {
+  display: flex;
+}
+
+//.profile-data {
+//  border: 10px solid #e4e4e4;
+//  background-color: #e4e4e4;
+//  border-radius: 10px;
+//
+//  ion-icon {
+//    color: #1a1a1a;
+//  }
+//}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fill-item {
+  flex: 1;
+
+  ion-list {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .justify-second {

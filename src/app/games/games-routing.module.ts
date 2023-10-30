@@ -8,34 +8,6 @@ import {EditGamePage} from "./edit-game/edit-game.page";
 
 
 const routes: Routes = [
-  // {
-  //   path: 'game',
-  //   children: [
-  //     {
-  //       path: 'edit-game',
-  //       loadChildren: () => import('./edit-game/edit-game.module').then(m => m.EditGamePageModule)
-  //     },
-  //     {
-  //       path: 'create-game',
-  //       loadChildren: () => import('./create-game/create-game.module').then(m => m.CreateGamePageModule)
-  //     },
-  //     {
-  //       path: 'details/:gameId',
-  //       loadChildren: () => import('./game-details/game-details.module').then(m => m.GameDetailsPageModule)
-  //     },
-  //     {
-  //       path: '',
-  //       redirectTo: '/games',
-  //       pathMatch: 'full'
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '',
-  //   component: GamesPage,
-  //   // redirectTo: '/games',
-  //   pathMatch: 'full'
-  // },
   {
     path: '',
     component: GamesPage,
@@ -50,7 +22,7 @@ const routes: Routes = [
     component: CreateGamePage
   },
   {
-    path: 'edit-game',
+    path: 'edit-game/:gameId',
     component: EditGamePage
   },
   // {

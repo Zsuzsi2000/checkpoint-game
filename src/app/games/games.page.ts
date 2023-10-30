@@ -55,6 +55,7 @@ export class GamesPage implements OnInit, OnDestroy {
         userId,
         null,
         null,
+        null,
         "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",
         gameId,
         true
@@ -67,6 +68,7 @@ export class GamesPage implements OnInit, OnDestroy {
       //TODO: delete this pictureUrl
       this.userService.updateUser(
         userId,
+        null,
         null,
         null,
         "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",

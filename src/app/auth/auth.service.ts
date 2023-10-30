@@ -98,15 +98,6 @@ export class AuthService implements OnDestroy {
     );
   }
 
-  changeEmail(token: string, newEmail: string) {
-    return this.http.post<AuthResponseData>(
-      `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${
-        environment.firebaseAPIKey
-      }`,
-      {idToken: token, email: newEmail, returnSecureToken: true}
-    );
-  }
-
   sendEmailVerification(token: string) {
     return this.http.post<AuthResponseData>(
       `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${
@@ -275,39 +266,6 @@ export class AuthService implements OnDestroy {
         );
       });
     });
-  }
-
-  updateEmailProcess(newEmail: string) {
-    let currentUser: User;
-    let currentToken = "";
-    return this.token.pipe(
-      take(1),
-      switchMap(token => {
-        currentToken = token;
-        console.log("token", token);
-        return this.user;
-      }),
-      take(1),
-      switchMap(user => {
-        currentUser = user;
-        console.log("user", user);
-
-        return this.changeEmail(currentToken, newEmail);
-      }),
-      take(1),
-      switchMap(response => {
-        console.log("response1", response);
-        return this.verifyEmail(currentToken);
-      }),
-      tap(response => {
-        if (!response.success) {
-          console.log("response2", response);
-          throw new Error(response.message);
-        }
-        currentUser.email = newEmail;
-        this._user.next(currentUser);
-      })
-    );
   }
 
   private storeAuthData(userId: string, token: string, tokenExpirationDate: string, email: string) {

@@ -5,7 +5,7 @@ import {AuthGuard} from "./auth/auth.guard";
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'folder/Inbox',
+    redirectTo: '/auth',
     pathMatch: 'full'
   },
   {
@@ -23,9 +23,15 @@ const routes: Routes = [
   {
     path: 'connections',
     loadChildren: () => import('./connections/connections.module').then( m => m.ConnectionsPageModule),
+    canLoad: [AuthGuard]
   },
   {
     path: 'profile/:userId',
+    loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule),
+  },
+  {
+    path: 'profile',
+    pathMatch: 'full',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule),
     canLoad: [AuthGuard]
   },

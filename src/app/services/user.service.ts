@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {map, switchMap, take, tap} from "rxjs/operators";
 import {AuthResponseData, AuthService} from "../auth/auth.service";
 import {UserData} from "../interfaces/UserData";
@@ -9,7 +9,7 @@ import {User} from "../models/user.model";
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UserService implements OnInit {
 
   private _users = new BehaviorSubject<UserData[]>(null);
 
@@ -20,9 +20,15 @@ export class UserService {
   constructor(private authService: AuthService, private http: HttpClient) {
   }
 
+  ngOnInit(): void {
+    this.fetchUsers().pipe(take(1)).subscribe(users => {
+      this._users.next(users);
+    })
+  }
+
   createUser(userData: AuthResponseData, username: string, country: string, imgUrl: string) {
     console.log("createUser");
-    const user: UserData = {
+    const newUser: UserData = {
       id: null,
       email: userData.email,
       username: username,
@@ -33,15 +39,16 @@ export class UserService {
 
     let generatedId: string;
     return this.http.post<{ name: string }>('https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/users.json',
-      {...user, id: null})
+      {...newUser, id: null})
       .pipe(
         switchMap(resData => {
           generatedId = resData.name;
-          return of(user);
+          return this.users;
         }),
         take(1),
-        tap(user => {
-          user.id = generatedId;
+        tap(users => {
+          newUser.id = generatedId;
+          this._users.next((users) ? users.concat(newUser) : [newUser]);
         })
       )
   }
@@ -52,7 +59,7 @@ export class UserService {
         map(data => {
           let user: User;
           for (const key in data) {
-            if (data[key].email === email) {
+            if (data.hasOwnProperty(key) && data[key].email === email) {
               user = new User(
                 key,
                 data[key].email,
@@ -107,11 +114,15 @@ export class UserService {
             }
           }
           return users;
+        }),
+        tap(users => {
+          this._users.next(users);
         })
       );
   }
 
   updateUser(id: string,
+             email: string,
              username: string,
              country: string,
              picture: string,
@@ -130,7 +141,6 @@ export class UserService {
           return of(users);
         }
       }),
-      take(1),
       switchMap(users => {
         console.log("users", users )
         updatedUserIndex = users.findIndex(u => u.id === id);
@@ -143,7 +153,7 @@ export class UserService {
 
         updatedUsers[updatedUserIndex] = {
           id: id,
-          email: old.email,
+          email: (email) ? email : old.email,
           username: (username) ? username : old.username,
           country: (country) ? country : old.country,
           picture: (picture) ? picture : old.picture,
@@ -169,7 +179,7 @@ export class UserService {
       take(1),
       switchMap(token => {
         return this.http.delete(
-          `https://ionic-angular-course.firebaseio.com/users/${id}.json?auth=${token}`
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/users/${id}.json?auth=${token}`
         );
       }),
       switchMap(() => {
