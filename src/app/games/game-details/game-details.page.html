@@ -19,7 +19,11 @@
   <ion-grid class="ion-no-padding" *ngIf="!isLoading">
     <ion-row id="img-container">
       <ion-col>
-        <ion-img id="game-img" [src]="game.imgUrl"></ion-img>
+        <ion-img id="game-img"
+                 [src]="(game.pointOfDeparture.staticMapImageUrl)
+                 ? game.pointOfDeparture.staticMapImageUrl
+                 : game.imgUrl">
+        </ion-img>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -44,7 +48,7 @@
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="location-sharp"></ion-icon>
-            <ion-label>{{ game.pointOfDeparture }}</ion-label>
+            <ion-label>{{ (game.pointOfDeparture.address) ? game.pointOfDeparture.address : game.pointOfDeparture }}</ion-label>
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="footsteps"></ion-icon>

@@ -1,4 +1,5 @@
 import {Checkpoint} from "./checkpoint.model";
+import {Location} from "../interfaces/Location";
 
 export class Game {
   public id: string;
@@ -6,7 +7,7 @@ export class Game {
   public creatorName: string;
   public hasALocation: boolean;
   public country: string;
-  public pointOfDeparture: string;
+  public pointOfDeparture: Location | string;
   public category: string;
   public quiz: boolean;
   public description: string;
@@ -26,7 +27,7 @@ export class Game {
     creatorName: string,
     hasALocation: boolean,
     country: string,
-    pointOfDeparture: string,
+    pointOfDeparture: Location | string,
     category: string,
     quiz: boolean,
     description: string,
@@ -54,7 +55,6 @@ export class Game {
     this.ratings = [];
     this.itIsPublic = itIsPublic;
     this.userId = userId;
-
   }
 
 }

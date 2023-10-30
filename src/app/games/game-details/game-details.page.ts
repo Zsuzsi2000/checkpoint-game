@@ -1,12 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Game} from "../../models/game.model";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AlertController, NavController} from "@ionic/angular";
+import {AlertController, ModalController, NavController} from "@ionic/angular";
 import {GamesService} from "../games.service";
 import {Subscription} from "rxjs";
 import {AuthService} from "../../auth/auth.service";
 import {User} from "../../models/user.model";
 import {take} from "rxjs/operators";
+import {MapModalComponent} from "../../shared/maps/map-modal/map-modal.component";
+import {Location} from "../../interfaces/Location";
 
 @Component({
   selector: 'app-game-details',
@@ -22,6 +24,7 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
+              private modalCtrl: ModalController,
               private gamesService: GamesService,
               private authService: AuthService,
               private alertController: AlertController,
@@ -52,6 +55,23 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     if (this.gameSub) {
       this.gameSub.unsubscribe();
     }
+  }
+
+  createMapModal() {
+    this.modalCtrl.create({
+      component: MapModalComponent,
+      componentProps: {
+        center: {
+          lat: (this.game.pointOfDeparture as Location).lat,
+          lng: (this.game.pointOfDeparture as Location).lng
+        },
+        selectable: false,
+        closeButtonText: "Close",
+        title: (this.game.pointOfDeparture as Location).address
+      }
+    }).then(modalEl => {
+      modalEl.present();
+    })
   }
 
   showALert() {

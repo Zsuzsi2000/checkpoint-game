@@ -24,7 +24,7 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
 export class SignupComponent implements OnInit {
 
   @Output() switchToLogIn = new EventEmitter<null>();
-  @ViewChild('modal', {static: true}) modal!: IonModal;
+  @ViewChild('modal') modal!: IonModal;
 
   profileForm: FormGroup;
   isLoading = false;

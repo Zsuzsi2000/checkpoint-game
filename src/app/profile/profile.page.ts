@@ -20,7 +20,7 @@ import {CountryService} from "../services/country.service";
 })
 export class ProfilePage implements OnInit, OnDestroy {
 
-  @ViewChild('modal', {static: true}) modal!: IonModal;
+  @ViewChild('modal') modal!: IonModal;
 
   userIsLoading = false;
   gamesAreLoading = false;

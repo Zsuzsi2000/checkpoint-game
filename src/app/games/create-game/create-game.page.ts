@@ -2,9 +2,12 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {GamesService} from "../games.service";
 import {CountryService} from "../../services/country.service";
-import {IonModal} from "@ionic/angular";
+import {IonModal, ModalController} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {take} from "rxjs/operators";
+import {CheckpointsEditorModalComponent} from "../../shared/maps/checkpoints-editor-modal/checkpoints-editor-modal.component";
+import { Location } from "../../interfaces/Location";
+import {MapModalComponent} from "../../shared/maps/map-modal/map-modal.component";
 
 @Component({
   selector: 'app-create-game',
@@ -13,16 +16,18 @@ import {take} from "rxjs/operators";
 })
 export class CreateGamePage implements OnInit {
 
-  @ViewChild('modal', {static: true}) modal!: IonModal;
+  @ViewChild('modal') modal!: IonModal;
 
   gameForm: FormGroup;
   categories: {id: string, name: string}[];
   countries = [];
   selectedCountry: string = "";
+  checkpointsReady = false;
 
   constructor(private gamesService: GamesService,
               private countryService: CountryService,
-              private router: Router) { }
+              private router: Router,
+              private modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.countries = ["1", "2", "3", "4", "5", "6", "7"];
@@ -50,10 +55,8 @@ export class CreateGamePage implements OnInit {
   createGame() {
     console.log("game", this.gameForm);
     let category: string;
-    let newCategory = false;
     if (this.gameForm.value.category === 'otherCategory') {
       category = this.gameForm.value.newCategory;
-      newCategory = true;
     } else {
       category = this.gameForm.value.category;
     }
@@ -87,6 +90,19 @@ export class CreateGamePage implements OnInit {
     console.log("countrySelectionChanged", country);
     this.selectedCountry = country;
     this.modal.dismiss();
+  }
+
+  openCheckpointsEditor() {
+    this.modalCtrl.create({ component: CheckpointsEditorModalComponent}).then(modalEl => {
+      modalEl.onDidDismiss().then(modalData => {
+        console.log(modalData.data);
+      });
+      modalEl.present();
+    })
+  }
+
+  onLocationPicked(location: Location) {
+    this.gameForm.patchValue({ pointOfDeparture: location })
   }
 
 }

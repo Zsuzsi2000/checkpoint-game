@@ -1,11 +1,12 @@
 import {Injectable, OnInit} from '@angular/core';
 import {Game} from "../models/game.model";
 import {AuthService} from "../auth/auth.service";
-import {filter, map, switchMap, take, tap} from "rxjs/operators";
+import {map, switchMap, take, tap} from "rxjs/operators";
 import {BehaviorSubject, of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {Checkpoint} from "../models/checkpoint.model";
 import {UserService} from "../services/user.service";
+import {Location} from "../interfaces/Location";
 
 interface GameData {
   name: string;
@@ -15,7 +16,7 @@ interface GameData {
   hasALocation: boolean;
   creatorName: string;
   country: string;
-  pointOfDeparture: string;
+  pointOfDeparture: string | Location;
   imgUrl: string;
   numberOfAttempts: number;
   distance: number;
@@ -117,7 +118,7 @@ export class GamesService {
   createGame(name: string,
              hasALocation: boolean,
              country: string,
-             pointOfDeparture: string,
+             pointOfDeparture: string | Location,
              category: string,
              quiz: boolean,
              description: string,
@@ -184,7 +185,7 @@ export class GamesService {
              creatorName: string,
              hasALocation: boolean,
              country: string,
-             pointOfDeparture: string,
+             pointOfDeparture: string | Location,
              category: string,
              quiz: boolean,
              description: string,
