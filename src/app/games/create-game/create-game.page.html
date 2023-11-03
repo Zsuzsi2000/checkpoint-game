@@ -46,32 +46,51 @@
         ></ion-input>
       </ion-item>
       <ion-item>
-        <ion-select placeholder="Choose a game type" formControlName="quiz">
-          <div slot="label">Type *</div>
+        <ion-select placeholder="Choose a game type *" formControlName="quiz">
+          <div slot="label">Quiz or learning? *</div>
           <ion-select-option [value]="true">Quiz</ion-select-option>
           <ion-select-option [value]="false">Learning</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-        <ion-label>It has specific location?</ion-label>
-        <ion-toggle formControlName="hasALocation" labelPlacement="start" value="false" color="secondary">It has specific location?</ion-toggle>
+      <ion-item
+        *ngIf="(!gameForm.get('quiz').valid && gameForm.get('quiz').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          You have to choose between quiz and learning.
+        </ion-label>
       </ion-item>
-      <ng-container *ngIf="gameForm.get('hasALocation').value">
+      <ion-item>
+        <ion-select placeholder="Choose a locationType" formControlName="locationType">
+          <div slot="label">Type *</div>
+          <ion-select-option [value]="LocationType.location">Location</ion-select-option>
+          <ion-select-option [value]="LocationType.description">Description</ion-select-option>
+          <ion-select-option [value]="LocationType.anywhere">Anywhere</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('locationType').valid && gameForm.get('locationType').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          You have to choose location type.
+        </ion-label>
+      </ion-item>
+      <ng-container *ngIf="(gameForm.get('locationType').value === LocationType.description) ||
+      (gameForm.get('locationType').value === LocationType.location)">
         <ion-item [button]="true" [detail]="false" id="select-game-country">
           <ion-label>Country</ion-label>
           <div slot="end" id="selected-country">{{ selectedCountry }}</div>
         </ion-item>
         <app-location-picker (pickLocation)="onLocationPicked($event)"></app-location-picker>
-<!--        <ion-item>-->
-<!--          <ion-label position="floating">Address</ion-label>-->
-<!--          <ion-input-->
-<!--            type="text"-->
-<!--            labelPlacement="floating"-->
-<!--            placeholder="Enter the address"-->
-<!--            formControlName="pointOfDeparture"-->
-<!--          ></ion-input>-->
-<!--        </ion-item>-->
       </ng-container>
+      <ion-item  *ngIf="gameForm.get('locationType').value === LocationType.description">
+        <ion-select placeholder="Choose from identifications" formControlName="locationIdentification">
+          <div slot="label">Identifications</div>
+          <ion-select-option [value]="LocationIdentification.id">Identification code</ion-select-option>
+          <ion-select-option [value]="LocationIdentification.qr">QR code</ion-select-option>
+        </ion-select>
+      </ion-item>
       <ion-item>
         <ion-label>Available for everyone?</ion-label>
         <ion-toggle formControlName="itIsPublic" labelPlacement="start" value="false" color="secondary"></ion-toggle>
@@ -138,7 +157,9 @@
     <ion-button
       class="ion-text-center ion-justify-content-center"
       color="primary"
+      [disabled]="canOpenCheckpointsEditor()"
       (click)="openCheckpointsEditor()">
+<!--      [routerLink]="['/', 'games', 'create-game', 'create-checkpoints']">-->
       Edit checkpoints
     </ion-button>
     <ion-button
@@ -146,7 +167,8 @@
       type="submit"
       color="primary"
       expand="full"
-      [disabled]="!gameForm.valid">
+      [disabled]="!gameForm.valid || (this.gameForm.get('locationType').value === LocationType.description
+      && this.gameForm.get('locationIdentification').value === null)">
 <!--      [disabled]="!gameForm.valid || !checkpointsReady">-->
       Save the game
     </ion-button>

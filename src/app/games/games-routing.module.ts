@@ -5,6 +5,8 @@ import { GamesPage } from './games.page';
 import {GameDetailsPage} from "./game-details/game-details.page";
 import {CreateGamePage} from "./create-game/create-game.page";
 import {EditGamePage} from "./edit-game/edit-game.page";
+import {CreateCheckpointsPage} from "./create-game/create-checkpoints/create-checkpoints.page";
+import {EditCheckpointsPage} from "./edit-game/edit-checkpoints/edit-checkpoints.page";
 
 
 const routes: Routes = [
@@ -24,6 +26,14 @@ const routes: Routes = [
   {
     path: 'edit-game/:gameId',
     component: EditGamePage
+  },
+  {
+    path: 'create-game/create-checkpoints',
+    component: CreateCheckpointsPage
+  },
+  {
+    path: 'edit-game/edit-checkpoints/:gameId',
+    component: EditCheckpointsPage
   },
   // {
   //   path: '',

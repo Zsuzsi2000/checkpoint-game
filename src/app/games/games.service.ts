@@ -7,16 +7,19 @@ import {HttpClient} from "@angular/common/http";
 import {Checkpoint} from "../models/checkpoint.model";
 import {UserService} from "../services/user.service";
 import {Location} from "../interfaces/Location";
+import {LocationIdentification} from "../enums/LocationIdentification";
+import {LocationType} from "../enums/LocationType";
 
 interface GameData {
   name: string;
   category: string;
   description: string;
   quiz: boolean;
-  hasALocation: boolean;
+  locationType: LocationType;
+  locationIdentification: LocationIdentification;
   creatorName: string;
   country: string;
-  pointOfDeparture: string | Location;
+  pointOfDeparture: Location;
   imgUrl: string;
   numberOfAttempts: number;
   distance: number;
@@ -70,7 +73,8 @@ export class GamesService {
                 key,
                 data[key].name,
                 data[key].creatorName,
-                data[key].hasALocation,
+                data[key].locationType,
+                data[key].locationIdentification,
                 data[key].country,
                 data[key].pointOfDeparture,
                 data[key].category,
@@ -99,7 +103,8 @@ export class GamesService {
           id,
           gameData.name,
           gameData.creatorName,
-          gameData.hasALocation,
+          gameData.locationType,
+          gameData.locationIdentification,
           gameData.country,
           gameData.pointOfDeparture,
           gameData.category,
@@ -116,9 +121,10 @@ export class GamesService {
   }
 
   createGame(name: string,
-             hasALocation: boolean,
+             locationType: LocationType,
+             locationIdentification: LocationIdentification,
              country: string,
-             pointOfDeparture: string | Location,
+             pointOfDeparture: Location,
              category: string,
              quiz: boolean,
              description: string,
@@ -149,7 +155,8 @@ export class GamesService {
           null,
           name,
           fetchedUserName,
-          hasALocation,
+          locationType,
+          locationIdentification,
           country,
           pointOfDeparture,
           category,
@@ -183,9 +190,10 @@ export class GamesService {
   updateGame(id: string,
              name: string,
              creatorName: string,
-             hasALocation: boolean,
+             locationType: LocationType,
+             locationIdentification: LocationIdentification,
              country: string,
-             pointOfDeparture: string | Location,
+             pointOfDeparture: Location,
              category: string,
              quiz: boolean,
              description: string,
@@ -208,7 +216,7 @@ export class GamesService {
         const updatedGameIndex = games.findIndex(g => g.id === id);
         const updatedGames = [...games];
         const old = updatedGames[updatedGameIndex];
-        updatedGames[updatedGameIndex] = new Game(old.id, name, creatorName, hasALocation, country,
+        updatedGames[updatedGameIndex] = new Game(old.id, name, creatorName, locationType, locationIdentification, country,
           pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId);
         return this.http.put(
           `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json`,
@@ -247,7 +255,8 @@ export class GamesService {
               key,
               data[key].name,
               data[key].creatorName,
-              data[key].hasALocation,
+              data[key].locationType,
+              data[key].locationIdentification,
               data[key].country,
               data[key].pointOfDeparture,
               data[key].category,

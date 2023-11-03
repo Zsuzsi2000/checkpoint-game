@@ -1,0 +1,27 @@
+.quiz {
+  border: 1px solid #aeaba6;
+  border-radius: 5px;
+}
+
+ion-list-header {
+  background-color: var(--color-game-creation-dark);
+  --color: white;
+}
+
+ion-button {
+  --background-color: var(--color-game-creation-dark);
+  --color: white;
+}
+
+.answers {
+  background-color: #eeeeee;
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+
+.delete-button {
+  color: #1a1a1a;
+}
+.answer-button {
+  margin: auto;
+}

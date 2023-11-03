@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { CheckpointsEditorModalComponent } from './checkpoints-editor-modal.component';
+import { CheckpointsEditorComponent } from './checkpoints-editor.component';
 
-describe('CheckpointsEditorModalComponent', () => {
-  let component: CheckpointsEditorModalComponent;
-  let fixture: ComponentFixture<CheckpointsEditorModalComponent>;
+describe('CheckpointsEditorComponent', () => {
+  let component: CheckpointsEditorComponent;
+  let fixture: ComponentFixture<CheckpointsEditorComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CheckpointsEditorModalComponent ],
+      declarations: [ CheckpointsEditorComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CheckpointsEditorModalComponent);
+    fixture = TestBed.createComponent(CheckpointsEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

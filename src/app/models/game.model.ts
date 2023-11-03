@@ -1,13 +1,16 @@
 import {Checkpoint} from "./checkpoint.model";
 import {Location} from "../interfaces/Location";
+import {LocationType} from "../enums/LocationType";
+import {LocationIdentification} from "../enums/LocationIdentification";
 
 export class Game {
   public id: string;
   public name: string;
   public creatorName: string;
-  public hasALocation: boolean;
+  public locationType: LocationType;
+  public locationIdentification: LocationIdentification;
   public country: string;
-  public pointOfDeparture: Location | string;
+  public pointOfDeparture: Location;
   public category: string;
   public quiz: boolean;
   public description: string;
@@ -25,9 +28,10 @@ export class Game {
     id: string,
     name: string,
     creatorName: string,
-    hasALocation: boolean,
+    locationType: LocationType,
+    locationIdentification: LocationIdentification,
     country: string,
-    pointOfDeparture: Location | string,
+    pointOfDeparture: Location,
     category: string,
     quiz: boolean,
     description: string,
@@ -40,7 +44,8 @@ export class Game {
     this.id = id;
     this.name = name;
     this.creatorName = creatorName;
-    this.hasALocation = hasALocation;
+    this.locationType = locationType;
+    this.locationIdentification = locationIdentification;
     this.country = country;
     this.pointOfDeparture = pointOfDeparture;
     this.category = category;

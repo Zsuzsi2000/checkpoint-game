@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ListOfUsersComponent} from './components/list-of-users/list-of-users.component';
 import {Ng2SearchPipeModule} from 'ng2-search-filter';
 import {PickAThingComponent} from "./components/pick-a-thing/pick-a-thing.component";
-import {CheckpointsEditorModalComponent} from "./maps/checkpoints-editor-modal/checkpoints-editor-modal.component";
 import {LocationPickerComponent} from "./maps/location-picker/location-picker.component";
 import {MapModalComponent} from "./maps/map-modal/map-modal.component";
 import {IonicModule} from "@ionic/angular";
+import {CheckpointEditorComponent} from "./components/checkpoint-editor/checkpoint-editor.component";
+import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkpoints-editor.component";
 
 
 
@@ -15,13 +16,15 @@ import {IonicModule} from "@ionic/angular";
   declarations: [
     ListOfUsersComponent,
     PickAThingComponent,
-    CheckpointsEditorModalComponent,
     LocationPickerComponent,
-    MapModalComponent
+    MapModalComponent,
+    CheckpointsEditorComponent,
+    CheckpointEditorComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     Ng2SearchPipeModule,
     IonicModule
   ],
@@ -29,9 +32,10 @@ import {IonicModule} from "@ionic/angular";
     ListOfUsersComponent,
     PickAThingComponent,
     Ng2SearchPipeModule,
-    CheckpointsEditorModalComponent,
     LocationPickerComponent,
-    MapModalComponent
+    MapModalComponent,
+    CheckpointsEditorComponent,
+    CheckpointEditorComponent
   ]
 })
 export class SharedModule { }

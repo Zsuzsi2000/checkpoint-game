@@ -2,12 +2,13 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {GamesService} from "../games.service";
 import {CountryService} from "../../services/country.service";
-import {IonModal, ModalController} from "@ionic/angular";
+import {IonModal} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {take} from "rxjs/operators";
-import {CheckpointsEditorModalComponent} from "../../shared/maps/checkpoints-editor-modal/checkpoints-editor-modal.component";
 import { Location } from "../../interfaces/Location";
-import {MapModalComponent} from "../../shared/maps/map-modal/map-modal.component";
+import { LocationType } from "../../enums/LocationType";
+import { LocationIdentification } from "../../enums/LocationIdentification";
+import {Game} from "../../models/game.model";
 
 @Component({
   selector: 'app-create-game',
@@ -22,12 +23,13 @@ export class CreateGamePage implements OnInit {
   categories: {id: string, name: string}[];
   countries = [];
   selectedCountry: string = "";
+  LocationType = LocationType;
+  LocationIdentification = LocationIdentification;
   checkpointsReady = false;
 
   constructor(private gamesService: GamesService,
               private countryService: CountryService,
-              private router: Router,
-              private modalCtrl: ModalController) { }
+              private router: Router) { }
 
   ngOnInit() {
     this.countries = ["1", "2", "3", "4", "5", "6", "7"];
@@ -37,7 +39,8 @@ export class CreateGamePage implements OnInit {
       newCategory: new FormControl(null, { updateOn: "change" }),
       description: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
       quiz: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
-      hasALocation: new FormControl(null, { updateOn: "change" }),
+      locationType: new FormControl(null, { updateOn: "change", validators: [Validators.required] }),
+      locationIdentification: new FormControl(null, { updateOn: "change" }),
       pointOfDeparture: new FormControl(null, { updateOn: "change" }),
       imgUrl: new FormControl(null, { updateOn: "change"}),
       distance: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
@@ -54,18 +57,21 @@ export class CreateGamePage implements OnInit {
 
   createGame() {
     console.log("game", this.gameForm);
-    let category: string;
-    if (this.gameForm.value.category === 'otherCategory') {
-      category = this.gameForm.value.newCategory;
-    } else {
-      category = this.gameForm.value.category;
+    let category = (this.gameForm.value.category === 'otherCategory')
+      ? this.gameForm.value.newCategory
+      : this.gameForm.value.category;
+
+    if (this.gameForm.value.locationType === LocationType.location) {
+      this.gameForm.patchValue({ locationIdentification: LocationIdentification.locator });
     }
+
     if (!this.gameForm.valid) {
       return;
     }
     this.gamesService.createGame(
       this.gameForm.value.name,
-      this.gameForm.value.hasALocation,
+      this.gameForm.value.locationType,
+      this.gameForm.value.locationIdentification,
       this.selectedCountry,
       this.gameForm.value.pointOfDeparture,
       category,
@@ -77,28 +83,37 @@ export class CreateGamePage implements OnInit {
       this.gameForm.value.itIsPublic
     ).subscribe(gameId => {
       console.log("game", gameId);
-      this.gamesService.createCategory(category).subscribe(categories => {
-        console.log("categories", categories);
-        this.categories = categories;
-        this.router.navigate(['/','games', 'details', gameId]);
-        this.gameForm.reset();
-      });
+      if (this.categories.find(c => c.name === category) === null) {
+        this.gamesService.createCategory(category).subscribe(categories => {
+          console.log("categories", categories);
+          this.categories = categories;
+        });
+      }
+      this.router.navigate(['/','games', 'details', gameId]);
+      this.gameForm.reset();
     });
+  }
+
+  canOpenCheckpointsEditor() {
+    const pointOfDeparture = (this.gameForm.get('locationType').value === LocationType.location
+      || this.gameForm.get('locationType').value === LocationType.description) && (this.gameForm.get('pointOfDeparture').value === null);
+    return (this.gameForm.get('locationType').value === null || this.gameForm.get('quiz').value === null || pointOfDeparture);
+  }
+
+  openCheckpointsEditor() {
+    this.router.navigate(['/', 'games', 'create-game', 'create-checkpoints'], { queryParams: {
+      locationType: this.gameForm.value.locationType,
+      quiz: this.gameForm.value.quiz,
+      lat: (this.gameForm.value.pointOfDeparture) ? this.gameForm.value.pointOfDeparture.lat : null,
+      lng: (this.gameForm.value.pointOfDeparture) ? this.gameForm.value.pointOfDeparture.lng : null,
+    }});
+    console.log("open", this.gameForm.value.locationType, this.gameForm.value.quiz, this.gameForm.value.pointOfDeparture);
   }
 
   countrySelectionChanged(country: string) {
     console.log("countrySelectionChanged", country);
     this.selectedCountry = country;
     this.modal.dismiss();
-  }
-
-  openCheckpointsEditor() {
-    this.modalCtrl.create({ component: CheckpointsEditorModalComponent}).then(modalEl => {
-      modalEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
-      });
-      modalEl.present();
-    })
   }
 
   onLocationPicked(location: Location) {

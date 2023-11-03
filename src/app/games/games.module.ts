@@ -9,6 +9,8 @@ import {EditGamePage} from "./edit-game/edit-game.page";
 import {GameDetailsPage} from "./game-details/game-details.page";
 import {CreateGamePage} from "./create-game/create-game.page";
 import {SharedModule} from "../shared/shared.module";
+import {CreateCheckpointsPage} from "./create-game/create-checkpoints/create-checkpoints.page";
+import {EditCheckpointsPage} from "./edit-game/edit-checkpoints/edit-checkpoints.page";
 
 @NgModule({
   imports: [
@@ -24,7 +26,9 @@ import {SharedModule} from "../shared/shared.module";
     GamesPage,
     EditGamePage,
     GameDetailsPage,
-    CreateGamePage
+    CreateGamePage,
+    CreateCheckpointsPage,
+    EditCheckpointsPage
   ]
 })
 export class GamesPageModule {}

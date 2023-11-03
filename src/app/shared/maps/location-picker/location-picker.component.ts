@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import {ModalController} from "@ionic/angular";
 import {MapModalComponent} from "../map-modal/map-modal.component";
 import {HttpClient} from "@angular/common/http";
@@ -15,7 +15,9 @@ import {of} from "rxjs";
 export class LocationPickerComponent implements OnInit {
 
   @Output() pickLocation = new EventEmitter<Location>();
-  selectedLocationImage: string;
+  @Input() location: Location;
+  @Input() center: { lat: number, lng: number };
+
   isLoading = false;
 
   constructor(private modalCtrl: ModalController,
@@ -23,10 +25,17 @@ export class LocationPickerComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("location", this.location, this.center);
   }
 
   onPickLocation() {
-    this.modalCtrl.create({component: MapModalComponent}).then(modal => {
+    let center = (this.location)
+      ? { lat: this.location.lat, lng: this.location.lng }
+      : (this.center ? { lat: this.center.lat, lng: this.center.lng } : null) ;
+    this.modalCtrl.create((center)
+      ? {component: MapModalComponent, componentProps: center}
+      : {component: MapModalComponent}
+      ).then(modal => {
       modal.onDidDismiss().then(modalData => {
         console.log(modalData.data);
         if (!modalData.data) {
@@ -48,7 +57,7 @@ export class LocationPickerComponent implements OnInit {
 
           })).subscribe( staticMapImageUrl => {
             pickLocation.staticMapImageUrl = staticMapImageUrl;
-            this.selectedLocationImage = staticMapImageUrl;
+            this.location = pickLocation;
             this.pickLocation.emit(pickLocation);
             this.isLoading = false;
         })
@@ -71,7 +80,7 @@ export class LocationPickerComponent implements OnInit {
   private getMapImage(lat: number, lng: number, zoom: number) {
     //TODO: you can add many markers!!!
     return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
-    &markers=color:blue%7Clabel:Location%7C${lat},${lng}&key=${environment.googleMapsAPIKey}`
+    &markers=color:red%7Clabel:Location%7C${lat},${lng}&key=${environment.googleMapsAPIKey}`
     //&signature=YOUR_SIGNATURE ??
   }
 
