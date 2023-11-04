@@ -4,7 +4,7 @@ import {environment} from '../../environments/environment';
 import {BehaviorSubject, from, interval, Observable, of} from "rxjs";
 import {User} from "../models/user.model";
 import {map, switchMap, take, takeWhile, tap} from "rxjs/operators";
-import {Plugins} from "@capacitor/core";
+import {Preferences} from "@capacitor/preferences";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {UserData} from "../interfaces/UserData";
 import {Router} from "@angular/router";
@@ -147,7 +147,7 @@ export class AuthService implements OnDestroy {
 
     console.log("logout");
     this.router.navigate(['/', 'auth'])
-    // Plugins.Storage.remove({key: 'authData'});
+    Preferences.remove({key: 'authData'});
   }
 
   private autoLogout(duration: number) {
@@ -160,7 +160,7 @@ export class AuthService implements OnDestroy {
   }
 
   autoLogin() {
-    return from(Plugins.Storage.get({key: 'authData'})).pipe(
+    return from(Preferences.get({key: 'authData'})).pipe(
       map(storedData => {
         if (!storedData || !(storedData as { key: string; value: string }).value) {
           return null;
@@ -275,8 +275,7 @@ export class AuthService implements OnDestroy {
       tokenExpirationDate: tokenExpirationDate,
       email: email
     });
-    //TODO: Plugins itt mit jelent, működni fog?
-    // Plugins.Storage.set({key: 'authData', value: data})
+    Preferences.set({key: 'authData', value: data});
   }
 
   private showAlert(message: string, header: string) {

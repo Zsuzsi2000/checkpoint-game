@@ -33,6 +33,8 @@
                       placeholder="Give a description of the checkpoint">
         </ion-textarea>
       </ion-item>
+      <app-image-picker (imagePick)="onImagePick($event)"
+                        [showPreview]="checkpointForm.get('imgUrl').value"></app-image-picker>
       <ion-item *ngIf="locationType === LocationType.description">
         <ion-label position="stacked">Description of Location</ion-label>
         <ion-input

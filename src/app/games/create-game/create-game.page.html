@@ -82,7 +82,13 @@
           <ion-label>Country</ion-label>
           <div slot="end" id="selected-country">{{ selectedCountry }}</div>
         </ion-item>
-        <app-location-picker (pickLocation)="onLocationPicked($event)"></app-location-picker>
+        <app-location-picker
+          *ngIf="gameForm.get('pointOfDeparture').value; else noLocationYet"
+          [location]="gameForm.get('pointOfDeparture').value"
+          (pickLocation)="onLocationPicked($event)"></app-location-picker>
+        <ng-template #noLocationYet>
+          <app-location-picker (pickLocation)="onLocationPicked($event)"></app-location-picker>
+        </ng-template>
       </ng-container>
       <ion-item  *ngIf="gameForm.get('locationType').value === LocationType.description">
         <ion-select placeholder="Choose from identifications" formControlName="locationIdentification">
@@ -143,16 +149,8 @@
           Duration is required.
         </ion-label>
       </ion-item>
-      <ion-item>
-        <ion-label>Upload a cover image for the game</ion-label>
-        <ion-input
-          slot="end"
-          type="file"
-          class="file-upoad"
-          onchange="console.log(event.target.files)"
-          formControlName="imgUrl"
-        ></ion-input>
-      </ion-item>
+      <app-image-picker (imagePick)="onImagePick($event)"
+                        [showPreview]="gameForm.get('imgUrl').value"></app-image-picker>
     </ion-list>
     <ion-button
       class="ion-text-center ion-justify-content-center"

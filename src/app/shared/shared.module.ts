@@ -9,6 +9,7 @@ import {MapModalComponent} from "./maps/map-modal/map-modal.component";
 import {IonicModule} from "@ionic/angular";
 import {CheckpointEditorComponent} from "./components/checkpoint-editor/checkpoint-editor.component";
 import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkpoints-editor.component";
+import {ImagePickerComponent} from "./components/image-picker/image-picker.component";
 
 
 
@@ -19,7 +20,8 @@ import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkp
     LocationPickerComponent,
     MapModalComponent,
     CheckpointsEditorComponent,
-    CheckpointEditorComponent
+    CheckpointEditorComponent,
+    ImagePickerComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +37,8 @@ import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkp
     LocationPickerComponent,
     MapModalComponent,
     CheckpointsEditorComponent,
-    CheckpointEditorComponent
+    CheckpointEditorComponent,
+    ImagePickerComponent
   ]
 })
 export class SharedModule { }

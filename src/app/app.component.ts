@@ -4,7 +4,10 @@ import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AppState} from "@capacitor/app";
 import {take} from "rxjs/operators";
-import {Plugins} from "@capacitor/core";
+import {Capacitor} from "@capacitor/core";
+import {Platform} from "@ionic/angular";
+import {SplashScreen} from "@capacitor/splash-screen";
+import {App} from "@capacitor/app";
 
 @Component({
   selector: 'app-root',
@@ -23,7 +26,15 @@ export class AppComponent implements OnInit, OnDestroy {
     { title: 'Játékmód', url: '/game-mode', icon: 'archive' },
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService,
+              private router: Router,
+              private platform: Platform) {
+    this.platform.ready().then(() => {
+      if (Capacitor.isPluginAvailable('SplashScreen')) {
+        SplashScreen.hide();
+      }
+    })
+  }
 
   ngOnInit(): void {
     this.authSub = this.authService.userIsAuthenticated.subscribe(isAuth => {
@@ -34,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     //TODO: megérteni 279.lecke
-    // Plugins.App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
+    App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
   }
 
   ngOnDestroy(): void {

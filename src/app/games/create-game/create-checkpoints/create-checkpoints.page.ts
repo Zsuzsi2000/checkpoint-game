@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {LocationType} from "../../../enums/LocationType";
-import {Location} from "../../../interfaces/Location";
+import {Coordinates, Location} from "../../../interfaces/Location";
 
 @Component({
   selector: 'app-create-checkpoints',
@@ -14,7 +14,7 @@ export class CreateCheckpointsPage implements OnInit {
   quiz: boolean;
   lat: number;
   lng: number;
-  center: { lat: number, lng: number };
+  center: Coordinates;
 
   constructor(private route: ActivatedRoute) {
     console.log(

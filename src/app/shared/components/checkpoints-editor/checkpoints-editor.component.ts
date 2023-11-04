@@ -4,6 +4,7 @@ import {ItemReorderEventDetail, ModalController} from "@ionic/angular";
 import {CheckpointEditorComponent} from "../checkpoint-editor/checkpoint-editor.component";
 import {Game} from "../../../models/game.model";
 import {LocationType} from "../../../enums/LocationType";
+import {Coordinates} from "../../../interfaces/Location";
 
 
 @Component({
@@ -14,7 +15,7 @@ import {LocationType} from "../../../enums/LocationType";
 export class CheckpointsEditorComponent implements OnInit {
 
   @Input() checkpoints: Checkpoint[] = [];
-  @Input() center!: { lat: number, lng: number };
+  @Input() center!: Coordinates;
   @Input() locationType!: LocationType;
   @Input() quiz!: boolean;
   reorderMode = false;

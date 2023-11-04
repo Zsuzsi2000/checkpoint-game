@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController} from "@ionic/angular";
 import {environment} from "../../../../environments/environment";
+import {Coordinates} from "../../../interfaces/Location";
 
 @Component({
   selector: 'app-map-modal',
@@ -10,7 +11,7 @@ import {environment} from "../../../../environments/environment";
 export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('map') mapElementRef: ElementRef;
-  @Input() center = { lat: 47, lng: 19};
+  @Input() center: Coordinates = { lat: 47, lng: 19};
   @Input() selectable = true;
   @Input() closeButtonText = 'Cancel';
   @Input() title = 'Pick Location';
@@ -31,6 +32,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
         this.googleMaps = googleMaps;
         const mapEl = this.mapElementRef.nativeElement;
 
+        console.log(this.googleMaps, this.center);
         const map = new googleMaps.Map( mapEl, {
           center: this.center,
           zoom: 8

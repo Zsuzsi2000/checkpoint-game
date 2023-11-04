@@ -73,28 +73,8 @@
       <ion-label>Country</ion-label>
       <div slot="end" id="selected-country">{{ selectedCountry }}</div>
     </ion-item>
-    <ion-item>
-      <ion-label>Upload profile picture</ion-label>
-      <ion-input
-        slot="end"
-        type="file"
-        class="file-upoad"
-        onchange="console.log(event.target.files)"
-        formControlName="picture"
-      ></ion-input>
-<!--      <input type="file" class="file-input"-->
-<!--             (change)="onFileSelected($event)" #fileUpload>-->
-
-<!--      <div class="file-upload">-->
-
-<!--        {{fileName || "No file uploaded yet."}}-->
-
-<!--        <button color="primary" class="upload-btn"-->
-<!--                (click)="fileUpload.click()">-->
-<!--          <mat-icon>attach_file</mat-icon>-->
-<!--        </button>-->
-<!--      </div>-->
-    </ion-item>
+    <app-image-picker (imagePick)="onImagePick($event)"
+                      [showPreview]="profileForm.get('picture').value"></app-image-picker>
   </ion-list>
   <ion-button
     class="ion-no-margin"

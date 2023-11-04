@@ -8,6 +8,7 @@ import {CountryService} from "../../services/country.service";
 import {concatMap, first, switchMap, take, takeUntil, takeWhile} from "rxjs/operators";
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import {UserService} from "../../services/user.service";
+import {ImageService} from "../../services/image.service";
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password').value;
@@ -39,7 +40,8 @@ export class SignupComponent implements OnInit {
     private router: Router,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private imageService: ImageService
   ) {
   }
 
@@ -125,6 +127,7 @@ export class SignupComponent implements OnInit {
     if (!this.profileForm.valid) {
       return;
     }
+
     const email = this.profileForm.get('email').value;
     const password = this.profileForm.get('password').value;
     const username = this.profileForm.get('username').value;
@@ -133,24 +136,6 @@ export class SignupComponent implements OnInit {
 
     this.signUp(email, password, username, country, picture);
     this.profileForm.reset();
-  }
-
-  onFileSelected(event) {
-
-    const file: File = event.target.files[0];
-
-    if (file) {
-
-      this.fileName = file.name;
-
-      const formData = new FormData();
-
-      formData.append("thumbnail", file);
-
-      // const upload$ = this.http.post("/api/thumbnail-upload", formData);
-      //
-      // upload$.subscribe();
-    }
   }
 
   countrySelectionChanged(country: string) {
@@ -167,6 +152,22 @@ export class SignupComponent implements OnInit {
         buttons: ['Okay']
       })
       .then(alertEl => alertEl.present());
+  }
+
+  onImagePick(imageData: string | File) {
+    console.log(imageData);
+    let imageFile;
+    if (typeof imageData === 'string') {
+      try {
+        imageFile = this.imageService.convertbase64toBlob(imageData);
+      } catch (error) {
+        console.log("error", error);
+        return;
+      }
+    } else {
+      imageFile = imageData
+    }
+    this.profileForm.patchValue({picture: imageFile})
   }
 
 }

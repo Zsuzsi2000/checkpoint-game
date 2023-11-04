@@ -2,9 +2,10 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {IonInput, IonToggle, ModalController} from "@ionic/angular";
 import {Checkpoint} from "../../../models/checkpoint.model";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {Location} from "../../../interfaces/Location";
+import {Coordinates, Location} from "../../../interfaces/Location";
 import {Quiz} from "../../../interfaces/Quiz";
 import {LocationType} from "../../../enums/LocationType";
+import {ImageService} from "../../../services/image.service";
 
 @Component({
   selector: 'app-checkpoint-editor',
@@ -19,16 +20,16 @@ export class CheckpointEditorComponent implements OnInit {
   @Input() checkpoint: Checkpoint;
   @Input() locationType!: LocationType;
   @Input() isQuiz!: boolean;
-  @Input() center!: { lat: number, lng: number };
+  @Input() center!: Coordinates;
   checkpointForm: FormGroup;
   answers: { answer: string, correct: boolean }[] = [];
   LocationType = LocationType;
 
   constructor(private modalCtrl: ModalController,
-              private formBuilder: FormBuilder) { }
+              private formBuilder: FormBuilder,
+              private imageService: ImageService) { }
 
   ngOnInit() {
-
     console.log(this.center)
     if (this.checkpoint) {
       let quiz: Quiz = {
@@ -46,7 +47,7 @@ export class CheckpointEditorComponent implements OnInit {
       this.checkpointForm = this.formBuilder.group({
         name: new FormControl(this.checkpoint.name, { updateOn: "change", validators: [Validators.required]}),
         description: new FormControl(this.checkpoint.description, { updateOn: "change"}),
-        // imgUrl: new FormControl(this.checkpoint.imgUrl, { updateOn: "change"}),
+        imgUrl: new FormControl(this.checkpoint.imgUrl, { updateOn: "change"}),
         locationDescription: new FormControl(this.checkpoint.locationDescription, { updateOn: "change"}),
         locationAddress: new FormControl(this.checkpoint.locationAddress, { updateOn: "change"}),
         quiz: this.formBuilder.group({
@@ -61,7 +62,7 @@ export class CheckpointEditorComponent implements OnInit {
       this.checkpointForm = new FormGroup({
         name: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
         description: new FormControl(null, { updateOn: "change"}),
-        // imgUrl: new FormControl(null, { updateOn: "change"}),
+        imgUrl: new FormControl(null, { updateOn: "change"}),
         locationDescription: new FormControl(null, { updateOn: "change"}),
         locationAddress: new FormControl(null, { updateOn: "change"}),
         quiz: this.formBuilder.group({
@@ -92,14 +93,11 @@ export class CheckpointEditorComponent implements OnInit {
       help: (this.checkpointForm.get('quiz').value.help)
     } : null;
 
-    let imgUrl = (this.checkpointForm.value.locationAddress)
-      ? (this.checkpointForm.value.locationAddress as Location).staticMapImageUrl : null;
-
     this.checkpoint = new Checkpoint(
       null,
       this.checkpointForm.value.name,
       this.checkpointForm.value.description,
-      imgUrl,
+      this.checkpointForm.value.imgUrl,
       this.checkpointForm.value.locationDescription,
       this.checkpointForm.value.locationAddress,
       quiz,
@@ -160,6 +158,22 @@ export class CheckpointEditorComponent implements OnInit {
       : ((this.locationType === LocationType.description) ? this.checkpointForm.value.locationDescription : true);
 
     return !(this.checkpointForm.valid && quizExist && locationExist)
+  }
+
+  onImagePick(imageData: string | File) {
+    console.log(imageData);
+    let imageFile;
+    if (typeof imageData === 'string') {
+      try {
+        imageFile = this.imageService.convertbase64toBlob(imageData);
+      } catch (error) {
+        console.log("error", error);
+        return;
+      }
+    } else {
+      imageFile = imageData
+    }
+    this.checkpointForm.patchValue({imgUrl: imageFile})
   }
 
 }
