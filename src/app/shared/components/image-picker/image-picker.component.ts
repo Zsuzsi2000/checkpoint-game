@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} f
 import {Platform} from "@ionic/angular";
 import {Capacitor} from "@capacitor/core";
 import {Camera, CameraResultType, CameraSource} from "@capacitor/camera";
+import {DataUrl, NgxImageCompressService, UploadResponse} from 'ngx-image-compress';
 
 @Component({
   selector: 'app-image-picker',
@@ -11,12 +12,12 @@ import {Camera, CameraResultType, CameraSource} from "@capacitor/camera";
 export class ImagePickerComponent implements OnInit {
 
   @ViewChild('filePicker') filePickerRef: ElementRef<HTMLInputElement>;
-  @Output() imagePick = new EventEmitter<string | File>();
+  @Output() imagePick = new EventEmitter<string | File | Blob>();
   @Input() showPreview = false;
   selectedImage: string;
   usePicker = false;
 
-  constructor(private platform: Platform) {}
+  constructor(private platform: Platform, private imageCompress: NgxImageCompressService) {}
 
   ngOnInit() {
     console.log('Mobile:', this.platform.is('mobile'));
@@ -40,16 +41,34 @@ export class ImagePickerComponent implements OnInit {
       return;
     }
     Camera.getPhoto({
-      quality: 50,
+      quality: 20,
       source: CameraSource.Prompt,
       correctOrientation: true,
-      // height: 320,
       width: 300,
-      resultType: CameraResultType.Base64
+      resultType: CameraResultType.DataUrl
     })
       .then(image => {
-        this.selectedImage = image.base64String;
-        this.imagePick.emit(image.base64String);
+        console.warn(
+          `Original: ${image.dataUrl.substring(0, 50)}... (${image.dataUrl.length} characters)`
+        );
+        console.warn('Size in bytes was:', this.imageCompress.byteCount(image.dataUrl));
+
+        this.imageCompress
+          .compressFile(image.dataUrl, -1, 50, 30)
+          .then((result: DataUrl) => {
+            console.warn(
+              `Compressed: ${result.substring(0, 50)}... (${
+                result.length
+              } characters)`
+            );
+            console.warn(
+              'Size in bytes is now:',
+              this.imageCompress.byteCount(result)
+            );
+            this.selectedImage = result;
+            this.imagePick.emit(result);
+
+          });
       })
       .catch(error => {
         console.log(error);
@@ -62,15 +81,41 @@ export class ImagePickerComponent implements OnInit {
 
   onFileChosen(event: Event) {
     const pickedFile = (event.target as HTMLInputElement).files[0];
+    console.log("pickedFile", pickedFile);
+    let result;
+
     if (!pickedFile) {
       console.log(event, pickedFile);
       return;
     }
     const fr = new FileReader();
+    console.log("pickedFile", pickedFile);
     fr.onload = () => {
+      console.log("pickedFile", pickedFile, fr.result);
       const dataUrl = fr.result.toString();
-      this.selectedImage = dataUrl;
-      this.imagePick.emit(pickedFile);
+
+      console.warn(
+        `Original: ${dataUrl.substring(0, 50)}... (${dataUrl.length} characters)`
+      );
+      console.warn('Size in bytes was:', this.imageCompress.byteCount(dataUrl));
+
+      this.imageCompress
+        .compressFile(dataUrl, -1, 50, 30)
+        .then((result: DataUrl) => {
+          console.warn(
+            `Compressed: ${result.substring(0, 50)}... (${
+              result.length
+            } characters)`
+          );
+          console.warn(
+            'Size in bytes is now:',
+            this.imageCompress.byteCount(result)
+          );
+          console.log(result);
+          this.selectedImage = result;
+          this.imagePick.emit(result);
+
+        });
     };
     fr.readAsDataURL(pickedFile);
   }

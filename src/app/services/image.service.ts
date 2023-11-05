@@ -48,6 +48,10 @@ export class ImageService {
   }
 
   convertbase64toBlob(imageData) {
-    return base64toBlob(imageData.replace('data:image/jpeg;base64,', ''), 'image/jpeg');
+    if (imageData.includes('png')) {
+      return base64toBlob(imageData.replace('data:image/png;base64,', ''), 'image/png');
+    } else {
+      return base64toBlob(imageData.replace('data:image/jpeg;base64,', ''), 'image/jpeg');
+    }
   }
 }

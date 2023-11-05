@@ -1,35 +1,62 @@
-<ion-grid class="ion-justify-content-center ion-align-items-center ion-no-padding ion-no-margin">
+<ion-grid *ngIf="isLoading; else loaded" class="ion-justify-content-center ion-align-items-center ion-no-padding ion-no-margin">
   <ion-row>
     <ion-col>
-      <ion-list class="ion-no-padding">
-        <ion-item class="header" lines="none">
-          <ion-label>CHECKPOINTS</ion-label>
-          <ion-badge>{{ checkpoints.length ? checkpoints.length : 0}}</ion-badge>
-        </ion-item>
-        <ion-reorder-group
-          *ngIf="checkpoints && checkpoints.length > 0"
-          [disabled]="!reorderMode"
-          (ionItemReorder)="handleReorder($any($event))">
-            <ion-item slot="header" *ngFor="let checkpoint of checkpoints">
-              <ion-label>{{ checkpoint.index + 1 }}. {{ checkpoint.name }}</ion-label>
-              <ion-buttons slot="end">
-                <ion-button (click)="editCheckpoint(checkpoint)"><ion-icon name="pencil"></ion-icon></ion-button>
-                <ion-button (click)="deleteCheckpoint(checkpoint.index)"><ion-icon name="trash"></ion-icon></ion-button>
-                <ion-button><ion-icon name="chevron-down-outline"></ion-icon></ion-button>
-              </ion-buttons>
-              <ion-reorder slot="end"></ion-reorder>
-            </ion-item>
-        </ion-reorder-group>
-      </ion-list>
-    </ion-col>
-  </ion-row>
-  <ion-row >
-    <ion-col size="12" class=" ion-text-center">
-      <ion-button color="secondary" *ngIf="checkpoints && checkpoints.length > 1" (click)="reorder()">
-        {{ reorderMode ? 'Reordering is done' : 'Reorder checkpoints'}}
-      </ion-button>
-      <ion-button color="secondary" (click)="addCheckpoint()">Add checkpoint</ion-button>
-      <ion-button color="secondary" (click)="selectOnMap()">Select on Map</ion-button>
+      <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
     </ion-col>
   </ion-row>
 </ion-grid>
+<ng-template #loaded>
+  <ion-grid class="ion-justify-content-center ion-align-items-center ion-no-padding ion-no-margin">
+    <ion-row *ngIf="(locationType === LocationType.description || locationType === LocationType.location) && checkpointsOnMap">
+      <ion-col>
+        <ion-img
+          [src]="checkpointsOnMap"
+          class="location-img"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list class="ion-no-padding">
+          <ion-item class="header" lines="none">
+            <ion-label>CHECKPOINTS</ion-label>
+            <ion-badge>{{ checkpoints.length ? checkpoints.length : 0}}</ion-badge>
+          </ion-item>
+          <ion-reorder-group
+            *ngIf="checkpoints && checkpoints.length > 0"
+            [disabled]="!reorderMode"
+            (ionItemReorder)="handleReorder($any($event))">
+            <ion-item slot="header" *ngFor="let checkpoint of checkpoints">
+              <ng-container *ngIf="checkpoint.name; else notEdited">
+                <ion-label>{{ checkpoint.index + 1 }}. {{ checkpoint.name }}</ion-label>
+                <ion-buttons slot="end">
+                  <ion-button (click)="editCheckpoint(checkpoint)"><ion-icon name="pencil"></ion-icon></ion-button>
+                  <ion-button (click)="deleteCheckpoint(checkpoint.index)"><ion-icon name="trash"></ion-icon></ion-button>
+                  <ion-button><ion-icon name="chevron-down-outline"></ion-icon></ion-button>
+                </ion-buttons>
+                <ion-reorder slot="end"></ion-reorder>
+              </ng-container>
+              <ng-template #notEdited>
+                <ion-label>{{ checkpoint.index + 1 }}. <ion-text color="danger">Waiting to be edited</ion-text></ion-label>
+                <ion-buttons slot="end">
+                  <ion-button color="danger" slot="icon-only" (click)="editCheckpoint(checkpoint)"><ion-icon name="pencil"></ion-icon></ion-button>
+                  <ion-button (click)="deleteCheckpoint(checkpoint.index)"><ion-icon name="trash"></ion-icon></ion-button>
+                  <ion-button [disabled]><ion-icon name="chevron-down-outline"></ion-icon></ion-button>
+                </ion-buttons>
+                <ion-reorder slot="end"></ion-reorder>
+              </ng-template>
+            </ion-item>
+          </ion-reorder-group>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row >
+      <ion-col size="12" class=" ion-text-center">
+        <ion-button color="secondary" *ngIf="checkpoints && checkpoints.length > 1" (click)="reorder()">
+          {{ reorderMode ? 'Reordering is done' : 'Reorder checkpoints'}}
+        </ion-button>
+        <ion-button color="secondary" (click)="addCheckpoint()">Add checkpoint</ion-button>
+        <ion-button *ngIf="locationType === LocationType.location" color="secondary" (click)="selectOnMap()">Select on Map</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ng-template>

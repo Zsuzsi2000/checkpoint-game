@@ -39,4 +39,8 @@ export class CreateCheckpointsPage implements OnInit {
 
   ngOnInit() {}
 
+  addCheckpointToGame() {
+
+  }
+
 }

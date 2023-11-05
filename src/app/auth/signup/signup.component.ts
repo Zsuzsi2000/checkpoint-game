@@ -9,6 +9,7 @@ import {concatMap, first, switchMap, take, takeUntil, takeWhile} from "rxjs/oper
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import {UserService} from "../../services/user.service";
 import {ImageService} from "../../services/image.service";
+import {isFatalDiagnosticError} from "@angular/compiler-cli/src/ngtsc/diagnostics";
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password').value;
@@ -65,7 +66,7 @@ export class SignupComponent implements OnInit {
     // });
   }
 
-  signUp(email: string, password: string, username: string, country: string, picture: string) {
+  signUp(email: string, password: string, username: string, country: string, picture: File) {
 
     this.isLoading = true;
     this.loadingCtrl.create({ keyboardClose: true, message: 'Signing up...',  }).then(loadingEl => {
@@ -103,10 +104,19 @@ export class SignupComponent implements OnInit {
               this.isLoading = false;
               loadingEl.dismiss();
               this.showAlert("Email verification was successful!", "Authentication succeeded");
-              this.userService.createUser(authRes, username, country, picture).subscribe(data => {
-                console.log("user", data);
-              });
-              this.switchToLogIn.emit();
+              if (picture) {
+                this.imageService.uploadImage(picture).pipe(switchMap( uploadResponse => {
+                  return this.userService.createUser(authRes, username, country, uploadResponse.imageUrl)
+                })).subscribe(data => {
+                  console.log("user", data);
+                  this.switchToLogIn.emit();
+                })
+              } else {
+                this.userService.createUser(authRes, username, country, null).subscribe(data => {
+                  console.log("user", data);
+                  this.switchToLogIn.emit();
+                });
+              }
             }
           },
           errRes => {
@@ -155,11 +165,12 @@ export class SignupComponent implements OnInit {
   }
 
   onImagePick(imageData: string | File) {
-    console.log(imageData);
+    console.log(typeof imageData, imageData);
     let imageFile;
     if (typeof imageData === 'string') {
       try {
         imageFile = this.imageService.convertbase64toBlob(imageData);
+        console.log("imageFile", imageFile, typeof imageFile);
       } catch (error) {
         console.log("error", error);
         return;

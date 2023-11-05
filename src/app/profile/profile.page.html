@@ -31,7 +31,7 @@
             <ion-avatar id="profile-picture">
               <img alt="Profile picture" [src]="loadedUser.picture"/>
             </ion-avatar>
-            <ion-button *ngIf="ownProfile" slot="end" (click)="editPictureAlert()" class="absolute-position">
+            <ion-button *ngIf="ownProfile" slot="end" (click)="togglePicture()" class="absolute-position">
               <ion-icon name="pencil"></ion-icon>
             </ion-button>
           </ion-item>

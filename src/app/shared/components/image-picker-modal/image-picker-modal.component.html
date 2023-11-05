@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelChanges()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>Pick new image</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirmChanges()">Done</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <app-image-picker (imagePick)="setPicture($event)"
+                    [showPreview]="loadedPicture"></app-image-picker>
+</ion-content>

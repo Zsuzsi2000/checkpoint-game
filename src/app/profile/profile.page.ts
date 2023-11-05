@@ -2,8 +2,8 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from "../auth/auth.service";
 import {GamesService} from "../games/games.service";
 import {UserService} from "../services/user.service";
-import {AlertController, IonModal, NavController} from "@ionic/angular";
-import {take} from "rxjs/operators";
+import {AlertController, IonModal, LoadingController, ModalController, NavController} from "@ionic/angular";
+import {switchMap, take} from "rxjs/operators";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {Game} from "../models/game.model";
 import {User} from "../models/user.model";
@@ -11,6 +11,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UserData} from "../interfaces/UserData";
 import {SegmentChangeEventDetail} from '@ionic/core';
 import {CountryService} from "../services/country.service";
+import {ImageService} from "../services/image.service";
+import {ImagePickerModalComponent} from "../shared/components/image-picker-modal/image-picker-modal.component";
+import {Checkpoint} from "../models/checkpoint.model";
 
 
 @Component({
@@ -41,7 +44,10 @@ export class ProfilePage implements OnInit, OnDestroy {
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private navCtrl: NavController,
-              private countryService: CountryService) {
+              private countryService: CountryService,
+              private imageService: ImageService,
+              private loadingCtrl: LoadingController,
+              private modalCtrl: ModalController) {
   }
 
 
@@ -93,7 +99,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       });
 
       this.countries = ["1", "2", "3", "4", "5", "6", "7"];
-      // Uncomment the code below to fetch countries
+      // TODO: Uncomment the code below to fetch countries
       // this.countryService.getAllCountries().subscribe(res => {
       //   for (var key in res) {
       //     this.countries.push(res[key].name);
@@ -102,331 +108,252 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
   }
 
-    // ngOnInit() {
-    //   this.activatedRoute.paramMap.subscribe(paramMap => {
-    //     if (!paramMap.has('userId')) {
-    //       console.log("userId", "Userid missing");
-    //       this.showALert();
-    //       return;
-    //     }
-    //     this.userIsLoading = true;
-    //     this.gamesAreLoading = true;
-    //     this.loadedUserId = paramMap.get('userId');
-    //
-    //     this.userSub = this.authService.user.subscribe(currentUser => {
-    //       if (currentUser) {
-    //         this.loggedUser = currentUser;
-    //         this.ownProfile = this.loadedUserId === this.loggedUser.id;
-    //       } else {
-    //         this.loggedUser = null;
-    //         this.ownProfile = false;
-    //       }
-    //       if (!this.ownProfile) {
-    //         this.userService.getUserById(this.loadedUserId).subscribe(user => {
-    //           this.loadedUser = user;
-    //           this.userIsLoading = false;
-    //         }, error => {
-    //           console.log("getUserError", error);
-    //           this.showALert();
-    //         });
-    //       } else {
-    //         this.loadedUser = {
-    //           id: this.loggedUser.id,
-    //           email: this.loggedUser.email,
-    //           username: this.loggedUser.username,
-    //           country: this.loggedUser.country,
-    //           picture: this.loggedUser.picture,
-    //           favouriteGames: this.loggedUser.favouriteGames
-    //         };
-    //         this.userIsLoading = false;
-    //       }
-    //     });
-    //     this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-    //       this.loadedOwnGames = games;
-    //       this.gamesAreLoading = false;
-    //     })
-    //   });
-    //   this.countries = ["1", "2", "3", "4", "5", "6", "7"];
-    //   // this.countryService.getAllCountries().subscribe(res => {
-    //   //   for (var key in res) {
-    //   //     this.countries.push(res[key].name);
-    //   //   }
-    //   // });
-    // }
 
-    ionViewWillEnter()
-    {
-      if (this.loadedUserId && this.firstTime) {
-        console.log("ionViewWillEnter fetch data");
-        this.gamesAreLoading = true;
-        this.userIsLoading = true;
-        this.userService.getUserById(this.loadedUserId).subscribe(user => {
-          this.loadedUser = user;
-          this.userIsLoading = false;
+  ionViewWillEnter() {
+    if (this.loadedUserId && this.firstTime) {
+      console.log("ionViewWillEnter fetch data");
+      this.gamesAreLoading = true;
+      this.userIsLoading = true;
+      this.userService.getUserById(this.loadedUserId).subscribe(user => {
+        this.loadedUser = user;
+        this.userIsLoading = false;
+      }, error => {
+        console.log("getUserError", error);
+        this.showALert();
+      });
+      this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
+        this.loadedOwnGames = games;
+        this.gamesAreLoading = false;
+      });
+    } else {
+      this.firstTime = true;
+    }
+  }
+
+  editUsernameAlert() {
+    this.alertCtrl.create({
+      header: "Enter your new username",
+      inputs: [{
+        placeholder: "New username",
+        type: "text",
+        name: "username",
+        value: this.loggedUser.username
+      }],
+      buttons: [
+        {
+          text: "Cancel",
+          role: "cancel"
+        },
+        {
+          text: "Save",
+          handler: (event) => {
+            this.updateUsername(event.username);
+          }
+        }
+      ]
+    }).then(
+      alertEl => alertEl.present()
+    )
+  }
+
+  togglePicture() {
+    this.modalCtrl.create({ component: ImagePickerModalComponent, componentProps: { loadedPicture: this.loadedUser.picture}}).then(modaEl => {
+      modaEl.onDidDismiss().then(modalData => {
+        console.log(modalData.data);
+        if (modalData.data) {
+          this.updatePicture(modalData.data)
+        }
+      });
+      modaEl.present();
+    });
+  }
+
+  updateUsername(username: string) {
+    console.log("update username", username);
+    this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe(response => {
+      console.log("response", response);
+    })
+  }
+
+  updatePicture(picture: string | File) {
+    console.log("update picture", picture);
+    const imageFile = this.onImagePick(picture);
+    if (imageFile) {
+      this.loadingCtrl.create({
+        message: 'Creating new image...'
+      }).then(loadingEl => {
+        loadingEl.present();
+        this.imageService.uploadImage(imageFile).pipe(switchMap(image => {
+          return this.userService.updateUser(this.loggedUser.id, null, null, null, image.imageUrl, null, null).pipe(take(1));
+        })).subscribe(res => {
+          console.log("res", res);
+          loadingEl.dismiss();
         }, error => {
-          console.log("getUserError", error);
-          this.showALert();
-        });
-        this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-          this.loadedOwnGames = games;
-          this.gamesAreLoading = false;
-        });
-      } else {
-        this.firstTime = true;
-      }
-    }
-
-    editUsernameAlert()
-    {
-      this.alertCtrl.create({
-        header: "Enter your new username",
-        inputs: [{
-          placeholder: "New username",
-          type: "text",
-          name: "username",
-          value: this.loggedUser.username
-        }],
-        buttons: [
-          {
-            text: "Cancel",
-            role: "cancel"
-          },
-          {
-            text: "Save",
-            handler: (event) => {
-              this.updateUsername(event.username);
-            }
-          }
-        ]
-      }).then(
-        alertEl => alertEl.present()
-      )
-    }
-
-    editPictureAlert()
-    {
-      this.alertCtrl.create({
-        header: "Upload your new picture",
-        inputs: [{
-          placeholder: "New picture",
-          type: "text",
-          name: "picture",
-          value: this.loggedUser.picture
-        }],
-        buttons: [
-          {
-            text: "Cancel",
-            role: "cancel"
-          },
-          {
-            text: "Save",
-            handler: (event) => {
-              this.updatePicture(event.picture);
-            }
-          }
-        ]
-      }).then(
-        alertEl => alertEl.present()
-      )
-    }
-
-    updateUsername(username
-  :
-    string
-  )
-    {
-      console.log("update username", username);
-      this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe(response => {
-        console.log("response", response);
-      })
-    }
-
-    updatePicture(picture
-  :
-    string
-  )
-    {
-      console.log("update picture", picture);
-      this.userService.updateUser(this.loggedUser.id, null, null, null, picture, null, null).pipe(take(1)).subscribe(response => {
-        console.log("response", response);
+          console.log("error", error);
+          loadingEl.dismiss();
+        })
       });
     }
+  }
 
-    addToFavourites(gameId
-  :
-    string
-  )
-    {
-      this.userService.updateUser(
-        this.loggedUser.id,
-        null,
-        null,
-        null,
-        "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",
-        gameId,
-        true
-      ).pipe(take(1)).subscribe();
-    }
+  addToFavourites(gameId: string) {
+    this.userService.updateUser(
+      this.loggedUser.id,
+      null,
+      null,
+      null,
+      null,
+      gameId,
+      true
+    ).pipe(take(1)).subscribe();
+  }
 
-    deleteFromFavourites(gameId
-  :
-    string
-  )
-    {
-      this.userService.updateUser(
-        this.loggedUser.id,
-        null,
-        null,
-        null,
-        "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",
-        gameId,
-        false
-      ).pipe(take(1)).subscribe();
-    }
+  deleteFromFavourites(gameId: string) {
+    this.userService.updateUser(
+      this.loggedUser.id,
+      null,
+      null,
+      null,
+      null,
+      gameId,
+      false
+    ).pipe(take(1)).subscribe();
+  }
 
-    checkIsItFavourite(id
-  :
-    string
-  ):
-    boolean
-    {
-      return this.loggedUser.favouriteGames.includes(id);
-    }
+  checkIsItFavourite(id: string):
+    boolean {
+    return this.loggedUser.favouriteGames.includes(id);
+  }
 
-    deleteProfile()
-    {
-      //TODO: delete games and events
-      this.authService.deleteAccount().subscribe(
-        resData => {
-          console.log("deleteAccount1", resData);
-        },
-        errRes => {
-          console.log("error", errRes.error.error.message);
-        });
-      this.userService.deleteUser(this.loadedUser.id).subscribe(resData => {
-          console.log("deleteAccount2", resData);
-        },
-        errRes => {
-          console.log("error", errRes.error.error.message);
-        });
-    }
+  deleteProfile() {
+    //TODO: delete games and events
+    this.authService.deleteAccount().subscribe(
+      resData => {
+        console.log("deleteAccount1", resData);
+      },
+      errRes => {
+        console.log("error", errRes.error.error.message);
+      });
+    this.userService.deleteUser(this.loadedUser.id).subscribe(resData => {
+        console.log("deleteAccount2", resData);
+      },
+      errRes => {
+        console.log("error", errRes.error.error.message);
+      });
+  }
 
-    startDeleteTheProfile()
-    {
-      this.alertCtrl
-        .create({
-          header: 'Are you sure you want to delete your account?',
-          message: 'The events and games you created will not be available.',
-          buttons: [
-            {
-              text: "Cancel",
-              role: "cancel",
-            },
-            {
-              text: "Delete",
-              role: "delete",
-              handler: () => {
-                this.deleteProfile();
-              }
-            }
-          ]
-        })
-        .then(alertEl => alertEl.present());
-    }
-
-    deleteGame(id
-  :
-    string
-  )
-    {
-      this.alertCtrl.create({
-        header: "Delete game",
-        message: "Are you sure you want to delete the game?",
+  startDeleteTheProfile() {
+    this.alertCtrl
+      .create({
+        header: 'Are you sure you want to delete your account?',
+        message: 'The events and games you created will not be available.',
         buttons: [
           {
             text: "Cancel",
-            role: "cancel"
+            role: "cancel",
           },
           {
             text: "Delete",
+            role: "delete",
             handler: () => {
-              this.gamesService.deleteGame(id).subscribe(res => {
-                console.log(res);
-                this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-                  this.loadedOwnGames = games;
-                });
-              });
+              this.deleteProfile();
             }
           }
         ]
-      }).then(
-        alertEl => alertEl.present()
-      );
-    }
+      })
+      .then(alertEl => alertEl.present());
+  }
 
-    createGame()
-    {
-      this.router.navigate(['/', 'games', 'create-game']);
-    }
+  deleteGame(id: string) {
+    this.alertCtrl.create({
+      header: "Delete game",
+      message: "Are you sure you want to delete the game?",
+      buttons: [
+        {
+          text: "Cancel",
+          role: "cancel"
+        },
+        {
+          text: "Delete",
+          handler: () => {
+            this.gamesService.deleteGame(id).subscribe(res => {
+              console.log(res);
+              this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
+                this.loadedOwnGames = games;
+              });
+            });
+          }
+        }
+      ]
+    }).then(
+      alertEl => alertEl.present()
+    );
+  }
 
-    editGame(id
-  :
-    string
-  )
-    {
-      this.router.navigate(['/', 'games', 'edit-game', id]);
-    }
+  createGame() {
+    this.router.navigate(['/', 'games', 'create-game']);
+  }
 
-    showALert()
-    {
-      this.alertCtrl
-        .create(
-          {
-            header: 'An error occured',
-            message: 'User could not be fetched. Please try again later.',
-            buttons: [{
-              text: 'Okay', handler: () => {
-                this.navCtrl.pop();
-              }
-            }]
-          })
-        .then(alertEl => {
-          alertEl.present();
-        });
-    }
+  editGame(id: string) {
+    this.router.navigate(['/', 'games', 'edit-game', id]);
+  }
 
-    countrySelectionChanged(country
-  :
-    string
-  )
-    {
-      console.log("countrySelectionChanged", country);
-      this.userService.updateUser(
-        this.loggedUser.id,
-        null,
-        null,
-        country,
-        "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",
-        null,
-        null
-      ).pipe(take(1)).subscribe();
-      this.modal.dismiss();
-    }
+  showALert() {
+    this.alertCtrl
+      .create(
+        {
+          header: 'An error occured',
+          message: 'User could not be fetched. Please try again later.',
+          buttons: [{
+            text: 'Okay', handler: () => {
+              this.navCtrl.pop();
+            }
+          }]
+        })
+      .then(alertEl => {
+        alertEl.present();
+      });
+  }
 
-    onFilterUpdate(event
-  :
-    CustomEvent<SegmentChangeEventDetail>
-  )
-    {
-      this.listGames = (event.detail.value === 'games');
-      console.log("change list", event.detail.value)
-    }
+  countrySelectionChanged(country: string) {
+    console.log("countrySelectionChanged", country);
+    this.userService.updateUser(
+      this.loggedUser.id,
+      null,
+      null,
+      country,
+      null,
+      null,
+      null
+    ).pipe(take(1)).subscribe();
+    this.modal.dismiss();
+  }
 
-    ngOnDestroy()
-    {
-      if (this.userSub) {
-        this.userSub.unsubscribe();
+  onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
+    this.listGames = (event.detail.value === 'games');
+    console.log("change list", event.detail.value)
+  }
+
+  onImagePick(imageData: string | File) {
+    console.log(imageData);
+    let imageFile;
+    if (typeof imageData === 'string') {
+      try {
+        imageFile = this.imageService.convertbase64toBlob(imageData);
+      } catch (error) {
+        console.log("error", error);
+        return;
       }
+    } else {
+      imageFile = imageData
+    }
+    return imageFile;
+  }
+
+  ngOnDestroy() {
+    if (this.userSub) {
+      this.userSub.unsubscribe();
     }
   }
+}
 

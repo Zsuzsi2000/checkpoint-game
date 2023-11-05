@@ -20,49 +20,50 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
   googleMaps: any;
 
   constructor(private modalCtrl: ModalController,
-              private renderer: Renderer2) {
-  }
+              private renderer: Renderer2) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {  }
 
   ngAfterViewInit(): void {
     this.getGoogleMaps()
       .then(googleMaps => {
-        this.googleMaps = googleMaps;
-        const mapEl = this.mapElementRef.nativeElement;
-
-        console.log(this.googleMaps, this.center);
-        const map = new googleMaps.Map( mapEl, {
-          center: this.center,
-          zoom: 8
-        });
-
-        googleMaps.event.addListenerOnce(map, 'idle', () => {
-          this.renderer.addClass(mapEl, 'visible');
-        });
-
-        if (this.selectable) {
-          this.clickListener = map.addListener('click', event => {
-            const selectedCoords = {
-              lat: event.latLng.lat(),
-              lng: event.latLng.lng()
-            };
-            this.modalCtrl.dismiss(selectedCoords);
-          });
-        } else {
-          const marker = new googleMaps.Marker({
-            position: this.center,
-            map: map,
-            title: 'Picked Location'
-          });
-          marker.setMap(map);
-        }
-
+        this.init(googleMaps);
       })
       .catch(err => {
         console.log(err);
       })
+  }
+
+  init(googleMaps) {
+    this.googleMaps = googleMaps;
+    const mapEl = this.mapElementRef.nativeElement;
+
+    console.log(this.googleMaps, this.center);
+    const map = new googleMaps.Map( mapEl, {
+      center: this.center,
+      zoom: 8
+    });
+
+    googleMaps.event.addListenerOnce(map, 'idle', () => {
+      this.renderer.addClass(mapEl, 'visible');
+    });
+
+    if (this.selectable) {
+      this.clickListener = map.addListener('click', event => {
+        const selectedCoords = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng()
+        };
+        this.modalCtrl.dismiss(selectedCoords);
+      });
+    } else {
+      const marker = new googleMaps.Marker({
+        position: this.center,
+        map: map,
+        title: 'Picked Location'
+      });
+      marker.setMap(map);
+    }
   }
 
   onCancel() {
@@ -83,7 +84,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
       document.body.appendChild(script);
       script.onload = () => {
         const loadedGoogleModule = win.google;
-        if (!loadedGoogleModule && loadedGoogleModule.maps) {
+        if (loadedGoogleModule && loadedGoogleModule.maps) {
           resolve(loadedGoogleModule.maps);
         } else {
           reject('Google maps SDK not available');

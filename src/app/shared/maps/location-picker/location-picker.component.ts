@@ -19,7 +19,7 @@ export class LocationPickerComponent implements OnInit {
 
   @Output() pickLocation = new EventEmitter<Location>();
   @Input() location: Location;
-  @Input() center: Coordinates ;
+  @Input() center: Coordinates;
 
   isLoading = false;
 
@@ -45,40 +45,6 @@ export class LocationPickerComponent implements OnInit {
       ]}).then(actionEl => {
         actionEl.present();
     });
-
-
-    // this.modalCtrl.create((center)
-    //   ? {component: MapModalComponent, componentProps: center}
-    //   : {component: MapModalComponent}
-    //   ).then(modal => {
-    //   modal.onDidDismiss().then(modalData => {
-    //     console.log(modalData.data);
-    //     if (!modalData.data) {
-    //       return;
-    //     }
-    //
-    //     const pickLocation: Location = {
-    //       lat: modalData.data.lat,
-    //       lng: modalData.data.lng,
-    //       address: null,
-    //       staticMapImageUrl: null
-    //     };
-    //     this.isLoading = true;
-    //     this.getAddress(pickLocation.lat, pickLocation.lng).pipe(
-    //       switchMap(address => {
-    //         console.log("Address", address);
-    //         pickLocation.address = address;
-    //         return of(this.getMapImage(pickLocation.lat, pickLocation.lng, 14));
-    //
-    //       })).subscribe( staticMapImageUrl => {
-    //         pickLocation.staticMapImageUrl = staticMapImageUrl;
-    //         this.location = pickLocation;
-    //         this.pickLocation.emit(pickLocation);
-    //         this.isLoading = false;
-    //     })
-    //   });
-    //   modal.present();
-    // })
   }
 
   locateUser() {
@@ -148,7 +114,6 @@ export class LocationPickerComponent implements OnInit {
   }
 
   private getMapImage(lat: number, lng: number, zoom: number) {
-    //TODO: you can add many markers!!!
     return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
     &markers=color:red%7Clabel:Location%7C${lat},${lng}&key=${environment.googleMapsAPIKey}`
     //&signature=YOUR_SIGNATURE ??

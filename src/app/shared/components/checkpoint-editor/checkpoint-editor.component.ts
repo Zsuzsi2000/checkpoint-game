@@ -30,7 +30,7 @@ export class CheckpointEditorComponent implements OnInit {
               private imageService: ImageService) { }
 
   ngOnInit() {
-    console.log(this.center)
+    console.log(this.center);
     if (this.checkpoint) {
       let quiz: Quiz = {
         question: "",
@@ -94,7 +94,7 @@ export class CheckpointEditorComponent implements OnInit {
     } : null;
 
     this.checkpoint = new Checkpoint(
-      null,
+      (this.checkpoint) ? this.checkpoint.index : null,
       this.checkpointForm.value.name,
       this.checkpointForm.value.description,
       this.checkpointForm.value.imgUrl,

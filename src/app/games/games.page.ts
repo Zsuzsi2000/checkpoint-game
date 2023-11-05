@@ -50,13 +50,12 @@ export class GamesPage implements OnInit, OnDestroy {
 
   addToFavourites(gameId: string) {
     this.authService.userId.pipe(take(1)).subscribe(userId => {
-      //TODO: delete this pictureUrl
       this.userService.updateUser(
         userId,
         null,
         null,
         null,
-        "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",
+        null,
         gameId,
         true
       ).pipe(take(1)).subscribe();
@@ -65,13 +64,12 @@ export class GamesPage implements OnInit, OnDestroy {
 
   deleteFromFavourites(gameId: string) {
     this.authService.userId.pipe(take(1)).subscribe(userId => {
-      //TODO: delete this pictureUrl
       this.userService.updateUser(
         userId,
         null,
         null,
         null,
-        "https://highlysensitiverefuge.com/wp-content/uploads/2019/12/highly-sensitive-person-signs.jpeg",
+        null,
         gameId,
         false
       ).pipe(take(1)).subscribe();

@@ -10,6 +10,9 @@ import {IonicModule} from "@ionic/angular";
 import {CheckpointEditorComponent} from "./components/checkpoint-editor/checkpoint-editor.component";
 import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkpoints-editor.component";
 import {ImagePickerComponent} from "./components/image-picker/image-picker.component";
+import {ImagePickerModalComponent} from "./components/image-picker-modal/image-picker-modal.component"
+import {CheckpointsPickerComponent} from "./maps/checkpoints-picker/checkpoints-picker.component";
+import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpoints-map-modal.component";
 
 
 
@@ -21,7 +24,10 @@ import {ImagePickerComponent} from "./components/image-picker/image-picker.compo
     MapModalComponent,
     CheckpointsEditorComponent,
     CheckpointEditorComponent,
-    ImagePickerComponent
+    ImagePickerComponent,
+    ImagePickerModalComponent,
+    CheckpointsPickerComponent,
+    CheckpointsMapModalComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +44,10 @@ import {ImagePickerComponent} from "./components/image-picker/image-picker.compo
     MapModalComponent,
     CheckpointsEditorComponent,
     CheckpointEditorComponent,
-    ImagePickerComponent
+    ImagePickerComponent,
+    ImagePickerModalComponent,
+    CheckpointsPickerComponent,
+    CheckpointsMapModalComponent
   ]
 })
 export class SharedModule { }

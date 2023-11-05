@@ -3,15 +3,21 @@
   border-radius: 5px;
 }
 
+ion-toolbar {
+  --background: var(--color-game-creation-dark);
+  --color: white;
+}
+
+
 ion-list-header {
   background-color: var(--color-game-creation-dark);
   --color: white;
 }
 
-ion-button {
-  --background-color: var(--color-game-creation-dark);
-  --color: white;
-}
+//ion-button {
+//  --background-color: var(--color-game-creation-dark);
+//  --color: white;
+//}
 
 .answers {
   background-color: #eeeeee;
