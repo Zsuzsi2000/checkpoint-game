@@ -11,7 +11,6 @@ import {CheckpointEditorComponent} from "./components/checkpoint-editor/checkpoi
 import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkpoints-editor.component";
 import {ImagePickerComponent} from "./components/image-picker/image-picker.component";
 import {ImagePickerModalComponent} from "./components/image-picker-modal/image-picker-modal.component"
-import {CheckpointsPickerComponent} from "./maps/checkpoints-picker/checkpoints-picker.component";
 import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpoints-map-modal.component";
 
 
@@ -26,7 +25,6 @@ import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpo
     CheckpointEditorComponent,
     ImagePickerComponent,
     ImagePickerModalComponent,
-    CheckpointsPickerComponent,
     CheckpointsMapModalComponent
   ],
   imports: [
@@ -46,7 +44,6 @@ import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpo
     CheckpointEditorComponent,
     ImagePickerComponent,
     ImagePickerModalComponent,
-    CheckpointsPickerComponent,
     CheckpointsMapModalComponent
   ]
 })
