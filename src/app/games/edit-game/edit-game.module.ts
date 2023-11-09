@@ -2,26 +2,25 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { GamesPageRoutingModule } from './games-routing.module';
-import { GamesPage } from './games.page';
 import {Ng2SearchPipeModule} from "ng2-search-filter";
-import {GameDetailsPage} from "./game-details/game-details.page";
-import {SharedModule} from "../shared/shared.module";
-
+import {EditGamePage} from "./edit-game.page";
+import {SharedModule} from "../../shared/shared.module";
+import {EditCheckpointsPage} from "./edit-checkpoints/edit-checkpoints.page";
+import {EditGamePageRoutingModule} from "./edit-game-routing.module";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GamesPageRoutingModule,
+    EditGamePageRoutingModule,
     Ng2SearchPipeModule,
     ReactiveFormsModule,
     SharedModule
   ],
   declarations: [
-    GamesPage,
-    GameDetailsPage,
+    EditGamePage,
+    EditCheckpointsPage,
   ]
 })
-export class GamesPageModule {}
+export class EditGamePageModule {}

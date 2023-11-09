@@ -16,6 +16,10 @@
   object-fit: cover;
 }
 
+ion-button {
+  position: absolute;
+}
+
 input[type='file'] {
   display: none;
 }

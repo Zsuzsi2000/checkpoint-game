@@ -78,9 +78,9 @@
       </ion-item>
       <ng-container *ngIf="(gameForm.get('locationType').value === LocationType.description) ||
       (gameForm.get('locationType').value === LocationType.location)">
-        <ion-item [button]="true" [detail]="false" id="select-game-country">
+        <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
           <ion-label>Country</ion-label>
-          <div slot="end" id="selected-country">{{ selectedCountry }}</div>
+          <div slot="end">{{ selectedCountry }}</div>
         </ion-item>
         <app-location-picker
           *ngIf="gameForm.get('pointOfDeparture').value; else noLocationYet"
@@ -149,15 +149,28 @@
           Duration is required.
         </ion-label>
       </ion-item>
-      <app-image-picker (imagePick)="onImagePick($event)"
+      <ion-item>
+        <ion-label class="ion-text-center">
+          Pick an image for the game
+        </ion-label>
+      </ion-item>
+      <app-image-picker (imagePick)="onImagePick($event, 'image')"
                         [showPreview]="gameForm.get('imgUrl').value"></app-image-picker>
+      <ng-container *ngIf="this.gameForm.get('locationType').value === LocationType.description">
+        <ion-item>
+          <ion-label class="ion-text-center">
+            Pick map image
+          </ion-label>
+        </ion-item>
+        <app-image-picker (imagePick)="onImagePick($event, 'map')"
+                          [showPreview]="gameForm.get('mapUrl').value"></app-image-picker>
+      </ng-container>
     </ion-list>
     <ion-button
-      class="ion-text-center ion-justify-content-center"
+      class="ion-text-center ion-justify-content-center align-center"
       color="primary"
       [disabled]="canOpenCheckpointsEditor()"
       (click)="openCheckpointsEditor()">
-<!--      [routerLink]="['/', 'games', 'create-game', 'create-checkpoints']">-->
       Edit checkpoints
     </ion-button>
     <ion-button
@@ -166,20 +179,8 @@
       color="primary"
       expand="full"
       [disabled]="!gameForm.valid || (this.gameForm.get('locationType').value === LocationType.description
-      && this.gameForm.get('locationIdentification').value === null)">
-<!--      [disabled]="!gameForm.valid || !checkpointsReady">-->
+      && this.gameForm.get('locationIdentification').value === null) || !checkpointsReady">
       Save the game
     </ion-button>
   </form>
 </ion-content>
-<ion-modal trigger="select-game-country" #modal>
-  <ng-template>
-    <app-pick-a-thing
-      class="ion-page"
-      [countries]="countries"
-      [selectedCountry]="selectedCountry"
-      (selectionChange)="countrySelectionChanged($event)"
-      (selectionCancel)="modal.dismiss()"
-    ></app-pick-a-thing>
-  </ng-template>
-</ion-modal>

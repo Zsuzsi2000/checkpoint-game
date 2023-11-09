@@ -1,9 +1,148 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>edit-game</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/games"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Editing game</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <form [formGroup]="gameForm" (ngSubmit)="updateGame()" *ngIf="gameForm">
+    <ion-list class="ion-padding" lines="none">
+      <ion-item>
+        <ion-label position="floating">Name of the game *</ion-label>
+        <ion-input
+          type="text"
+          labelPlacement="floating"
+          placeholder="Enter a game name"
+          formControlName="name"
+        ></ion-input>
+      </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('name').valid && gameForm.get('name').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          Name is required.
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="categories">
+        <ion-select placeholder="Select a category" formControlName="category">
+          <div slot="label">Category *</div>
+          <ng-container *ngFor="let category of categories">
+            <ion-select-option [value]="category.name">{{ category.name }}</ion-select-option>
+          </ng-container>
+          <ion-select-option [value]="'otherCategory'">Other category</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item *ngIf="gameForm.get('category').value === 'otherCategory'">
+        <ion-label position="floating">New category</ion-label>
+        <ion-input
+          type="text"
+          labelPlacement="floating"
+          placeholder="Enter a new category"
+          formControlName="newCategory"
+        ></ion-input>
+      </ion-item>
+      <ng-container *ngIf="(game.locationType === LocationType.description) ||
+      (game.locationType === LocationType.location)">
+        <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
+          <ion-label>Country</ion-label>
+          <div slot="end">{{ selectedCountry }}</div>
+        </ion-item>
+        <app-location-picker
+          *ngIf="gameForm.get('pointOfDeparture').value; else noLocationYet"
+          [location]="gameForm.get('pointOfDeparture').value"
+          (pickLocation)="onLocationPicked($event)"></app-location-picker>
+        <ng-template #noLocationYet>
+          <app-location-picker (pickLocation)="onLocationPicked($event)"></app-location-picker>
+        </ng-template>
+      </ng-container>
+      <ion-item>
+        <ion-label>Available for everyone?</ion-label>
+        <ion-toggle formControlName="itIsPublic" labelPlacement="start" value="false" color="secondary"></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-textarea label="Description *"
+                      labelPlacement="floating"
+                      formControlName="description"
+                      placeholder="Give a description of the game. Who would you recommend it to?"></ion-textarea>
+      </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('description').valid && gameForm.get('description').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          Description is required.
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Distance (km)*</ion-label>
+        <ion-input
+          type="text"
+          labelPlacement="floating"
+          placeholder="Enter approximately how long the game is in km."
+          formControlName="distance"
+        ></ion-input>
+      </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('distance').valid && gameForm.get('distance').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          Distance is required.
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Duration (hour) *</ion-label>
+        <ion-input
+          type="text"
+          labelPlacement="floating"
+          placeholder="Enter the approximate length of the game in hours."
+          formControlName="duration"
+        ></ion-input>
+      </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('duration').valid && gameForm.get('duration').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          Duration is required.
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label class="ion-text-center">
+          Pick an image for the game
+        </ion-label>
+      </ion-item>
+      <app-image-picker (imagePick)="onImagePick($event, 'image')"
+                        [showPreview]="game.imgUrl"
+                        [previewImage]="game.imgUrl"></app-image-picker>
+      <ng-container *ngIf="game.locationType === LocationType.description">
+        <ion-item>
+          <ion-label class="ion-text-center">
+            Pick map image
+          </ion-label>
+        </ion-item>
+        <app-image-picker (imagePick)="onImagePick($event, 'map')"
+                          [showPreview]="game.mapUrl"
+                          [previewImage]="game.mapUrl"></app-image-picker>
+      </ng-container>
+    </ion-list>
+    <ion-button
+      class="ion-text-center ion-justify-content-center align-center"
+      color="primary"
+      (click)="openCheckpointsEditor()">
+      Edit checkpoints
+    </ion-button>
+    <ion-button
+      class="ion-text-center ion-justify-content-center"
+      type="submit"
+      color="primary"
+      expand="full"
+      [disabled]="!gameForm.valid">
+      Save the game
+    </ion-button>
+  </form>
 </ion-content>

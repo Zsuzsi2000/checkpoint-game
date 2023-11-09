@@ -1,0 +1,8 @@
+<ng-container *ngIf="userId">
+  <ion-button *ngIf="checkIsItFavourite(gameId); else favourite" (click)="deleteFromFavourites(gameId)">
+    <ion-icon name="heart"></ion-icon>
+  </ion-button>
+  <ng-template #favourite>
+    <ion-button (click)="addToFavourites(gameId)"><ion-icon name="heart-outline"></ion-icon></ion-button>
+  </ng-template>
+</ng-container>

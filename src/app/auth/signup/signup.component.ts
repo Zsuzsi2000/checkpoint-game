@@ -1,15 +1,14 @@
 import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import {NgForm, ValidatorFn} from "@angular/forms";
-import {interval, Observable} from "rxjs";
+import {ValidatorFn} from "@angular/forms";
+import {interval} from "rxjs";
 import {AuthResponseData, AuthService} from "../auth.service";
 import {Router} from "@angular/router";
-import {AlertController, IonModal, LoadingController} from "@ionic/angular";
+import {AlertController, IonModal, LoadingController, ModalController} from "@ionic/angular";
 import {CountryService} from "../../services/country.service";
-import {concatMap, first, switchMap, take, takeUntil, takeWhile} from "rxjs/operators";
+import {switchMap, takeWhile} from "rxjs/operators";
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import {UserService} from "../../services/user.service";
-import {ImageService} from "../../services/image.service";
-import {isFatalDiagnosticError} from "@angular/compiler-cli/src/ngtsc/diagnostics";
+import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password').value;
@@ -26,7 +25,6 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
 export class SignupComponent implements OnInit {
 
   @Output() switchToLogIn = new EventEmitter<null>();
-  @ViewChild('modal') modal!: IonModal;
 
   profileForm: FormGroup;
   isLoading = false;
@@ -42,7 +40,7 @@ export class SignupComponent implements OnInit {
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private fb: FormBuilder,
-    private imageService: ImageService
+    private modalCtrl: ModalController
   ) {
   }
 
@@ -56,7 +54,6 @@ export class SignupComponent implements OnInit {
         validators: [Validators.required, Validators.minLength(6)]}),
       passwordAgain: new FormControl(null, {updateOn: "blur",
         validators: [Validators.required, Validators.minLength(6)]}),
-      picture: new FormControl(null, {updateOn: "blur"}),
     }, { validator: passwordMatchValidator });
     this.countries = ["1", "2", "3", "4", "5", "6", "7"];
     // this.countryService.getAllCountries().subscribe(res => {
@@ -66,7 +63,7 @@ export class SignupComponent implements OnInit {
     // });
   }
 
-  signUp(email: string, password: string, username: string, country: string, picture: File) {
+  signUp(email: string, password: string, username: string, country: string) {
 
     this.isLoading = true;
     this.loadingCtrl.create({ keyboardClose: true, message: 'Signing up...',  }).then(loadingEl => {
@@ -104,19 +101,10 @@ export class SignupComponent implements OnInit {
               this.isLoading = false;
               loadingEl.dismiss();
               this.showAlert("Email verification was successful!", "Authentication succeeded");
-              if (picture) {
-                this.imageService.uploadImage(picture).pipe(switchMap( uploadResponse => {
-                  return this.userService.createUser(authRes, username, country, uploadResponse.imageUrl)
-                })).subscribe(data => {
-                  console.log("user", data);
-                  this.switchToLogIn.emit();
-                })
-              } else {
-                this.userService.createUser(authRes, username, country, null).subscribe(data => {
-                  console.log("user", data);
-                  this.switchToLogIn.emit();
-                });
-              }
+              this.userService.createUser(authRes, username, country).subscribe(data => {
+                console.log("user", data);
+                this.switchToLogIn.emit();
+              });
             }
           },
           errRes => {
@@ -142,16 +130,24 @@ export class SignupComponent implements OnInit {
     const password = this.profileForm.get('password').value;
     const username = this.profileForm.get('username').value;
     const country = this.selectedCountry;
-    const picture = this.profileForm.get('picture').value;
 
-    this.signUp(email, password, username, country, picture);
+    this.signUp(email, password, username, country);
     this.profileForm.reset();
   }
 
-  countrySelectionChanged(country: string) {
-    console.log("countrySelectionChanged", country);
-    this.selectedCountry = country;
-    this.modal.dismiss();
+  selectCountry() {
+    this.modalCtrl.create({ component: PickAThingComponent, componentProps: {
+        countries: this.countries,
+        selectedCountry: this.selectedCountry
+      }}).then(modalEl => {
+      modalEl.onDidDismiss().then(modal => {
+        if (modal.data) {
+          console.log("countrySelectionChanged", modal.data);
+          this.selectedCountry = modal.data;
+        }
+      });
+      modalEl.present();
+    })
   }
 
   private showAlert(message: string, header: string = 'Authentication failed') {
@@ -163,22 +159,4 @@ export class SignupComponent implements OnInit {
       })
       .then(alertEl => alertEl.present());
   }
-
-  onImagePick(imageData: string | File) {
-    console.log(typeof imageData, imageData);
-    let imageFile;
-    if (typeof imageData === 'string') {
-      try {
-        imageFile = this.imageService.convertbase64toBlob(imageData);
-        console.log("imageFile", imageFile, typeof imageFile);
-      } catch (error) {
-        console.log("error", error);
-        return;
-      }
-    } else {
-      imageFile = imageData
-    }
-    this.profileForm.patchValue({picture: imageFile})
-  }
-
 }

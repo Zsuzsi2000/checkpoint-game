@@ -26,14 +26,14 @@ export class UserService implements OnInit {
     })
   }
 
-  createUser(userData: AuthResponseData, username: string, country: string, imgUrl: string) {
+  createUser(userData: AuthResponseData, username: string, country: string) {
     console.log("createUser");
     const newUser: UserData = {
       id: null,
       email: userData.email,
       username: username,
       country: country,
-      picture: imgUrl,
+      picture: "",
       favouriteGames: []
     };
 

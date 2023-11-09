@@ -14,6 +14,11 @@ p {
 ion-toolbar {
   --background: var(--color-games);
   --color: white;
+
+  ion-button {
+    --padding-start: 1px;
+    --padding-end: 1px;
+  }
 }
 
 .brown {
@@ -25,3 +30,5 @@ ion-icon {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 }
+
+

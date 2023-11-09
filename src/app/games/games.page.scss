@@ -57,6 +57,21 @@ ion-chip {
   flex: 1;
 }
 
+.rotate-icon {
+  color: black;
+  transform: rotate(45deg);
+}
+
+.rotate-icon-135 {
+  color: black;
+  transform: rotate(135deg);
+}
+
+.black {
+  color: black;
+}
+
+
 @media (max-width: 437px) {
   .custom-align-item {
     display: flex;

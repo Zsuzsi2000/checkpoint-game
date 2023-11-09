@@ -69,12 +69,10 @@
         Passwords do not match.
       </ion-label>
     </ion-item>
-    <ion-item [button]="true" [detail]="false" id="select-country">
+    <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
       <ion-label>Country</ion-label>
-      <div slot="end" id="selected-country">{{ selectedCountry }}</div>
+      <div slot="end">{{ selectedCountry }}</div>
     </ion-item>
-    <app-image-picker (imagePick)="onImagePick($event)"
-                      [showPreview]="profileForm.get('picture').value"></app-image-picker>
   </ion-list>
   <ion-button
     class="ion-no-margin"
@@ -85,14 +83,3 @@
     Signup
   </ion-button>
 </form>
-<ion-modal trigger="select-country" #modal>
-  <ng-template>
-    <app-pick-a-thing
-      class="ion-page"
-      [countries]="countries"
-      [selectedCountry]="selectedCountry"
-      (selectionChange)="countrySelectionChanged($event)"
-      (selectionCancel)="modal.dismiss()"
-    ></app-pick-a-thing>
-  </ng-template>
-</ion-modal>

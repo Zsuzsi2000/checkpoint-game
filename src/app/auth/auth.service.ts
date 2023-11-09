@@ -31,8 +31,7 @@ export class AuthService implements OnDestroy {
 
   get userIsAuthenticated() {
     return this._user.asObservable().pipe(map(user => {
-      //TODO: itt false volt eredetileg
-      return (user) ? !!user.token : null;
+      return (user) ? !!user.token : false;
     }));
   }
 

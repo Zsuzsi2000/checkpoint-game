@@ -3,10 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { GamesPage } from './games.page';
 import {GameDetailsPage} from "./game-details/game-details.page";
-import {CreateGamePage} from "./create-game/create-game.page";
-import {EditGamePage} from "./edit-game/edit-game.page";
-import {CreateCheckpointsPage} from "./create-game/create-checkpoints/create-checkpoints.page";
-import {EditCheckpointsPage} from "./edit-game/edit-checkpoints/edit-checkpoints.page";
+import {AuthGuard} from "../auth/auth.guard";
 
 
 const routes: Routes = [
@@ -21,20 +18,24 @@ const routes: Routes = [
   },
   {
     path: 'create-game',
-    component: CreateGamePage
+    loadChildren: () => import('./create-game/create-game.module').then( m => m.CreateGamePageModule),
+    canLoad: [AuthGuard]
   },
   {
-    path: 'edit-game/:gameId',
-    component: EditGamePage
+    path: 'edit-game',
+    loadChildren: () => import('./edit-game/edit-game.module').then( m => m.EditGamePageModule),
+    canLoad: [AuthGuard]
   },
-  {
-    path: 'create-game/create-checkpoints',
-    component: CreateCheckpointsPage
-  },
-  {
-    path: 'edit-game/edit-checkpoints/:gameId',
-    component: EditCheckpointsPage
-  },
+  // {
+  //   path: 'create-game/create-checkpoints',
+  //   component: CreateCheckpointsPage,
+  //   canLoad: [AuthGuard]
+  // },
+  // {
+  //   path: 'edit-game/edit-checkpoints/:gameId',
+  //   component: EditCheckpointsPage,
+  //   canLoad: [AuthGuard]
+  // },
   // {
   //   path: '',
   //   redirectTo: '/games',

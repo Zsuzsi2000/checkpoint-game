@@ -12,6 +12,7 @@ import {CheckpointsEditorComponent} from "./components/checkpoints-editor/checkp
 import {ImagePickerComponent} from "./components/image-picker/image-picker.component";
 import {ImagePickerModalComponent} from "./components/image-picker-modal/image-picker-modal.component"
 import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpoints-map-modal.component";
+import {FavouriteComponent} from "./components/favourite/favourite.component";
 
 
 
@@ -25,7 +26,8 @@ import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpo
     CheckpointEditorComponent,
     ImagePickerComponent,
     ImagePickerModalComponent,
-    CheckpointsMapModalComponent
+    CheckpointsMapModalComponent,
+    FavouriteComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +46,8 @@ import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpo
     CheckpointEditorComponent,
     ImagePickerComponent,
     ImagePickerModalComponent,
-    CheckpointsMapModalComponent
+    CheckpointsMapModalComponent,
+    FavouriteComponent
   ]
 })
 export class SharedModule { }

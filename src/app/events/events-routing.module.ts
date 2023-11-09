@@ -13,11 +13,12 @@ const routes: Routes = [
   {
     path: 'create-event',
     loadChildren: () => import('./create-event/create-event.module').then( m => m.CreateEventPageModule),
-    // canLoad: [AuthGuard]
+    canLoad: [AuthGuard]
   },
   {
     path: 'edit-event/:eventId',
-    loadChildren: () => import('./edit-event/edit-event.module').then( m => m.EditEventPageModule)
+    loadChildren: () => import('./edit-event/edit-event.module').then( m => m.EditEventPageModule),
+    canLoad: [AuthGuard]
   },
   {
     path: ':eventId',

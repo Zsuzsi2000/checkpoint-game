@@ -1,9 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>edit-checkpoints</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/games/edit-game/' + gameId"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Game editing</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-
+  <app-checkpoints-editor [center]="center"
+                          [locationType]="locationType"
+                          [quiz]="quiz"
+                          [checkpoints]="checkpoints"
+                          (checkpointsDone)="updateCheckpoints($event)"></app-checkpoints-editor>
 </ion-content>

@@ -8,5 +8,5 @@
 </ion-header>
 
 <ion-content>
-  <app-checkpoints-editor [center]="center" [locationType]="locationType" [quiz]="quiz"></app-checkpoints-editor>
+  <app-checkpoints-editor [center]="center" [locationType]="locationType" [quiz]="quiz" (checkpointsDone)="addCheckpointToGame($event)"></app-checkpoints-editor>
 </ion-content>

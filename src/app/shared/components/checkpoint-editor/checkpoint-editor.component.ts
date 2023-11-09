@@ -16,11 +16,12 @@ export class CheckpointEditorComponent implements OnInit {
 
   @ViewChild('newAnswer') newAnswer: IonInput;
   @ViewChild('isItGood') isItGood: IonToggle;
-  @Input() location: Location;
-  @Input() checkpoint: Checkpoint;
   @Input() locationType!: LocationType;
   @Input() isQuiz!: boolean;
   @Input() center!: Coordinates;
+  @Input() checkpoint: Checkpoint;
+  @Input() imageFile: File | Blob;
+
   checkpointForm: FormGroup;
   answers: { answer: string, correct: boolean }[] = [];
   LocationType = LocationType;
@@ -30,7 +31,6 @@ export class CheckpointEditorComponent implements OnInit {
               private imageService: ImageService) { }
 
   ngOnInit() {
-    console.log(this.center);
     if (this.checkpoint) {
       let quiz: Quiz = {
         question: "",
@@ -43,11 +43,10 @@ export class CheckpointEditorComponent implements OnInit {
         this.answers = this.checkpoint.quiz.answers;
         quiz.help = this.checkpoint.quiz.help;
       }
-      console.log("chckpoint", this.checkpoint);
       this.checkpointForm = this.formBuilder.group({
         name: new FormControl(this.checkpoint.name, { updateOn: "change", validators: [Validators.required]}),
         description: new FormControl(this.checkpoint.description, { updateOn: "change"}),
-        imgUrl: new FormControl(this.checkpoint.imgUrl, { updateOn: "change"}),
+        imgUrl: new FormControl((this.checkpoint.imgUrl) ? this.checkpoint.imgUrl : this.imageFile, { updateOn: "change"}),
         locationDescription: new FormControl(this.checkpoint.locationDescription, { updateOn: "change"}),
         locationAddress: new FormControl(this.checkpoint.locationAddress, { updateOn: "change"}),
         quiz: this.formBuilder.group({
@@ -57,7 +56,6 @@ export class CheckpointEditorComponent implements OnInit {
         }),
         info: new FormControl(this.checkpoint.info, { updateOn: "change"}),
       });
-      console.log("locationAddress", this.checkpointForm.get('locationAddress').value)
     } else {
       this.checkpointForm = new FormGroup({
         name: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
@@ -80,7 +78,6 @@ export class CheckpointEditorComponent implements OnInit {
   }
 
   createCheckpoint() {
-    console.log("checkpoint", this.checkpointForm);
     if (!this.checkpointForm.valid) {
       return;
     }
@@ -93,18 +90,18 @@ export class CheckpointEditorComponent implements OnInit {
       help: (this.checkpointForm.get('quiz').value.help)
     } : null;
 
-    this.checkpoint = new Checkpoint(
+    let checkpoint1 = new Checkpoint(
       (this.checkpoint) ? this.checkpoint.index : null,
       this.checkpointForm.value.name,
       this.checkpointForm.value.description,
-      this.checkpointForm.value.imgUrl,
+      (this.checkpoint && this.checkpoint.imgUrl) ? this.checkpoint.imgUrl : null,
       this.checkpointForm.value.locationDescription,
       this.checkpointForm.value.locationAddress,
       quiz,
       info
     );
 
-    this.modalCtrl.dismiss(this.checkpoint);
+    this.modalCtrl.dismiss({ checkpoint: checkpoint1, imageFile: this.checkpointForm.value.imgUrl});
   }
 
   onLocationPicked(location: Location) {
@@ -112,46 +109,51 @@ export class CheckpointEditorComponent implements OnInit {
   }
 
   addAnswer(newAnswer: string, isItGood: boolean) {
-    console.log("new answer", newAnswer, isItGood);
     this.answers.push({ answer: newAnswer, correct: isItGood });
     this.checkpointForm.get('quiz').patchValue({ answers: this.answers });
     this.newAnswer.value = "";
     this.isItGood.checked = false;
-    console.log("info", this.newAnswer, this.isItGood, this.answers)
   }
 
   changeAnswer(a: { answer: string, correct: boolean }, event) {
     this.answers.forEach(answer => {
-      console.log("answer", answer, event);
       if (answer === a) {
         answer.answer = event.detail.value;
       }
-    })
+    });
+    this.checkpointForm.get('quiz').patchValue({ answers: this.answers });
   }
 
   changeAnswerCorrection(a: { answer: string, correct: boolean }, event) {
     this.answers.forEach(answer => {
-      console.log("answer", answer, event);
       if (answer === a) {
         answer.correct = event.detail.checked;
       }
-    })
+    });
+    this.checkpointForm.get('quiz').patchValue({ answers: this.answers });
   }
 
   deleteAnswer(answer: { answer: string, correct: boolean }) {
-    console.log("new answer", answer);
-
     this.answers = this.answers.filter(a => a !== answer);
     this.checkpointForm.get('quiz').patchValue({ answers: this.answers });
     this.newAnswer.value = "";
     this.isItGood.checked = false;
   }
 
+  quizIsReady() {
+    let correctExist = false;
+    if (this.checkpointForm.get('quiz').value && this.checkpointForm.get('quiz').value.answers
+      && this.checkpointForm.get('quiz').value.question && this.checkpointForm.get('quiz').value.answers.length > 0) {
+      this.checkpointForm.get('quiz').value.answers.forEach(answer => {
+        if (answer.correct) { correctExist = true; }
+      });
+    }
+    return correctExist;
+  }
+
   isNotValid() {
     let quizExist = (this.isQuiz)
-      ? ((this.checkpointForm.get('quiz').value && this.checkpointForm.get('quiz').value.answers)
-        ? (this.checkpointForm.get('quiz').value.question && this.checkpointForm.get('quiz').value.answers.length > 0)
-        : false)
+      ? this.quizIsReady()
       : this.checkpointForm.value.info;
     let locationExist = (this.locationType === LocationType.location)
       ? this.checkpointForm.value.locationAddress
@@ -161,7 +163,6 @@ export class CheckpointEditorComponent implements OnInit {
   }
 
   onImagePick(imageData: string | File) {
-    console.log(imageData);
     let imageFile;
     if (typeof imageData === 'string') {
       try {

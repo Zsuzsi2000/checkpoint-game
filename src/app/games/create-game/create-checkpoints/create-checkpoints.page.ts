@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {LocationType} from "../../../enums/LocationType";
 import {Coordinates, Location} from "../../../interfaces/Location";
+import {Checkpoint} from "../../../models/checkpoint.model";
 
 @Component({
   selector: 'app-create-checkpoints',
@@ -16,13 +17,7 @@ export class CreateCheckpointsPage implements OnInit {
   lng: number;
   center: Coordinates;
 
-  constructor(private route: ActivatedRoute) {
-    console.log(
-      this.route.snapshot.queryParamMap.get('locationType'),
-      this.route.snapshot.queryParamMap.get('quiz'),
-      this.route.snapshot.queryParamMap.get('lat'),
-      this.route.snapshot.queryParamMap.get('lng'),
-    );
+  constructor(private route: ActivatedRoute, private router: Router) {
     switch (this.route.snapshot.queryParamMap.get('locationType')) {
       case "0": { this.locationType = LocationType.location; break; }
       case "1": { this.locationType = LocationType.description; break; }
@@ -39,8 +34,25 @@ export class CreateCheckpointsPage implements OnInit {
 
   ngOnInit() {}
 
-  addCheckpointToGame() {
-
+  addCheckpointToGame(event: {
+    checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob}[],
+    mapUrl: string
+  }) {
+    console.log("event", event);
+    let checks = event.checkpoints.map(data => {
+      let checkpoint = JSON.stringify(data.checkpoint);
+      let image = JSON.stringify(data.imageFile);
+      return {
+        checkpoint: checkpoint,
+        imageFile: image
+      }
+    });
+    this.router.navigate(['/', 'games', 'create-game'], {
+      queryParams: {
+        checkpoints: JSON.stringify(checks),
+        mapUrl: JSON.stringify(event.mapUrl)
+      }
+    });
   }
 
 }

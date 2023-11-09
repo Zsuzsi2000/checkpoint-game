@@ -14,12 +14,14 @@ export class ImagePickerComponent implements OnInit {
   @ViewChild('filePicker') filePickerRef: ElementRef<HTMLInputElement>;
   @Output() imagePick = new EventEmitter<string | File | Blob>();
   @Input() showPreview = false;
+  @Input() previewImage: string;
   selectedImage: string;
   usePicker = false;
 
   constructor(private platform: Platform, private imageCompress: NgxImageCompressService) {}
 
   ngOnInit() {
+    this.selectedImage = this.previewImage;
     console.log('Mobile:', this.platform.is('mobile'));
     console.log('Hybrid:', this.platform.is('hybrid'));
     console.log('iOS:', this.platform.is('ios'));

@@ -1,4 +1,5 @@
 import {Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import {ModalController} from "@ionic/angular";
 
 @Component({
   selector: 'app-pick-a-thing',
@@ -16,6 +17,9 @@ export class PickAThingComponent implements OnInit {
   filter: string = "";
   workingSelectedCountry: string;
 
+  constructor(private modalCtrl: ModalController) {}
+
+
   ngOnInit() {
     this.workingSelectedCountry = this.selectedCountry;
     console.log("countries", this.countries)
@@ -23,11 +27,13 @@ export class PickAThingComponent implements OnInit {
   }
 
   cancelChanges() {
-    this.selectionCancel.emit();
+    this.modalCtrl.dismiss();
+    // this.selectionCancel.emit();
   }
 
   confirmChanges() {
-    this.selectionChange.emit(this.workingSelectedCountry);
+    this.modalCtrl.dismiss(this.workingSelectedCountry)
+    // this.selectionChange.emit(this.workingSelectedCountry);
   }
 
   checkboxChange(event) {

@@ -3,12 +3,12 @@ import {Game} from "../../models/game.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertController, ModalController, NavController} from "@ionic/angular";
 import {GamesService} from "../games.service";
-import {Subscription} from "rxjs";
+import {of, Subscription} from "rxjs";
 import {AuthService} from "../../auth/auth.service";
 import {User} from "../../models/user.model";
-import {take} from "rxjs/operators";
-import {MapModalComponent} from "../../shared/maps/map-modal/map-modal.component";
-import {Location} from "../../interfaces/Location";
+import {catchError, switchMap, take} from "rxjs/operators";
+import {LocationType} from "../../enums/LocationType";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-game-details',
@@ -21,12 +21,16 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   gameSub: Subscription;
   isLoading = false;
   user: User;
+  creator: User;
+  ownGame = false;
+  LocationType = LocationType;
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
               private modalCtrl: ModalController,
               private gamesService: GamesService,
               private authService: AuthService,
+              private userService: UserService,
               private alertController: AlertController,
               private router: Router) {
   }
@@ -37,41 +41,61 @@ export class GameDetailsPage implements OnInit, OnDestroy {
         this.navCtrl.pop();
       }
       this.isLoading = true;
-      this.gamesService.fetchGame(paramMap.get('gameId')).subscribe(game => {
-        this.game = game;
+      this.gamesService.fetchGame(paramMap.get('gameId')).pipe(
+        take(1),
+        catchError(error => {
+          this.showALert();
+          return of(null);
+        }),
+        switchMap(game => {
+          if (game) {
+            this.game = game;
+            this.isLoading = false;
+            return this.userService.getUserById(game.userId).pipe(take(1));
+          } else {
+            return of(null);
+          }
+        }),
+        catchError(error => {
+          return of(null);
+        }),
+        switchMap(user => {
+          if (user) {
+            this.creator = user;
+            return this.authService.user.pipe(take(1));
+          } else {
+            return of(null);
+          }
+        })
+      ).subscribe(user => {
         this.isLoading = false;
-      }, error => {
-        this.showALert();
-      })
-    }, error => {
-      this.showALert();
+        if (user) {
+          this.user = user;
+          this.ownGame = (this.user.id === this.creator.id);
+        }
+      });
     });
-    this.authService.user.pipe(take(1)).subscribe(user => {
-      this.user = user;
-    })
+    //   )(game => {
+    //     this.game = game;
+    //     this.isLoading = false;
+    //     this.userService.getUserById(game.userId).pipe(take(1)).subscribe( user => {
+    //       this.creator = user;
+    //     })
+    //   }, error => {
+    //     this.showALert();
+    //   })
+    // }, error => {
+    //   this.showALert();
+    // });
+    // this.authService.user.pipe(take(1)).subscribe(user => {
+    //   this.user = user;
+    // })
   }
 
   ngOnDestroy(): void {
     if (this.gameSub) {
       this.gameSub.unsubscribe();
     }
-  }
-
-  createMapModal() {
-    this.modalCtrl.create({
-      component: MapModalComponent,
-      componentProps: {
-        center: {
-          lat: (this.game.pointOfDeparture as Location).lat,
-          lng: (this.game.pointOfDeparture as Location).lng
-        },
-        selectable: false,
-        closeButtonText: "Close",
-        title: (this.game.pointOfDeparture as Location).address
-      }
-    }).then(modalEl => {
-      modalEl.present();
-    })
   }
 
   showALert() {
@@ -89,6 +113,33 @@ export class GameDetailsPage implements OnInit, OnDestroy {
       .then(alertEl => {
         alertEl.present();
       });
+  }
+
+  deleteGame(id: string) {
+    this.alertController.create({
+      header: "Delete game",
+      message: "Are you sure you want to delete the game?",
+      buttons: [
+        {
+          text: "Cancel",
+          role: "cancel"
+        },
+        {
+          text: "Delete",
+          handler: () => {
+            this.gamesService.deleteGame(id).subscribe(res => {
+              this.router.navigate(['/', 'games']);
+            });
+          }
+        }
+      ]
+    }).then(
+      alertEl => alertEl.present()
+    );
+  }
+
+  editGame(id: string) {
+    this.router.navigate(['/', 'games', 'edit-game', id]);
   }
 
 }

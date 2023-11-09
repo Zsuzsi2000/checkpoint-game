@@ -1,3 +1,10 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 <ion-content [ngSwitch]="status" class="ion-no-padding ion-align-items-center ion-text-center">
   <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center">
     <ion-row class="ion-align-items-center full-fill">
@@ -5,7 +12,8 @@
         <ion-grid class="ion-no-padding ion-no-margin ion-align-items-center ion-text-center full-fill">
           <ion-row>
             <ion-col size-xs="8" offset-xs="2" size-sm="6" offset-sm="3" size-md="4" offset-md="4">
-              <ion-img [src]="'assets/logo.png'" alt="Logo" [ngClass]="status === AuthStatus.modeSelection ? 'logo-img-big-botton-padding' : 'logo-img-height'"></ion-img>
+              <ion-img [src]="'assets/logo.png'" alt="Logo"
+                       [ngClass]="status === AuthStatus.modeSelection ? 'logo-img-big-botton-padding' : 'logo-img-height'"></ion-img>
             </ion-col>
           </ion-row>
           <ng-container *ngSwitchCase="AuthStatus.modeSelection">

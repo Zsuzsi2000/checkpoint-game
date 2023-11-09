@@ -55,10 +55,20 @@ ion-chip {
   }
 }
 
+.dark-card {
+  ion-icon {
+    color: white;
+  }
+}
+
 .segment-container {
   display: flex;
 }
 
+.colored {
+  --background: var(--color-profile);
+  --color: white;
+}
 //.profile-data {
 //  border: 10px solid #e4e4e4;
 //  background-color: #e4e4e4;

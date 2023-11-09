@@ -58,7 +58,7 @@
                 <h2>Country</h2>
                 <p>{{ loadedUser.country }}</p>
               </ion-label>
-              <ion-button *ngIf="ownProfile" slot="end" id="edit-country">
+              <ion-button *ngIf="ownProfile" slot="end" (click)="selectCountry()">
                 <ion-icon name="pencil"></ion-icon>
               </ion-button>
             </ion-item>
@@ -110,18 +110,7 @@
                           <ion-button *ngIf="ownProfile" (click)="deleteGame(game.id)">
                             <ion-icon name="trash"></ion-icon>
                           </ion-button>
-                          <ng-container *ngIf="loggedUser">
-                            <ng-container *ngIf="checkIsItFavourite(game.id); else noFavourite">
-                              <ion-button (click)="deleteFromFavourites(game.id)">
-                                <ion-icon name="heart"></ion-icon>
-                              </ion-button>
-                            </ng-container>
-                            <ng-template #noFavourite>
-                              <ion-button (click)="addToFavourites(game.id)">
-                                <ion-icon name="heart-outline"></ion-icon>
-                              </ion-button>
-                            </ng-template>
-                          </ng-container>
+                          <app-favourite [gameId]="game.id"></app-favourite>
                           <ion-button>
                             <ion-icon name="share-social"></ion-icon>
                           </ion-button>
@@ -149,17 +138,18 @@
                     </ion-item>
                   </ion-list>
                   <ion-buttons class="custom-align-2">
-                    <ion-button class="green custom-align-item margin-top" fill="solid" size="small" shape="round"
+                    <ion-button class="colored custom-align-item margin-top" fill="solid" size="small" shape="round"
                                 [routerLink]="['/', 'games', 'details', game.id]">
                       Details
                       <ion-icon slot="end" name="arrow-forward"></ion-icon>
                     </ion-button>
-                    <ion-button *ngIf="loggedUser" class="green custom-align-item margin-top" fill="solid" size="small" shape="round"
+                    <ion-button *ngIf="loggedUser" class="colored custom-align-item margin-top" fill="solid"
+                                size="small" shape="round"
                                 [routerLink]="['/', 'events', 'create-event']">
                       Create event
                       <ion-icon slot="end" name="arrow-forward"></ion-icon>
                     </ion-button>
-                    <ion-button class="green custom-align-item margin-top" fill="solid" size="small" shape="round"
+                    <ion-button class="colored custom-align-item margin-top" fill="solid" size="small" shape="round"
                                 [routerLink]="['/', 'game-mode']">
                       Play
                       <ion-icon slot="end" name="arrow-forward"></ion-icon>
@@ -178,7 +168,10 @@
                     <ion-label>Don't have your own game yet?</ion-label>
                   </ion-item>
                   <ion-item>
-                    <ion-button (click)="createGame()">Create game</ion-button>
+                    <ion-button [routerLink]="['/', 'games', 'create-game']">
+                      <ion-icon slot="start" name="add"></ion-icon>
+                      <ion-label>Create game</ion-label>
+                    </ion-button>
                   </ion-item>
                 </ion-list>
               </ion-col>
@@ -188,15 +181,9 @@
       </ng-container>
     </ion-grid>
   </ng-template>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="listGames && loadedOwnGames && loadedOwnGames.length > 0">
+    <ion-fab-button color="secondary">
+      <ion-icon name="add" [routerLink]="['/', 'games', 'create-game']"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
-<ion-modal trigger="edit-country" #modal>
-  <ng-template>
-    <app-pick-a-thing
-      class="ion-page"
-      [countries]="countries"
-      [selectedCountry]="this.loadedUser.country"
-      (selectionChange)="countrySelectionChanged($event)"
-      (selectionCancel)="modal.dismiss()"
-    ></app-pick-a-thing>
-  </ng-template>
-</ion-modal>

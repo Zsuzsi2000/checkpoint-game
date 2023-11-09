@@ -2,14 +2,16 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {GamesService} from "../games.service";
 import {CountryService} from "../../services/country.service";
-import {IonModal, LoadingController} from "@ionic/angular";
-import {Router} from "@angular/router";
-import {switchMap, take} from "rxjs/operators";
+import {IonModal, LoadingController, ModalController} from "@ionic/angular";
+import {ActivatedRoute, Router} from "@angular/router";
+import {catchError, map, switchMap, take} from "rxjs/operators";
 import {Location} from "../../interfaces/Location";
 import {LocationType} from "../../enums/LocationType";
 import {LocationIdentification} from "../../enums/LocationIdentification";
-import {Game} from "../../models/game.model";
 import {ImageService} from "../../services/image.service";
+import {Checkpoint} from "../../models/checkpoint.model";
+import {forkJoin, of} from "rxjs";
+import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
 
 @Component({
   selector: 'app-create-game',
@@ -18,8 +20,6 @@ import {ImageService} from "../../services/image.service";
 })
 export class CreateGamePage implements OnInit {
 
-  @ViewChild('modal') modal!: IonModal;
-
   gameForm: FormGroup;
   categories: { id: string, name: string }[];
   countries = [];
@@ -27,13 +27,16 @@ export class CreateGamePage implements OnInit {
   LocationType = LocationType;
   LocationIdentification = LocationIdentification;
   checkpointsReady = false;
+  checkpoints: {checkpoint: Checkpoint, imageFile: File}[] = [];
+  mapUrl = "";
 
   constructor(private gamesService: GamesService,
               private countryService: CountryService,
               private router: Router,
               private imageService: ImageService,
-              private loadingCtrl: LoadingController) {
-  }
+              private loadingCtrl: LoadingController,
+              private activatedRoute: ActivatedRoute,
+              private modalCtrl: ModalController) {}
 
   ngOnInit() {
     this.countries = ["1", "2", "3", "4", "5", "6", "7"];
@@ -47,6 +50,7 @@ export class CreateGamePage implements OnInit {
       locationIdentification: new FormControl(null, {updateOn: "change"}),
       pointOfDeparture: new FormControl(null, {updateOn: "change"}),
       imgUrl: new FormControl(null, {updateOn: "change"}),
+      mapUrl: new FormControl(null, {updateOn: "change"}),
       distance: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       duration: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       itIsPublic: new FormControl(null, {updateOn: "change"}),
@@ -57,6 +61,28 @@ export class CreateGamePage implements OnInit {
         console.log(this.categories, this.categories[0].name)
       }
     })
+  }
+
+  ionViewWillEnter() {
+    if (this.activatedRoute.snapshot.queryParamMap.has('checkpoints')) {
+      console.log(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
+      let checks = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
+      console.log(checks);
+      this.checkpoints = checks.map(data => {
+        let checkpoint = JSON.parse(data.checkpoint) as Checkpoint;
+        let image = JSON.parse(data.imageFile) as File | Blob;
+        return {
+          checkpoint: checkpoint,
+          imageFile: image
+        }
+      });
+      console.log(this.checkpoints);
+      this.checkpointsReady = true;
+    }
+    if (this.activatedRoute.snapshot.queryParamMap.has('mapUrl')) {
+      console.log(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
+      this.mapUrl = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
+    }
   }
 
   createGame() {
@@ -76,29 +102,53 @@ export class CreateGamePage implements OnInit {
       message: 'Creating game...'
     }).then(loadingEl => {
       loadingEl.present();
-      if (this.gameForm.get('imgUrl').value) {
-        this.imageService.uploadImage(this.gameForm.get('imgUrl').value).pipe(
-          switchMap(uploadResponse => {
-            return this.gamesService.createGame(
-              this.gameForm.value.name,
-              this.gameForm.value.locationType,
-              this.gameForm.value.locationIdentification,
-              this.selectedCountry,
-              this.gameForm.value.pointOfDeparture,
-              category,
-              this.gameForm.value.quiz,
-              this.gameForm.value.description,
-              uploadResponse.imageUrl,
-              this.gameForm.value.distance,
-              this.gameForm.value.duration,
-              this.gameForm.value.itIsPublic
-            )
-          })
-        ).subscribe(gameId => {
-          this.handleGameCreationSuccess(gameId, category, loadingEl);
-        });
-      } else {
-        this.gamesService.createGame(
+      let checkpoints: Checkpoint[] = [];
+      let imageUrl;
+      this.uploadImages().pipe(
+        catchError(error => {
+          console.log('Error from uploadImages:', error);
+          checkpoints = this.checkpoints.map(data => {
+            if (data.checkpoint.locationAddress && data.checkpoint.locationAddress.staticMapImageUrl) {
+              data.checkpoint.imgUrl = data.checkpoint.locationAddress.staticMapImageUrl;
+            }
+            return data.checkpoint;
+          });
+          return of(null);
+        }),
+        switchMap(check => {
+          console.log('check', check);
+
+          if (check) {
+            checkpoints = check;
+          }
+          return (this.gameForm.get('imgUrl').value) ? this.imageService.uploadImage(this.gameForm.get('imgUrl').value) : of(null);
+      })).pipe(
+        catchError(error => {
+          console.log('Error from uploadImage image:', error);
+          return of(null);
+        }),
+        switchMap(uploadResponse => {
+          console.log('EuploadResponse', uploadResponse);
+
+          imageUrl = (uploadResponse)
+            ? uploadResponse.imageUrl
+            : (this.gameForm.value.pointOfDeparture) ? (this.gameForm.value.pointOfDeparture as Location).staticMapImageUrl : null;
+
+          return (this.gameForm.value.locationType === LocationType.description && this.gameForm.get('mapUrl').value)
+            ? this.imageService.uploadImage(this.gameForm.get('mapUrl').value) : of(null);
+        })).pipe(
+        catchError(error => {
+          console.log('Error from uploadImage map:', error);
+          return of(null);
+        }),
+        switchMap(uploadResponse => {
+          console.log('EuploadResponse', uploadResponse);
+
+          checkpoints = checkpoints.sort((a, b) =>  a.index < b.index ? -1 : (a.index > b.index ? 1 : 0));
+
+          let mapUrl = (uploadResponse) ? uploadResponse.imageUrl : null;
+
+        return this.gamesService.createGame(
           this.gameForm.value.name,
           this.gameForm.value.locationType,
           this.gameForm.value.locationIdentification,
@@ -107,21 +157,56 @@ export class CreateGamePage implements OnInit {
           category,
           this.gameForm.value.quiz,
           this.gameForm.value.description,
-          null,
+          imageUrl,
           this.gameForm.value.distance,
           this.gameForm.value.duration,
-          this.gameForm.value.itIsPublic
-        ).subscribe(gameId => {
-          this.handleGameCreationSuccess(gameId, category, loadingEl);
-        });
-      }
+          this.gameForm.value.itIsPublic,
+          (this.gameForm.value.locationType === LocationType.description) ? mapUrl : this.mapUrl,
+          checkpoints
+        )
+      })).subscribe( gameId => {
+        this.handleGameCreationSuccess(gameId, category, loadingEl);
+      });
     });
   }
 
+  uploadImages() {
+    console.log("uploaded");
+
+    let checkpoints: Checkpoint[] = [];
+    const observables = [];
+    this.checkpoints.forEach(data => {
+      if(data.imageFile) {
+        observables.push(this.imageService.uploadImage(data.imageFile).pipe(map(uploaded => {
+          data.checkpoint.imgUrl = uploaded.imageUrl;
+          console.log("uploaded", uploaded);
+          return data.checkpoint;
+        })));
+      } else if (data.checkpoint.locationAddress && data.checkpoint.locationAddress.staticMapImageUrl) {
+        data.checkpoint.imgUrl = data.checkpoint.locationAddress.staticMapImageUrl;
+        checkpoints.push(data.checkpoint);
+        console.log("checkpoints", checkpoints);
+      } else {
+        checkpoints.push(data.checkpoint);
+        console.log("checkpoints", checkpoints);
+
+      }
+    });
+
+    return (observables.length > 0)
+      ? (forkJoin(observables).pipe(
+        map(result => {
+          console.log(result);
+          checkpoints = checkpoints.concat(result as Checkpoint[]);
+          return checkpoints;
+        })))
+      : of(checkpoints);
+  }
+
   handleGameCreationSuccess(gameId, category, loadingEl) {
-    console.log("game", gameId);
+    console.log("game success", gameId);
     loadingEl.dismiss();
-    if (this.categories.find(c => c.name === category) === null) {
+    if (this.categories.find(c => c.name === category) === undefined) {
       this.gamesService.createCategory(category).subscribe(categories => {
         console.log("categories", categories);
         this.categories = categories;
@@ -149,17 +234,26 @@ export class CreateGamePage implements OnInit {
     console.log("open", this.gameForm.value.locationType, this.gameForm.value.quiz, this.gameForm.value.pointOfDeparture);
   }
 
-  countrySelectionChanged(country: string) {
-    console.log("countrySelectionChanged", country);
-    this.selectedCountry = country;
-    this.modal.dismiss();
+  selectCountry() {
+    this.modalCtrl.create({ component: PickAThingComponent, componentProps: {
+        countries: this.countries,
+        selectedCountry: this.selectedCountry
+      }}).then(modalEl => {
+        modalEl.onDidDismiss().then(modal => {
+          if (modal.data) {
+            console.log("countrySelectionChanged", modal.data);
+            this.selectedCountry = modal.data;
+          }
+        });
+        modalEl.present();
+    })
   }
 
   onLocationPicked(location: Location) {
     this.gameForm.patchValue({pointOfDeparture: location})
   }
 
-  onImagePick(imageData: string | File) {
+  onImagePick(imageData: string | File, type: string) {
     console.log(imageData);
     let imageFile;
     if (typeof imageData === 'string') {
@@ -172,7 +266,11 @@ export class CreateGamePage implements OnInit {
     } else {
       imageFile = imageData
     }
-    this.gameForm.patchValue({imgUrl: imageFile})
+    if (type === 'image') {
+      this.gameForm.patchValue({imgUrl: imageFile})
+    } else {
+      this.gameForm.patchValue({mapUrl: imageFile})
+    }
   }
 
 }

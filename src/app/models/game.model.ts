@@ -23,6 +23,7 @@ export class Game {
   public checkpoints: Checkpoint[];
   public ratings: string[];
   public userId: string;
+  public mapUrl: string;
 
   constructor(
     id: string,
@@ -39,7 +40,12 @@ export class Game {
     distance: number,
     duration: number,
     itIsPublic: boolean,
-    userId: string
+    userId: string,
+    mapUrl: string,
+    checkpoints: Checkpoint[],
+    numberOfAttempts: number = 0,
+    creationDate: Date = new Date(),
+    ratings: string[] = []
   ) {
     this.id = id;
     this.name = name;
@@ -50,16 +56,17 @@ export class Game {
     this.pointOfDeparture = pointOfDeparture;
     this.category = category;
     this.quiz = quiz;
-    this.numberOfAttempts = 0;
+    this.numberOfAttempts = numberOfAttempts;
     this.description = description;
     this.imgUrl = imgUrl;
     this.distance = distance;
     this.duration = duration;
-    this.creationDate = new Date();
-    this.checkpoints = [];
-    this.ratings = [];
+    this.creationDate = creationDate;
+    this.checkpoints = checkpoints;
+    this.ratings = ratings;
     this.itIsPublic = itIsPublic;
     this.userId = userId;
+    this.mapUrl = mapUrl;
   }
 
 }

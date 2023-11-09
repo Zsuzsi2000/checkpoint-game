@@ -13,7 +13,7 @@ import {SegmentChangeEventDetail} from '@ionic/core';
 import {CountryService} from "../services/country.service";
 import {ImageService} from "../services/image.service";
 import {ImagePickerModalComponent} from "../shared/components/image-picker-modal/image-picker-modal.component";
-import {Checkpoint} from "../models/checkpoint.model";
+import {PickAThingComponent} from "../shared/components/pick-a-thing/pick-a-thing.component";
 
 
 @Component({
@@ -22,8 +22,6 @@ import {Checkpoint} from "../models/checkpoint.model";
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit, OnDestroy {
-
-  @ViewChild('modal') modal!: IonModal;
 
   userIsLoading = false;
   gamesAreLoading = false;
@@ -196,35 +194,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     }
   }
 
-  addToFavourites(gameId: string) {
-    this.userService.updateUser(
-      this.loggedUser.id,
-      null,
-      null,
-      null,
-      null,
-      gameId,
-      true
-    ).pipe(take(1)).subscribe();
-  }
-
-  deleteFromFavourites(gameId: string) {
-    this.userService.updateUser(
-      this.loggedUser.id,
-      null,
-      null,
-      null,
-      null,
-      gameId,
-      false
-    ).pipe(take(1)).subscribe();
-  }
-
-  checkIsItFavourite(id: string):
-    boolean {
-    return this.loggedUser.favouriteGames.includes(id);
-  }
-
   deleteProfile() {
     //TODO: delete games and events
     this.authService.deleteAccount().subscribe(
@@ -290,10 +259,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     );
   }
 
-  createGame() {
-    this.router.navigate(['/', 'games', 'create-game']);
-  }
-
   editGame(id: string) {
     this.router.navigate(['/', 'games', 'edit-game', id]);
   }
@@ -315,18 +280,27 @@ export class ProfilePage implements OnInit, OnDestroy {
       });
   }
 
-  countrySelectionChanged(country: string) {
-    console.log("countrySelectionChanged", country);
-    this.userService.updateUser(
-      this.loggedUser.id,
-      null,
-      null,
-      country,
-      null,
-      null,
-      null
-    ).pipe(take(1)).subscribe();
-    this.modal.dismiss();
+  selectCountry() {
+    this.modalCtrl.create({ component: PickAThingComponent, componentProps: {
+        countries: this.countries,
+        selectedCountry: this.loggedUser.country
+      }}).then(modalEl => {
+      modalEl.onDidDismiss().then(modal => {
+        if (modal.data) {
+          console.log("countrySelectionChanged", modal.data);
+          this.userService.updateUser(
+            this.loggedUser.id,
+            null,
+            null,
+            modal.data,
+            null,
+            null,
+            null
+          ).pipe(take(1)).subscribe();
+        }
+      });
+      modalEl.present();
+    })
   }
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
