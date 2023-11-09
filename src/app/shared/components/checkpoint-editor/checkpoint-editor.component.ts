@@ -163,18 +163,7 @@ export class CheckpointEditorComponent implements OnInit {
   }
 
   onImagePick(imageData: string | File) {
-    let imageFile;
-    if (typeof imageData === 'string') {
-      try {
-        imageFile = this.imageService.convertbase64toBlob(imageData);
-      } catch (error) {
-        console.log("error", error);
-        return;
-      }
-    } else {
-      imageFile = imageData
-    }
-    this.checkpointForm.patchValue({imgUrl: imageFile})
+    this.checkpointForm.patchValue({imgUrl: imageData})
   }
 
 }

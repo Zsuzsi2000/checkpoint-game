@@ -21,7 +21,6 @@ export class FavouriteComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.favouritesSub = this.authService.user.subscribe(user => {
-      console.log("user", user);
       if (user) {
         this.favouriteGames = user.favouriteGames;
         this.userId = user.id;

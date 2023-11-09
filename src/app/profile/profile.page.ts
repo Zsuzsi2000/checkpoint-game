@@ -109,7 +109,6 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     if (this.loadedUserId && this.firstTime) {
-      console.log("ionViewWillEnter fetch data");
       this.gamesAreLoading = true;
       this.userIsLoading = true;
       this.userService.getUserById(this.loadedUserId).subscribe(user => {
@@ -157,7 +156,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   togglePicture() {
     this.modalCtrl.create({ component: ImagePickerModalComponent, componentProps: { loadedPicture: this.loadedUser.picture}}).then(modaEl => {
       modaEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
         if (modalData.data) {
           this.updatePicture(modalData.data)
         }
@@ -167,14 +165,12 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   updateUsername(username: string) {
-    console.log("update username", username);
     this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe(response => {
       console.log("response", response);
     })
   }
 
   updatePicture(picture: string | File) {
-    console.log("update picture", picture);
     const imageFile = this.onImagePick(picture);
     if (imageFile) {
       this.loadingCtrl.create({
@@ -246,7 +242,6 @@ export class ProfilePage implements OnInit, OnDestroy {
           text: "Delete",
           handler: () => {
             this.gamesService.deleteGame(id).subscribe(res => {
-              console.log(res);
               this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
                 this.loadedOwnGames = games;
               });
@@ -287,7 +282,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       }}).then(modalEl => {
       modalEl.onDidDismiss().then(modal => {
         if (modal.data) {
-          console.log("countrySelectionChanged", modal.data);
           this.userService.updateUser(
             this.loggedUser.id,
             null,
@@ -305,11 +299,9 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     this.listGames = (event.detail.value === 'games');
-    console.log("change list", event.detail.value)
   }
 
   onImagePick(imageData: string | File) {
-    console.log(imageData);
     let imageFile;
     if (typeof imageData === 'string') {
       try {

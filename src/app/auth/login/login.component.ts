@@ -95,7 +95,6 @@ export class LoginComponent implements OnInit {
   }
 
   setUserData(userData: AuthResponseData) {
-    console.log("setUserData");
     const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
     this.userService.getUserByEmail(userData.email).pipe(take(1)).subscribe(user => {
       let currentUser = new User(
@@ -141,7 +140,6 @@ export class LoginComponent implements OnInit {
   setNewPassword(email: string) {
     this.authService.sendPasswordResetEamil(email).subscribe(
       resData => {
-        console.log("setNewPassword", resData);
         this.showAlert("You can set a new password if you follow the instructions in the email",
           "Password change email has been sent");
       },

@@ -36,9 +36,7 @@ export class ImagePickerComponent implements OnInit {
   }
 
   onPickImage() {
-    console.log(Capacitor.isPluginAvailable('Camera'));
     if (!Capacitor.isPluginAvailable('Camera')) {
-      console.log("click native");
       this.filePickerRef.nativeElement.click();
       return;
     }
@@ -83,19 +81,14 @@ export class ImagePickerComponent implements OnInit {
 
   onFileChosen(event: Event) {
     const pickedFile = (event.target as HTMLInputElement).files[0];
-    console.log("pickedFile", pickedFile);
     let result;
 
     if (!pickedFile) {
-      console.log(event, pickedFile);
       return;
     }
     const fr = new FileReader();
-    console.log("pickedFile", pickedFile);
     fr.onload = () => {
-      console.log("pickedFile", pickedFile, fr.result);
       const dataUrl = fr.result.toString();
-
       console.warn(
         `Original: ${dataUrl.substring(0, 50)}... (${dataUrl.length} characters)`
       );

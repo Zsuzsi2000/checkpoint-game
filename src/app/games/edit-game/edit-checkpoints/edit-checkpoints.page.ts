@@ -46,38 +46,15 @@ export class EditCheckpointsPage implements OnInit {
     this.checkpoints = JSON.parse(this.route.snapshot.queryParamMap.get('checkpoints'));
     if (this.lng !== null && this.lat !== null) {
       this.center = { lat: this.lat, lng: this.lng };
-      console.log("center", this.center);
     }
   }
 
   ngOnInit() {}
 
   updateCheckpoints(event: {
-    checkpoints: {checkpoint: Checkpoint, imageFile: File}[],
+    checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[],
     mapUrl: string
   }) {
-    console.log("event", event);
-    // let checks = event.checkpoints.map(data => {
-    //   console.log(data);
-    //   if (data.imageFile) {
-    //     const reader = new FileReader();
-    //     let base64String ;
-    //     reader.onload = (event) => {
-    //       base64String = event.target.result; // This is the Base64-encoded image
-    //       console.log(base64String);
-    //       return { checkpoint: data.checkpoint, imageFile: base64String };
-    //     };
-    //     reader.readAsDataURL(data.imageFile);
-    //
-    //     // return { checkpoint: data.checkpoint, imageFile: base64String };
-    //   } else {
-    //     return { checkpoint: data.checkpoint, imageFile: null };
-    //   }
-    // });
-    //
-    // Preferences.set({key: 'checkpoints', value: JSON.stringify(checks)});
-    // console.log(JSON.stringify(checks));
-
     this.router.navigate(['/', 'games', 'edit-game', this.gameId], {
       queryParams: {
         checkpoints: JSON.stringify(event.checkpoints),

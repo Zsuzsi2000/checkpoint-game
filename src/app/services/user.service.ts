@@ -27,7 +27,6 @@ export class UserService implements OnInit {
   }
 
   createUser(userData: AuthResponseData, username: string, country: string) {
-    console.log("createUser");
     const newUser: UserData = {
       id: null,
       email: userData.email,
@@ -95,7 +94,6 @@ export class UserService implements OnInit {
   }
 
   fetchUsers() {
-    console.log("fetchUsers");
     return this.http.get<{ [key: string]: UserData }>("https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/users.json")
       .pipe(
         map(data => {
@@ -129,7 +127,6 @@ export class UserService implements OnInit {
              gameId: string,
              addFavourite: boolean) {
 
-    console.log("updateUser", gameId, addFavourite)
     let updatedUsers: UserData[];
     let updatedUserIndex: number;
     return this.users.pipe(
@@ -142,11 +139,9 @@ export class UserService implements OnInit {
         }
       }),
       switchMap(users => {
-        console.log("users", users )
         updatedUserIndex = users.findIndex(u => u.id === id);
         updatedUsers = [...users];
         const old: UserData = updatedUsers[updatedUserIndex];
-        console.log("old", updatedUsers[updatedUserIndex] );
         if (old.favouriteGames === undefined || null) {
           old.favouriteGames = [];
         }

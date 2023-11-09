@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {Checkpoint} from "../../../models/checkpoint.model";
-import {ItemReorderEventDetail, ModalController} from "@ionic/angular";
+import {AlertController, ItemReorderEventDetail, ModalController} from "@ionic/angular";
 import {CheckpointEditorComponent} from "../checkpoint-editor/checkpoint-editor.component";
 import {LocationType} from "../../../enums/LocationType";
 import {Coordinates, Location} from "../../../interfaces/Location";
@@ -18,20 +18,21 @@ import {forkJoin, of} from "rxjs";
 })
 export class CheckpointsEditorComponent implements OnInit {
 
-  @Input() checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob}[]  = [];
+  @Input() checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[]  = [];
   @Input() center!: Coordinates;
   @Input() locationType!: LocationType;
   @Input() quiz!: boolean;
-  @Output() checkpointsDone = new EventEmitter<{ checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob}[], mapUrl: string}>();
+  @Output() checkpointsDone = new EventEmitter<{ checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[], mapUrl: string}>();
   reorderMode = false;
   LocationType = LocationType;
   checkpointsOnMap: string;
   isLoading = false;
 
-  constructor(private modalCtrl: ModalController, private http: HttpClient) { }
+  constructor(private modalCtrl: ModalController,
+              private http: HttpClient,
+              private alertController: AlertController) { }
 
   ngOnInit() {
-    console.log(this.center);
     if (this.locationType === LocationType.location || this.locationType === LocationType.description) {
       this.setUpCoords();
     }
@@ -73,7 +74,27 @@ export class CheckpointsEditorComponent implements OnInit {
   }
 
   selectOnMap() {
-    console.log("checkpoints", this.checkpoints, this.checkpoints.map( bigCheckpoint => bigCheckpoint.checkpoint));
+    this.alertController
+      .create({
+        header: 'Select checkpoints on map',
+        message: 'You can select checkpoints location by click, but after that you should edit this checkpoints.',
+        buttons: [
+          {
+            text: 'Okay',
+            handler: () => {
+              this.createChekpointsMapModal();
+            }
+          },
+          {
+            text: "Cancel",
+            role: "cancel"
+          }
+        ]
+      })
+      .then(alertEl => alertEl.present());
+  }
+
+  createChekpointsMapModal() {
     this.modalCtrl.create({
       component: CheckpointsMapModalComponent,
       componentProps: (this.checkpoints && this.checkpoints.length > 0)
@@ -81,7 +102,6 @@ export class CheckpointsEditorComponent implements OnInit {
         : { center: this.center }
     }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
         const observables = [];
         const actualLength = this.checkpoints.length;
         if (modalData.data) {
@@ -110,7 +130,6 @@ export class CheckpointsEditorComponent implements OnInit {
           })
         }
         forkJoin(observables).subscribe( (data: {location: Location, index: number}[]) => {
-          console.log("data", data);
           data.forEach(d => {
             let newCheckpoint = new Checkpoint(actualLength + d.index,null,null, null, null, d.location, null, null);
             this.checkpoints.push({ checkpoint: newCheckpoint, imageFile: null});
@@ -133,7 +152,6 @@ export class CheckpointsEditorComponent implements OnInit {
       componentProps: { locationType: this.locationType, isQuiz: this.quiz, center: this.center }
     }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
         if (modalData.data) {
           (modalData.data.checkpoint as Checkpoint).index = this.checkpoints.length;
           this.checkpoints.push({ checkpoint: modalData.data.checkpoint, imageFile: modalData.data.imageFile });
@@ -147,17 +165,14 @@ export class CheckpointsEditorComponent implements OnInit {
   }
 
   editCheckpoint(data: {checkpoint: Checkpoint, imageFile: File | Blob}) {
-    console.log(data,"editedCheckpoint");
     this.modalCtrl.create({
       component: CheckpointEditorComponent,
       componentProps: { locationType: this.locationType, isQuiz: this.quiz, center: this.center, checkpoint: data.checkpoint, imageFile: data.imageFile }
     }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data, this.checkpoints);
         if (modalData.data) {
           let editedIndex = this.checkpoints.findIndex(checkpoint => checkpoint.checkpoint.index === modalData.data.checkpoint.index);
           this.checkpoints[editedIndex] = { checkpoint: modalData.data.checkpoint, imageFile: modalData.data.imageFile };
-          console.log(this.checkpoints[editedIndex], this.checkpoints);
         }
       });
       modalEl.present();
@@ -204,7 +219,6 @@ export class CheckpointsEditorComponent implements OnInit {
   private getAddress(lat: number, lng: number) {
     return this.http.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${environment.googleMapsAPIKey}`)
       .pipe(map((geoData: any) => {
-        console.log(geoData);
         if (!geoData || !geoData.results || geoData.results.length === 0) {
           return null;
         }

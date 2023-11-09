@@ -27,7 +27,7 @@ export class CreateGamePage implements OnInit {
   LocationType = LocationType;
   LocationIdentification = LocationIdentification;
   checkpointsReady = false;
-  checkpoints: {checkpoint: Checkpoint, imageFile: File}[] = [];
+  checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[] = [];
   mapUrl = "";
 
   constructor(private gamesService: GamesService,
@@ -58,35 +58,21 @@ export class CreateGamePage implements OnInit {
     this.gamesService.fetchCategories().pipe(take(1)).subscribe(categories => {
       if (categories) {
         this.categories = categories;
-        console.log(this.categories, this.categories[0].name)
       }
     })
   }
 
   ionViewWillEnter() {
     if (this.activatedRoute.snapshot.queryParamMap.has('checkpoints')) {
-      console.log(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
-      let checks = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
-      console.log(checks);
-      this.checkpoints = checks.map(data => {
-        let checkpoint = JSON.parse(data.checkpoint) as Checkpoint;
-        let image = JSON.parse(data.imageFile) as File | Blob;
-        return {
-          checkpoint: checkpoint,
-          imageFile: image
-        }
-      });
-      console.log(this.checkpoints);
+      this.checkpoints = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
       this.checkpointsReady = true;
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('mapUrl')) {
-      console.log(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
       this.mapUrl = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
     }
   }
 
   createGame() {
-    console.log("game", this.gameForm);
     let category = (this.gameForm.value.category === 'otherCategory')
       ? this.gameForm.value.newCategory
       : this.gameForm.value.category;
@@ -116,8 +102,6 @@ export class CreateGamePage implements OnInit {
           return of(null);
         }),
         switchMap(check => {
-          console.log('check', check);
-
           if (check) {
             checkpoints = check;
           }
@@ -128,8 +112,6 @@ export class CreateGamePage implements OnInit {
           return of(null);
         }),
         switchMap(uploadResponse => {
-          console.log('EuploadResponse', uploadResponse);
-
           imageUrl = (uploadResponse)
             ? uploadResponse.imageUrl
             : (this.gameForm.value.pointOfDeparture) ? (this.gameForm.value.pointOfDeparture as Location).staticMapImageUrl : null;
@@ -142,8 +124,6 @@ export class CreateGamePage implements OnInit {
           return of(null);
         }),
         switchMap(uploadResponse => {
-          console.log('EuploadResponse', uploadResponse);
-
           checkpoints = checkpoints.sort((a, b) =>  a.index < b.index ? -1 : (a.index > b.index ? 1 : 0));
 
           let mapUrl = (uploadResponse) ? uploadResponse.imageUrl : null;
@@ -171,32 +151,26 @@ export class CreateGamePage implements OnInit {
   }
 
   uploadImages() {
-    console.log("uploaded");
-
     let checkpoints: Checkpoint[] = [];
     const observables = [];
     this.checkpoints.forEach(data => {
       if(data.imageFile) {
-        observables.push(this.imageService.uploadImage(data.imageFile).pipe(map(uploaded => {
+        let imageFile = this.convertToBlob(data.imageFile);
+        observables.push(this.imageService.uploadImage(imageFile).pipe(map(uploaded => {
           data.checkpoint.imgUrl = uploaded.imageUrl;
-          console.log("uploaded", uploaded);
           return data.checkpoint;
         })));
       } else if (data.checkpoint.locationAddress && data.checkpoint.locationAddress.staticMapImageUrl) {
         data.checkpoint.imgUrl = data.checkpoint.locationAddress.staticMapImageUrl;
         checkpoints.push(data.checkpoint);
-        console.log("checkpoints", checkpoints);
       } else {
         checkpoints.push(data.checkpoint);
-        console.log("checkpoints", checkpoints);
-
       }
     });
 
     return (observables.length > 0)
       ? (forkJoin(observables).pipe(
         map(result => {
-          console.log(result);
           checkpoints = checkpoints.concat(result as Checkpoint[]);
           return checkpoints;
         })))
@@ -204,11 +178,9 @@ export class CreateGamePage implements OnInit {
   }
 
   handleGameCreationSuccess(gameId, category, loadingEl) {
-    console.log("game success", gameId);
     loadingEl.dismiss();
     if (this.categories.find(c => c.name === category) === undefined) {
       this.gamesService.createCategory(category).subscribe(categories => {
-        console.log("categories", categories);
         this.categories = categories;
       });
     }
@@ -231,7 +203,6 @@ export class CreateGamePage implements OnInit {
         lng: (this.gameForm.value.pointOfDeparture) ? this.gameForm.value.pointOfDeparture.lng : null,
       }
     });
-    console.log("open", this.gameForm.value.locationType, this.gameForm.value.quiz, this.gameForm.value.pointOfDeparture);
   }
 
   selectCountry() {
@@ -241,7 +212,6 @@ export class CreateGamePage implements OnInit {
       }}).then(modalEl => {
         modalEl.onDidDismiss().then(modal => {
           if (modal.data) {
-            console.log("countrySelectionChanged", modal.data);
             this.selectedCountry = modal.data;
           }
         });
@@ -253,8 +223,16 @@ export class CreateGamePage implements OnInit {
     this.gameForm.patchValue({pointOfDeparture: location})
   }
 
-  onImagePick(imageData: string | File, type: string) {
-    console.log(imageData);
+  onImagePick(imageData: string | File | Blob, type: string) {
+    let imageFile = this.convertToBlob(imageData);
+    if (type === 'image') {
+      this.gameForm.patchValue({imgUrl: imageFile});
+    } else {
+      this.gameForm.patchValue({mapUrl: imageFile});
+    }
+  }
+
+  convertToBlob(imageData: string | File | Blob) {
     let imageFile;
     if (typeof imageData === 'string') {
       try {
@@ -264,13 +242,9 @@ export class CreateGamePage implements OnInit {
         return;
       }
     } else {
-      imageFile = imageData
+      imageFile = imageData;
     }
-    if (type === 'image') {
-      this.gameForm.patchValue({imgUrl: imageFile})
-    } else {
-      this.gameForm.patchValue({mapUrl: imageFile})
-    }
+    return imageFile;
   }
 
 }

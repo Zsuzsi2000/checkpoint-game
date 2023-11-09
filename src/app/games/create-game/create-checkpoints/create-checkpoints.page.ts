@@ -28,28 +28,18 @@ export class CreateCheckpointsPage implements OnInit {
     this.lng = (this.route.snapshot.queryParamMap.get('lng') !== "null") ? Number(this.route.snapshot.queryParamMap.get('lng')) : null;
     if (this.lng !== null && this.lat !== null) {
       this.center = { lat: this.lat, lng: this.lng };
-      console.log("center", this.center);
     }
   }
 
   ngOnInit() {}
 
   addCheckpointToGame(event: {
-    checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob}[],
+    checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[],
     mapUrl: string
   }) {
-    console.log("event", event);
-    let checks = event.checkpoints.map(data => {
-      let checkpoint = JSON.stringify(data.checkpoint);
-      let image = JSON.stringify(data.imageFile);
-      return {
-        checkpoint: checkpoint,
-        imageFile: image
-      }
-    });
     this.router.navigate(['/', 'games', 'create-game'], {
       queryParams: {
-        checkpoints: JSON.stringify(checks),
+        checkpoints: JSON.stringify(event.checkpoints),
         mapUrl: JSON.stringify(event.mapUrl)
       }
     });

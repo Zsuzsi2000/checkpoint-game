@@ -133,7 +133,6 @@ export class GamesService {
              itIsPublic: boolean,
              mapUrl: string,
              checkpoints: Checkpoint[]) {
-    console.log("createGame");
 
     let generatedId: string;
     let fetchedUserId: string;
@@ -324,9 +323,7 @@ export class GamesService {
   }
 
   createCategory(newCat: string) {
-    console.log("createCategory");
     let generatedId: string;
-
     return this.http.post<{ name: string }>('https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/categories.json',
       {name: newCat})
       .pipe(

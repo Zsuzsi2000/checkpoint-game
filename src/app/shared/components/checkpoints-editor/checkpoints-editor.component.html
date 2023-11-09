@@ -31,7 +31,6 @@
                 <ion-buttons slot="end">
                   <ion-button (click)="editCheckpoint(checkpoint)"><ion-icon name="pencil"></ion-icon></ion-button>
                   <ion-button (click)="deleteCheckpoint(checkpoint.checkpoint.index)"><ion-icon name="trash"></ion-icon></ion-button>
-                  <ion-button><ion-icon name="chevron-down-outline"></ion-icon></ion-button>
                 </ion-buttons>
                 <ion-reorder slot="end"></ion-reorder>
               </ng-container>
@@ -40,7 +39,6 @@
                 <ion-buttons slot="end">
                   <ion-button color="danger" slot="icon-only" shape="round" fill="solid" (click)="editCheckpoint(checkpoint)"><ion-icon name="pencil"></ion-icon></ion-button>
                   <ion-button (click)="deleteCheckpoint(checkpoint.checkpoint.index)"><ion-icon name="trash"></ion-icon></ion-button>
-                  <ion-button [disabled]><ion-icon name="chevron-down-outline"></ion-icon></ion-button>
                 </ion-buttons>
                 <ion-reorder slot="end"></ion-reorder>
               </ng-template>

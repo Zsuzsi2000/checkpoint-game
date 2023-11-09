@@ -18,10 +18,11 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
   coordinates: Coordinates[] = [];
   clickListener: any;
   markerClickListeners: any[] = [];
-  markerDragListeners: any[] = [];
+  // markerDragListeners: any[] = [];
   googleMaps: any;
   map: any;
   infoWindow: any;
+  marker: any;
 
   constructor(private modalCtrl: ModalController,
               private renderer: Renderer2) { }
@@ -31,7 +32,10 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.getGoogleMaps()
       .then(googleMaps => {
-        console.log(googleMaps);
+        // googleMaps.importLibrary("marker").then(m => {
+        //   this.marker = m;
+        //   this.init(googleMaps);
+        // });
         this.init(googleMaps);
       })
       .catch(err => {
@@ -42,11 +46,10 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
   init(googleMaps) {
     this.googleMaps = googleMaps;
     const mapEl = this.mapElementRef.nativeElement;
-
-    console.log(this.googleMaps, this.center);
     this.map = new googleMaps.Map( mapEl, {
       center: this.center,
-      zoom: 12
+      zoom: 12,
+      // mapId: "DEMO_MAP_ID",
     });
 
     googleMaps.event.addListenerOnce(this.map, 'idle', () => {
@@ -93,7 +96,7 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
   addMarkerAndListenerToCoords(coords: Coordinates) {
     let index = this.checkpoints.length + this.coordinates.length;
     this.coordinates.push(coords);
-    // const style = new this.googleMaps.marker.PinElement({
+    // const style = new this.marker.PinElement({
     //   background: 'red',
     //   borderColor: '',
     //   glyphColor: '',
@@ -102,7 +105,7 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
     const marker = new this.googleMaps.Marker({
       position: coords,
       map: this.map,
-      gmpDraggable: true,
+      // gmpDraggable: true,
       title: `${index + 1}.`,
       // content: style.element
     });
@@ -113,17 +116,15 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
       this.infoWindow.open(marker.map, marker);
     }));
 
-    this.markerDragListeners.push(marker.addListener('dragend', (event) => {
-      this.infoWindow.close();
-      console.log(event, marker, this.coordinates, this.coordinates[+marker.title-this.checkpoints.length]);
-      this.coordinates[+marker.title-this.checkpoints.length] =  marker.position;
-      console.log(event, marker, this.coordinates, this.coordinates[+marker.title-this.checkpoints.length]);
-      this.infoWindow.open(marker.map, marker);
-    }));
+    // this.markerDragListeners.push(marker.addListener('dragend', (event) => {
+    //   this.infoWindow.close();
+    //   this.coordinates[+marker.title-this.checkpoints.length] =  marker.position;
+    //   this.infoWindow.open(marker.map, marker);
+    // }));
   }
 
   addMarkerAndListenerToCheckpoint(coords: Coordinates, index: number, title: string = "") {
-    // const style = new this.googleMaps.marker.PinElement({
+    // const style = new this.marker.PinElement({
     //   background: 'blue',
     //   borderColor: '',
     //   glyphColor: '',
@@ -152,6 +153,7 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsAPIKey}&callback=initMap`;
+      // script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsAPIKey}&libraries=places,marker&callback=initMap`;
       script.async = true;
       script.defer = true;
       document.body.appendChild(script);
@@ -173,9 +175,9 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
     this.markerClickListeners.forEach(markerListener => {
       this.googleMaps.event.removeListener(markerListener);
     });
-    this.markerDragListeners.forEach(markerListener => {
-      this.googleMaps.event.removeListener(markerListener);
-    });
+    // this.markerDragListeners.forEach(markerListener => {
+    //   this.googleMaps.event.removeListener(markerListener);
+    // });
 
   }
 

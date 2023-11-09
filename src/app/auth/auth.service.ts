@@ -193,7 +193,6 @@ export class AuthService implements OnDestroy {
   }
 
   setUserWhenLoggedIn(user: User, token: string, expirationTime: Date) {
-    console.log("setUserData");
     this._user.next(user);
     this.autoLogout(user.tokenDuration);
     this.storeAuthData(user.id, token, expirationTime.toISOString(), user.email);

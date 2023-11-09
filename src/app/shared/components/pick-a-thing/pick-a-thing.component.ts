@@ -22,8 +22,6 @@ export class PickAThingComponent implements OnInit {
 
   ngOnInit() {
     this.workingSelectedCountry = this.selectedCountry;
-    console.log("countries", this.countries)
-
   }
 
   cancelChanges() {

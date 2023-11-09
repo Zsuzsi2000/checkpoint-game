@@ -94,10 +94,8 @@ export class SignupComponent implements OnInit {
         )
         .subscribe(
           (resData: {kind: any, users: any}) => {
-            console.log("users", resData.users)
             if (resData.users && resData.users[0].emailVerified) {
               doItAgain = false;
-              console.log("setData");
               this.isLoading = false;
               loadingEl.dismiss();
               this.showAlert("Email verification was successful!", "Authentication succeeded");

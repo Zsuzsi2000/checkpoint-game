@@ -30,7 +30,7 @@ export class EditGamePage implements OnInit {
   selectedCountry: string = "";
   LocationType = LocationType;
   LocationIdentification = LocationIdentification;
-  checkpoints: { checkpoint: Checkpoint, imageFile: File }[] = [];
+  checkpoints: { checkpoint: Checkpoint, imageFile: File | Blob | string }[] = [];
   mapUrl = "";
   isLoading = false;
   first = true;
@@ -53,12 +53,12 @@ export class EditGamePage implements OnInit {
         this.navCtrl.pop();
       }
       this.isLoading = true;
-      if (this.first) {
+
+      if (this.first && this.checkpoints.length === 0) {
         this.gamesService.fetchGame(paramMap.get('gameId')).subscribe(game => {
           this.game = game;
           this.selectedCountry = this.game.country;
           this.isLoading = false;
-          console.log(this.checkpoints)
           game.checkpoints.forEach(checkpoint => {
             this.checkpoints.push({checkpoint: checkpoint, imageFile: null})
           });
@@ -91,7 +91,6 @@ export class EditGamePage implements OnInit {
     this.gamesService.fetchCategories().pipe(take(1)).subscribe(categories => {
       if (categories) {
         this.categories = categories;
-        console.log(this.categories, this.categories[0].name)
       }
     })
   }
@@ -99,13 +98,7 @@ export class EditGamePage implements OnInit {
   ionViewWillEnter() {
     if (this.activatedRoute.snapshot.queryParamMap.has('checkpoints')) {
       console.log(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
-      // console.log(Preferences.get({key: 'checkpoints'}));
-      // Preferences.get({key: 'checkpoints'}).then(checkpoint => {
-      //   console.log(checkpoint);
-      // })
-      // this.checkpoints = JSON.parse(Preferences.get({key: 'checkpoints'}));
-      // this.checkpoints = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
-      // Preferences.remove({ key: 'checkpoints'})
+      this.checkpoints = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('mapUrl')) {
       console.log(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
@@ -214,7 +207,8 @@ export class EditGamePage implements OnInit {
     const observables = [];
     this.checkpoints.forEach(data => {
       if (data.imageFile) {
-        observables.push(this.imageService.uploadImage(data.imageFile).pipe(map(uploaded => {
+        let imageFile = this.convertToBlob(data.imageFile);
+        observables.push(this.imageService.uploadImage(imageFile).pipe(map(uploaded => {
           data.checkpoint.imgUrl = uploaded.imageUrl;
           console.log("uploaded", uploaded);
           return data.checkpoint;
@@ -266,7 +260,6 @@ export class EditGamePage implements OnInit {
     });
 
     return this.getMapImageFromLocations(center, coords, 14);
-    ;
   }
 
   private getMapImageFromLocations(center: Coordinates, coords: Coordinates[], zoom: number): string {
@@ -313,7 +306,16 @@ export class EditGamePage implements OnInit {
     this.gameForm.patchValue({pointOfDeparture: location})
   }
 
-  onImagePick(imageData: string | File, type: string) {
+  onImagePick(imageData: string | File | Blob, type: string) {
+    let imageFile = this.convertToBlob(imageData);
+    if (type === 'image') {
+      this.gameForm.patchValue({imgUrl: imageFile});
+    } else {
+      this.gameForm.patchValue({mapUrl: imageFile});
+    }
+  }
+
+  convertToBlob(imageData: string | File | Blob) {
     console.log(imageData);
     let imageFile;
     if (typeof imageData === 'string') {
@@ -324,13 +326,9 @@ export class EditGamePage implements OnInit {
         return;
       }
     } else {
-      imageFile = imageData
+      imageFile = imageData;
     }
-    if (type === 'image') {
-      this.gameForm.patchValue({imgUrl: imageFile})
-    } else {
-      this.gameForm.patchValue({mapUrl: imageFile})
-    }
+    return imageFile;
   }
 
   showALert() {
