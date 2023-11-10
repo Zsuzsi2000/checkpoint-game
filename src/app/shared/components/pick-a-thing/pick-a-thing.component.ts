@@ -10,8 +10,6 @@ export class PickAThingComponent implements OnInit {
 
   @Input() countries: string[] = [];
   @Input() selectedCountry: string = "";
-  @Output() selectionCancel = new EventEmitter<void>();
-  @Output() selectionChange = new EventEmitter<string>();
 
   title = 'Select country';
   filter: string = "";
@@ -26,12 +24,10 @@ export class PickAThingComponent implements OnInit {
 
   cancelChanges() {
     this.modalCtrl.dismiss();
-    // this.selectionCancel.emit();
   }
 
   confirmChanges() {
     this.modalCtrl.dismiss(this.workingSelectedCountry)
-    // this.selectionChange.emit(this.workingSelectedCountry);
   }
 
   checkboxChange(event) {

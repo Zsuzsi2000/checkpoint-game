@@ -201,6 +201,7 @@ export class CreateGamePage implements OnInit {
         quiz: this.gameForm.value.quiz,
         lat: (this.gameForm.value.pointOfDeparture) ? this.gameForm.value.pointOfDeparture.lat : null,
         lng: (this.gameForm.value.pointOfDeparture) ? this.gameForm.value.pointOfDeparture.lng : null,
+        checkpoints: JSON.stringify(this.checkpoints)
       }
     });
   }

@@ -3,12 +3,3 @@ export enum SortingMode {
   byGameName,
   byPopularity,
 }
-
-// export enum SortingMode {
-//   descendingByCreationDate,
-//   ascendingByCreationDate,
-//   descendingByGameName,
-//   ascendingByGameName,
-//   descendingByPopularity,
-//   ascendingByPopularity
-// }

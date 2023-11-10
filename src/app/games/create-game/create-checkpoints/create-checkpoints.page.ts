@@ -16,6 +16,7 @@ export class CreateCheckpointsPage implements OnInit {
   lat: number;
   lng: number;
   center: Coordinates;
+  checkpoints: {checkpoint: Checkpoint, imageFile: File}[] = [];
 
   constructor(private route: ActivatedRoute, private router: Router) {
     switch (this.route.snapshot.queryParamMap.get('locationType')) {
@@ -26,6 +27,7 @@ export class CreateCheckpointsPage implements OnInit {
     this.quiz = this.route.snapshot.queryParamMap.get('quiz') === "true";
     this.lat = (this.route.snapshot.queryParamMap.get('lat') !== "null") ? Number(this.route.snapshot.queryParamMap.get('lat')) : null;
     this.lng = (this.route.snapshot.queryParamMap.get('lng') !== "null") ? Number(this.route.snapshot.queryParamMap.get('lng')) : null;
+    this.checkpoints = JSON.parse(this.route.snapshot.queryParamMap.get('checkpoints'));
     if (this.lng !== null && this.lat !== null) {
       this.center = { lat: this.lat, lng: this.lng };
     }

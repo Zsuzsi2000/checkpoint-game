@@ -8,6 +8,14 @@ ion-toolbar {
   --color: white;
 }
 
+.filter-group {
+
+  ion-chip {
+    background-color: var(--ion-color-tertiary);
+    color: white;
+  }
+}
+
 ion-icon {
   color: white;
 }
