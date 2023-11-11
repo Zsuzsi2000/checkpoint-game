@@ -65,7 +65,8 @@ export class ProfilePage implements OnInit, OnDestroy {
               username: currentUser.username,
               country: currentUser.country,
               picture: currentUser.picture,
-              favouriteGames: currentUser.favouriteGames
+              favouriteGames: currentUser.favouriteGames,
+              eventsUserSignedUpFor: currentUser.eventsUserSignedUpFor,
             };
             this.userIsLoading = false;
           } else {
@@ -314,6 +315,12 @@ export class ProfilePage implements OnInit, OnDestroy {
       imageFile = imageData
     }
     return imageFile;
+  }
+
+  navigate(gameId: string) {
+    this.router.navigate(['/', 'events', 'create-event'], {
+      queryParams: { gameId: gameId }
+    });
   }
 
   ngOnDestroy() {

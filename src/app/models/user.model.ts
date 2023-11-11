@@ -6,6 +6,7 @@ export class User {
     public country: string,
     public picture: string,
     public favouriteGames: string[],
+    public eventsUserSignedUpFor: string[],
     private _token: string,
     private tokenExpirationDate: Date
   ) {}

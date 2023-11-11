@@ -33,7 +33,8 @@ export class UserService implements OnInit {
       username: username,
       country: country,
       picture: "",
-      favouriteGames: []
+      favouriteGames: [],
+      eventsUserSignedUpFor: []
     };
 
     let generatedId: string;
@@ -66,6 +67,7 @@ export class UserService implements OnInit {
                 data[key].country,
                 data[key].picture,
                 data[key].favouriteGames,
+                data[key].eventsUserSignedUpFor,
                 null,
                 null
               );
@@ -86,6 +88,7 @@ export class UserService implements OnInit {
           userData.country,
           userData.picture,
           userData.favouriteGames,
+          userData.eventsUserSignedUpFor,
           null,
           null
         );
@@ -106,7 +109,8 @@ export class UserService implements OnInit {
                 username: data[key].username,
                 country: data[key].country,
                 picture: data[key].picture,
-                favouriteGames: data[key].favouriteGames
+                favouriteGames: data[key].favouriteGames,
+                eventsUserSignedUpFor: data[key].eventsUserSignedUpFor,
               };
               users.push(user);
             }
@@ -124,8 +128,10 @@ export class UserService implements OnInit {
              username: string,
              country: string,
              picture: string,
-             gameId: string,
-             addFavourite: boolean) {
+             gameId: string = null,
+             addFavourite: boolean = null,
+             eventId: string = null,
+             addEvent: boolean = null) {
 
     let updatedUsers: UserData[];
     let updatedUserIndex: number;
@@ -154,7 +160,10 @@ export class UserService implements OnInit {
           picture: (picture) ? picture : old.picture,
           favouriteGames: (gameId)
             ? ((addFavourite) ? old.favouriteGames.concat(gameId) : old.favouriteGames.filter(g => g != gameId))
-            : old.favouriteGames
+            : old.favouriteGames,
+          eventsUserSignedUpFor: (eventId)
+            ? ((addEvent) ? old.eventsUserSignedUpFor.concat(eventId) : old.eventsUserSignedUpFor.filter(g => g != eventId))
+            : old.eventsUserSignedUpFor,
         };
 
         return this.http.put(

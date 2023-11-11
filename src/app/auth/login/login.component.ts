@@ -104,6 +104,7 @@ export class LoginComponent implements OnInit {
         user.country,
         user.picture,
         (user.favouriteGames) ? user.favouriteGames : [],
+        (user.eventsUserSignedUpFor) ? user.eventsUserSignedUpFor : [],
         userData.idToken,
         expirationTime
       );

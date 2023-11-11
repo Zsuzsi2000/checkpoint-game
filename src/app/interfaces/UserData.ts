@@ -5,4 +5,5 @@ export interface UserData {
   country: string;
   picture: string;
   favouriteGames: string[];
+  eventsUserSignedUpFor: string[];
 }

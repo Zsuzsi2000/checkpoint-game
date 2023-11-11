@@ -165,11 +165,7 @@ export class AuthService implements OnDestroy {
           return null;
         }
         const parsedData = JSON.parse((storedData as { key: string; value: string }).value) as {
-          id: string;
-          email: string;
-          username: string;
-          country: string;
-          picture: string;
+          user: User;
           token: string;
           tokenExpirationDate: string;
         };
@@ -177,8 +173,8 @@ export class AuthService implements OnDestroy {
         if (expirationTime <= new Date()) {
           return null;
         }
-        return new User(parsedData.id, parsedData.email, parsedData.username, parsedData.country,
-          parsedData.picture, [], parsedData.token, expirationTime);
+        return new User(parsedData.user.id, parsedData.user.email, parsedData.user.username, parsedData.user.country,
+          parsedData.user.picture, parsedData.user.favouriteGames, parsedData.user.eventsUserSignedUpFor, parsedData.token, expirationTime);
       }),
       tap(user => {
         if (user) {
@@ -195,26 +191,27 @@ export class AuthService implements OnDestroy {
   setUserWhenLoggedIn(user: User, token: string, expirationTime: Date) {
     this._user.next(user);
     this.autoLogout(user.tokenDuration);
-    this.storeAuthData(user.id, token, expirationTime.toISOString(), user.email);
+    this.storeAuthData(user, token, expirationTime.toISOString());
   }
 
   setUser(user: UserData) {
     this.user.pipe(
       take(1)).subscribe((currentUser) => {
-        currentUser.email = user.email;
-        currentUser.username = user.username;
-        currentUser.country = user.country;
-        currentUser.picture = user.picture;
-        currentUser.favouriteGames = user.favouriteGames;
+      currentUser.email = user.email;
+      currentUser.username = user.username;
+      currentUser.country = user.country;
+      currentUser.picture = user.picture;
+      currentUser.favouriteGames = user.favouriteGames;
+      currentUser.eventsUserSignedUpFor = user.eventsUserSignedUpFor;
       console.log("setUserData", currentUser);
       this._user.next(currentUser);
     });
   }
 
-  verifyEmail(token: string): Observable<{success: boolean, message: string}> {
-    return new Observable<{success: boolean, message: string}>((observer ) => {
+  verifyEmail(token: string): Observable<{ success: boolean, message: string }> {
+    return new Observable<{ success: boolean, message: string }>((observer) => {
       this.isLoading = true;
-      this.loadingCtrl.create({ keyboardClose: true, message: 'Sending an email to you...' }).then(loadingEl => {
+      this.loadingCtrl.create({keyboardClose: true, message: 'Sending an email to you...'}).then(loadingEl => {
         loadingEl.present();
         let doItAgain = true;
 
@@ -256,7 +253,8 @@ export class AuthService implements OnDestroy {
               case "EMAIL_EXISTS": {
                 message = "The email address is already in use by another account.";
                 break;
-              }            }
+              }
+            }
             this.showAlert(message, "Email is not verified");
             observer.next({success: false, message: message});
             observer.complete();
@@ -266,12 +264,11 @@ export class AuthService implements OnDestroy {
     });
   }
 
-  private storeAuthData(userId: string, token: string, tokenExpirationDate: string, email: string) {
+  private storeAuthData(user: User, token: string, tokenExpirationDate: string) {
     const data = JSON.stringify({
-      userId: userId,
+      user: user,
       token: token,
       tokenExpirationDate: tokenExpirationDate,
-      email: email
     });
     Preferences.set({key: 'authData', value: data});
   }

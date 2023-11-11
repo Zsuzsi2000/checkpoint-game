@@ -1,9 +1,12 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>create-event</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/games"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Event creating</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <app-edit-event *ngIf="!!gameId" [gameId]="gameId" (done)="navigateToEvent($event)"></app-edit-event>
 </ion-content>

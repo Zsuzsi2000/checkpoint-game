@@ -14,6 +14,7 @@ import {ImagePickerModalComponent} from "./components/image-picker-modal/image-p
 import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpoints-map-modal.component";
 import {FavouriteComponent} from "./components/favourite/favourite.component";
 import {PickThingsComponent} from "./components/pick-things/pick-things.component";
+import {EditEventComponent} from "./components/edit-event/edit-event.component";
 
 
 
@@ -29,7 +30,8 @@ import {PickThingsComponent} from "./components/pick-things/pick-things.componen
     ImagePickerModalComponent,
     CheckpointsMapModalComponent,
     FavouriteComponent,
-    PickThingsComponent
+    PickThingsComponent,
+    EditEventComponent
   ],
   imports: [
     CommonModule,
@@ -50,7 +52,8 @@ import {PickThingsComponent} from "./components/pick-things/pick-things.componen
     ImagePickerModalComponent,
     CheckpointsMapModalComponent,
     FavouriteComponent,
-    PickThingsComponent
+    PickThingsComponent,
+    EditEventComponent
   ]
 })
 export class SharedModule { }

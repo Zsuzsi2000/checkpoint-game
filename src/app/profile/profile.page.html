@@ -144,8 +144,7 @@
                       <ion-icon slot="end" name="arrow-forward"></ion-icon>
                     </ion-button>
                     <ion-button *ngIf="loggedUser" class="colored custom-align-item margin-top" fill="solid"
-                                size="small" shape="round"
-                                [routerLink]="['/', 'events', 'create-event']">
+                                size="small" shape="round" (click)="navigate(game.id)">
                       Create event
                       <ion-icon slot="end" name="arrow-forward"></ion-icon>
                     </ion-button>

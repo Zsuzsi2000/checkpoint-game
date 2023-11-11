@@ -220,7 +220,7 @@ export class GamesService {
       }),
       switchMap(games => {
         const updatedGameIndex = games.findIndex(g => g.id === id);
-        const updatedGames = [...games];
+        updatedGames = [...games];
         const old = updatedGames[updatedGameIndex];
         updatedGames[updatedGameIndex] = new Game(old.id, name, updatedGames[updatedGameIndex].creatorName, locationType, locationIdentification, country,
           pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId, mapUrl, checkpoints, numberOfAttempts, creationDate, ratings);

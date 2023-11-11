@@ -1,0 +1,117 @@
+<form [formGroup]="eventForm" (ngSubmit)="createEvent()">
+  <ion-list class="ion-padding" lines="none">
+    <ion-item>
+      <ion-label position="stacked">Name of the event *</ion-label>
+      <ion-input
+        type="text"
+        labelPlacement="stacked"
+        placeholder="Enter an event name"
+        formControlName="name"
+      ></ion-input>
+    </ion-item>
+    <ion-item
+      *ngIf="(!eventForm.get('name').valid && eventForm.get('name').touched)"
+      lines="none">
+      <ion-label color="danger">
+        Name is required.
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-datetime [showDefaultButtons]="true"
+                    [value]="defaultDate"
+                    [min]="today"
+                    (ionChange)="setDate($event)"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Available for everyone?</ion-label>
+      <ion-toggle formControlName="isItPublic" labelPlacement="start" value="false" color="secondary"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label class="ion-text-center">
+        Pick an image for the event
+      </ion-label>
+    </ion-item>
+    <app-image-picker (imagePick)="onImagePick($event)"
+                      [showPreview]="eventForm.get('imgUrl').value"
+                      [previewImage]="eventForm.get('imgUrl').value"></app-image-picker>
+    <ion-item>
+      <ion-label position="stacked">Description</ion-label>
+      <ion-textarea label="Description"
+                    labelPlacement="stacked"
+                    formControlName="description"
+                    placeholder="Give a description of the checkpoint">
+      </ion-textarea>
+    </ion-item>
+<!--    <ion-item>-->
+<!--      <ion-select label="Stacked label" label-placement="stacked">-->
+<!--        <ion-select-option value="apple">Apple</ion-select-option>-->
+<!--        <ion-select-option value="banana">Banana</ion-select-option>-->
+<!--        <ion-select-option value="orange">Orange</ion-select-option>-->
+<!--      </ion-select>-->
+<!--    </ion-item>-->
+    <ion-item>
+      <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="GameMode.againstEachOther">
+        <ion-segment-button [value]="GameMode.againstEachOther">
+          <ion-label>AGAINST<br>EACH<br>OTHER</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="GameMode.teamGame">
+          <ion-label>TEAM<br>GAME</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="GameMode.teamVsTeam">
+          <ion-label>TEAM<br>VS<br>TEAM</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-item>
+    <ng-container *ngIf="eventForm.get('liveGameSettings').get('gameMode') === GameMode.teamVsTeam">
+      <ion-item>
+        <ion-label position="floating">Number of teams</ion-label>
+        <ion-input
+          type="number"
+          labelPlacement="floating"
+          placeholder="Enter the number of teams"
+          formControlName="maxTeam"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Number of team members</ion-label>
+        <ion-input
+          type="number"
+          labelPlacement="floating"
+          placeholder="Enter the maximum number of people in a team"
+          formControlName="maxTeamMember"
+        ></ion-input>
+      </ion-item>
+    </ng-container>
+    <ng-container *ngIf="eventForm.get('liveGameSettings').get('gameMode') === GameMode.teamGame">
+      <ion-item>
+        <ion-label position="floating">Number of members</ion-label>
+        <ion-input
+          type="number"
+          labelPlacement="floating"
+          placeholder="Enter the number of members"
+          formControlName="maxTeam"
+        ></ion-input>
+      </ion-item>
+    </ng-container>
+    <ng-container *ngIf="eventForm.get('liveGameSettings').get('gameMode') === GameMode.againstEachOther">
+      <ion-item>
+        <ion-label position="floating">Number of members</ion-label>
+        <ion-input
+          type="number"
+          labelPlacement="floating"
+          placeholder="Enter the number of members"
+          formControlName="maxTeamMember"
+        ></ion-input>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+  <ion-button
+    class="ion-text-center ion-justify-content-center ion-no-margin"
+    type="submit"
+    expand="full"
+    color="secondary"
+    [disabled]="!eventForm.valid">
+    <ion-label>Save the event</ion-label>
+  </ion-button>
+</form>
+

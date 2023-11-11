@@ -83,8 +83,7 @@
     <ion-row class="ion-padding">
       <ion-col class="ion-no-padding">
         <ion-buttons class="ion-justify-content-between">
-          <ion-button color="secondary" fill="solid" size="small" shape="round"
-                      [routerLink]="['/', 'events', 'create-event']">
+          <ion-button color="secondary" fill="solid" size="small" shape="round" (click)="navigate()">
             Create event
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>

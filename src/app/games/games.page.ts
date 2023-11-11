@@ -11,6 +11,7 @@ import {AlertController, ModalController} from "@ionic/angular";
 import {CountryService} from "../services/country.service";
 import {PickThingsComponent} from "../shared/components/pick-things/pick-things.component";
 import {User} from "../models/user.model";
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -50,6 +51,7 @@ export class GamesPage implements OnInit, OnDestroy {
               private authService: AuthService,
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
+              private router: Router,
               private countryService: CountryService) { }
 
   ngOnInit() {
@@ -235,6 +237,12 @@ export class GamesPage implements OnInit, OnDestroy {
       (this.filtersObject.ownCountry !== null) ? ["Own country"] : []);
 
     console.log(this.filters, this.filtersObject);
+  }
+
+  navigate(gameId: string) {
+    this.router.navigate(['/', 'events', 'create-event'], {
+      queryParams: { gameId: gameId }
+    });
   }
 
   ngOnDestroy(): void {

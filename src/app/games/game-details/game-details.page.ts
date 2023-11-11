@@ -92,10 +92,10 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     // })
   }
 
-  ngOnDestroy(): void {
-    if (this.gameSub) {
-      this.gameSub.unsubscribe();
-    }
+  navigate() {
+    this.router.navigate(['/', 'events', 'create-event'], {
+      queryParams: { gameId: this.game.id }
+    });
   }
 
   showALert() {
@@ -140,6 +140,12 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   editGame(id: string) {
     this.router.navigate(['/', 'games', 'edit-game', id]);
+  }
+
+  ngOnDestroy(): void {
+    if (this.gameSub) {
+      this.gameSub.unsubscribe();
+    }
   }
 
 }

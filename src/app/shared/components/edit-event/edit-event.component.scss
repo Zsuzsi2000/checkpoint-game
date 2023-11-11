@@ -1,0 +1,9 @@
+ion-segment {
+  --background: white;
+  border: 3px solid var(--ion-color-primary);
+  border-radius: 15px;
+}
+
+ion-segment-button.selected {
+  --background: var(--ion-color-primary);
+}
