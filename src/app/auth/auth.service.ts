@@ -174,7 +174,7 @@ export class AuthService implements OnDestroy {
           return null;
         }
         return new User(parsedData.user.id, parsedData.user.email, parsedData.user.username, parsedData.user.country,
-          parsedData.user.picture, parsedData.user.favouriteGames, parsedData.user.eventsUserSignedUpFor, parsedData.token, expirationTime);
+          parsedData.user.picture, parsedData.user.favouriteGames, parsedData.user.eventsUserSignedUpFor, parsedData.user.savedEvents, parsedData.token, expirationTime);
       }),
       tap(user => {
         if (user) {
@@ -203,6 +203,7 @@ export class AuthService implements OnDestroy {
       currentUser.picture = user.picture;
       currentUser.favouriteGames = user.favouriteGames;
       currentUser.eventsUserSignedUpFor = user.eventsUserSignedUpFor;
+      currentUser.savedEvents = user.savedEvents;
       console.log("setUserData", currentUser);
       this._user.next(currentUser);
     });

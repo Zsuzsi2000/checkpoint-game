@@ -4,4 +4,5 @@ export enum FilteringMode {
   byTypes,
   byFavourites,
   byOwnCountry,
+  bySaved
 }

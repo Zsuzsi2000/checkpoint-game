@@ -34,7 +34,8 @@ export class UserService implements OnInit {
       country: country,
       picture: "",
       favouriteGames: [],
-      eventsUserSignedUpFor: []
+      eventsUserSignedUpFor: [],
+      savedEvents: []
     };
 
     let generatedId: string;
@@ -68,6 +69,7 @@ export class UserService implements OnInit {
                 data[key].picture,
                 data[key].favouriteGames,
                 data[key].eventsUserSignedUpFor,
+                data[key].savedEvents,
                 null,
                 null
               );
@@ -89,6 +91,7 @@ export class UserService implements OnInit {
           userData.picture,
           userData.favouriteGames,
           userData.eventsUserSignedUpFor,
+          userData.savedEvents,
           null,
           null
         );
@@ -111,6 +114,7 @@ export class UserService implements OnInit {
                 picture: data[key].picture,
                 favouriteGames: data[key].favouriteGames,
                 eventsUserSignedUpFor: data[key].eventsUserSignedUpFor,
+                savedEvents: data[key].savedEvents,
               };
               users.push(user);
             }
@@ -131,7 +135,8 @@ export class UserService implements OnInit {
              gameId: string = null,
              addFavourite: boolean = null,
              eventId: string = null,
-             addEvent: boolean = null) {
+             addEvent: boolean = null,
+             saveEvent: boolean = null) {
 
     let updatedUsers: UserData[];
     let updatedUserIndex: number;
@@ -148,9 +153,9 @@ export class UserService implements OnInit {
         updatedUserIndex = users.findIndex(u => u.id === id);
         updatedUsers = [...users];
         const old: UserData = updatedUsers[updatedUserIndex];
-        if (old.favouriteGames === undefined || null) {
-          old.favouriteGames = [];
-        }
+        if (old.favouriteGames === undefined || old.favouriteGames === null) old.favouriteGames = [];
+        if (old.eventsUserSignedUpFor === undefined || old.eventsUserSignedUpFor === null) old.eventsUserSignedUpFor = [];
+        if (old.savedEvents === undefined || old.savedEvents === null) old.savedEvents = [];
 
         updatedUsers[updatedUserIndex] = {
           id: id,
@@ -161,9 +166,12 @@ export class UserService implements OnInit {
           favouriteGames: (gameId)
             ? ((addFavourite) ? old.favouriteGames.concat(gameId) : old.favouriteGames.filter(g => g != gameId))
             : old.favouriteGames,
-          eventsUserSignedUpFor: (eventId)
+          eventsUserSignedUpFor: (eventId && addEvent !== null)
             ? ((addEvent) ? old.eventsUserSignedUpFor.concat(eventId) : old.eventsUserSignedUpFor.filter(g => g != eventId))
             : old.eventsUserSignedUpFor,
+          savedEvents: (eventId && saveEvent !== null)
+            ? ((saveEvent) ? old.savedEvents.concat(eventId) : old.savedEvents.filter(g => g != eventId))
+            : old.savedEvents,
         };
 
         return this.http.put(

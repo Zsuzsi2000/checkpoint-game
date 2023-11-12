@@ -1,0 +1,8 @@
+<ng-container *ngIf="userId">
+  <ion-button *ngIf="checkIsItSaved(); else notSaved" (click)="deleteFromSavedEvents()">
+    <ion-icon name="bookmark"></ion-icon>
+  </ion-button>
+  <ng-template #notSaved>
+    <ion-button (click)="addToSavedEvents()"><ion-icon name="bookmark-outline"></ion-icon></ion-button>
+  </ng-template>
+</ng-container>

@@ -67,6 +67,7 @@ export class ProfilePage implements OnInit, OnDestroy {
               picture: currentUser.picture,
               favouriteGames: currentUser.favouriteGames,
               eventsUserSignedUpFor: currentUser.eventsUserSignedUpFor,
+              savedEvents: currentUser.savedEvents,
             };
             this.userIsLoading = false;
           } else {

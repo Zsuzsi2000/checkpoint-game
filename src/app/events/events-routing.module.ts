@@ -21,7 +21,7 @@ const routes: Routes = [
     canLoad: [AuthGuard]
   },
   {
-    path: ':eventId',
+    path: 'details/:eventId',
     loadChildren: () => import('./event-details/event-details.module').then( m => m.EventDetailsPageModule)
   },
 ];

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AlertController, NavController} from "@ionic/angular";
 import {GamesService} from "../../games/games.service";
 
@@ -15,7 +15,8 @@ export class CreateEventPage implements OnInit {
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
               private alertCtrl: AlertController,
-              private gamesService: GamesService) { }
+              private gamesService: GamesService,
+              private router: Router) { }
 
   ngOnInit() {
     if (this.activatedRoute.snapshot.queryParamMap.has('gameId')) {
@@ -29,16 +30,20 @@ export class CreateEventPage implements OnInit {
     }
   }
 
-  navigateToEvent(event) {
-    console.log(event);
+  navigateToEvent(newId) {
+    if (newId) {
+      this.router.navigate(['/', 'events', 'details', newId])
+    } else {
+      this.showALert('Something went wrong while creating the event');
+    }
   }
 
-  showALert() {
+  showALert(message: string = 'Game could not be fetched.') {
     this.alertCtrl
       .create(
         {
           header: 'An error occured',
-          message: 'Game could not be fetched.',
+          message: message,
           buttons: [{
             text: 'Okay', handler: () => {
               this.navCtrl.pop();

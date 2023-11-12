@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ModalController} from "@ionic/angular";
+import {LoadingController, ModalController} from "@ionic/angular";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ImageService} from "../../../services/image.service";
 import {GameMode} from "../../../enums/GameMode";
@@ -27,8 +27,10 @@ export class EditEventComponent implements OnInit {
   defaultDate: string;
   today: string;
   GameMode = GameMode;
+  actualGameMode: GameMode = GameMode.notSpecified;
 
   constructor(private modalCtrl: ModalController,
+              private loadingCtrl: LoadingController,
               private formBuilder: FormBuilder,
               private authService: AuthService,
               private eventsService: EventsService,
@@ -39,6 +41,7 @@ export class EditEventComponent implements OnInit {
     this.today = new Date().toISOString();
     this.authService.userId.pipe(take(1)).subscribe(userid => this.userId = userid);
     if (this.event) {
+      this.actualGameMode = this.event.liveGameSettings.gameMode;
       this.defaultDate = this.event.date.toISOString();
       this.eventForm = this.formBuilder.group({
         name: new FormControl(this.event.name, { updateOn: "change", validators: [Validators.required]}),
@@ -72,42 +75,50 @@ export class EditEventComponent implements OnInit {
     if (!this.eventForm.valid) {
       return;
     }
+    this.loadingCtrl.create({
+      message: 'Creating event...'
+    }).then(loadingEl => {
+      loadingEl.present();
 
-    let liveGameSettings = this.setLiveGameSettings();
-    let newEvent = new Event(
-      (this.event) ? this.event.id : null,
-      this.eventForm.value.name,
-      this.eventForm.value.date,
-      this.eventForm.value.isItPublic,
-      this.eventForm.value.imgUrl,
-      this.userId,
-      this.gameId,
-      this.eventForm.value.description,
-      liveGameSettings,
-      (this.event) ? this.event.players : [],
-      (this.event) ? this.event.joined : [],
+      let liveGameSettings = this.setLiveGameSettings();
+      let newEvent = new Event(
+        (this.event) ? this.event.id : null,
+        this.eventForm.value.name,
+        this.eventForm.value.date,
+        this.eventForm.value.isItPublic,
+        this.eventForm.value.imgUrl,
+        this.userId,
+        this.gameId,
+        this.eventForm.value.description,
+        liveGameSettings,
+        (this.event) ? this.event.players : [],
+        (this.event) ? this.event.joined : [],
       );
 
-    if(this.imageFile) {
-      this.imageService.uploadImage(this.imageFile).pipe(
-        catchError(error => {
-          console.log('Error from uploadImages:', error);
-          return of(null);
-        }),
-        switchMap(uploadResponse => {
-          if (uploadResponse && uploadResponse.imageUrl) {
-            newEvent.imgUrl = uploadResponse.imageUrl;
-          }
-          return (this.event) ? this.eventsService.updateEvent(newEvent) : this.eventsService.createEvent(newEvent);
-        })).subscribe(res => {
+      if (this.imageFile) {
+        this.imageService.uploadImage(this.imageFile).pipe(
+          catchError(error => {
+            console.log('Error from uploadImages:', error);
+            return of(null);
+          }),
+          switchMap(uploadResponse => {
+            if (uploadResponse && uploadResponse.imageUrl) {
+              newEvent.imgUrl = uploadResponse.imageUrl;
+            }
+            return (this.event) ? this.eventsService.updateEvent(newEvent) : this.eventsService.createEvent(newEvent);
+          })).subscribe(res => {
           console.log(res);
-      });
-    } else {
-      ((this.event) ? this.eventsService.updateEvent(newEvent) : this.eventsService.createEvent(newEvent)).subscribe(res => {
-        console.log(res);
-        this.done.emit(res);
-      });
-    }
+          loadingEl.dismiss();
+          this.done.emit(res);
+        });
+      } else {
+        ((this.event) ? this.eventsService.updateEvent(newEvent) : this.eventsService.createEvent(newEvent)).subscribe(res => {
+          console.log(res);
+          loadingEl.dismiss();
+          this.done.emit(res);
+        });
+      }
+    });
 
   }
 
@@ -131,9 +142,16 @@ export class EditEventComponent implements OnInit {
     this.eventForm.patchValue({ date: new Date(event.detail.value) });
   }
 
+  setPublic(event) {
+    console.log(event);
+    this.eventForm.patchValue({ isItPublic: event.detail.value });
+  }
+
   setGameMode(event) {
     console.log(event);
     this.eventForm.get('liveGameSettings').patchValue({ gameMode: +event.detail.value as GameMode });
+    this.actualGameMode = +event.detail.value as GameMode;
+    console.log(this.eventForm,this.actualGameMode )
   }
 
   setLiveGameSettings(): LiveGameSettings {

@@ -75,21 +75,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
         }
       });
     });
-    //   )(game => {
-    //     this.game = game;
-    //     this.isLoading = false;
-    //     this.userService.getUserById(game.userId).pipe(take(1)).subscribe( user => {
-    //       this.creator = user;
-    //     })
-    //   }, error => {
-    //     this.showALert();
-    //   })
-    // }, error => {
-    //   this.showALert();
-    // });
-    // this.authService.user.pipe(take(1)).subscribe(user => {
-    //   this.user = user;
-    // })
   }
 
   navigate() {

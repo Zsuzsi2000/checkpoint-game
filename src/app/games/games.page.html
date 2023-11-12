@@ -93,7 +93,7 @@
                 <div class="custom-align-item justify-second">
                   <ion-buttons slot="end" class="justify-second">
                     <app-favourite [gameId]="game.id"></app-favourite>
-                    <ion-button *ngIf="">
+                    <ion-button *ngIf="user">
                       <ion-icon name="share-social"></ion-icon>
                     </ion-button>
                     <ion-button disabled class="whiteDisabled">

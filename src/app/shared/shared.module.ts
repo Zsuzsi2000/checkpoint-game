@@ -15,6 +15,8 @@ import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpo
 import {FavouriteComponent} from "./components/favourite/favourite.component";
 import {PickThingsComponent} from "./components/pick-things/pick-things.component";
 import {EditEventComponent} from "./components/edit-event/edit-event.component";
+import {JoinEventComponent} from "./components/join-event/join-event.component";
+import {SavedComponent} from "./components/saved/saved.component";
 
 
 
@@ -31,7 +33,9 @@ import {EditEventComponent} from "./components/edit-event/edit-event.component";
     CheckpointsMapModalComponent,
     FavouriteComponent,
     PickThingsComponent,
-    EditEventComponent
+    EditEventComponent,
+    JoinEventComponent,
+    SavedComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +57,9 @@ import {EditEventComponent} from "./components/edit-event/edit-event.component";
     CheckpointsMapModalComponent,
     FavouriteComponent,
     PickThingsComponent,
-    EditEventComponent
+    EditEventComponent,
+    JoinEventComponent,
+    SavedComponent
   ]
 })
 export class SharedModule { }

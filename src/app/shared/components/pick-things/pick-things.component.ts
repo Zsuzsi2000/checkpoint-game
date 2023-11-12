@@ -31,7 +31,11 @@ export class PickThingsComponent implements OnInit {
 
   checkboxChange(event) {
     console.log("checkboxChange", event);
-    this.workingPickedThings.push(event.detail.value);
+    if (event.detail.checked) {
+      this.workingPickedThings.push(event.detail.value);
+    } else {
+      this.workingPickedThings = this.workingPickedThings.filter( t => t !== event.detail.value);
+    }
   }
 
 }

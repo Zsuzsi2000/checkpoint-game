@@ -1,9 +1,23 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>edit-event</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/events"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Event editing</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-grid class="ion-no-padding ion-no-margin container" *ngIf="isLoading; else loaded">
+    <ion-row class="fill-item">
+      <ion-col class="ion-text-center ion-justify-content-center ion-align-items-center">
+        <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ng-template #loaded>
+    <app-edit-event *ngIf="!!gameId && event"
+                    [gameId]="gameId" [event]="event"
+                    (done)="navigateToEvent($event)"></app-edit-event>
+  </ng-template>
 </ion-content>

@@ -6,4 +6,5 @@ export interface UserData {
   picture: string;
   favouriteGames: string[];
   eventsUserSignedUpFor: string[];
+  savedEvents: string[];
 }
