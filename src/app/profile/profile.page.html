@@ -79,7 +79,7 @@
           </ion-segment>
         </ion-col>
       </ion-row>
-      <ng-container *ngIf="listGames">
+      <ng-container *ngIf="listGames; else listEvents">
         <ng-container *ngIf="gamesAreLoading; else gamesAreNotLoading">
           <ion-row class="fill-item">
             <ion-col class="ion-text-center ion-justify-content-center ion-align-items-center">
@@ -92,70 +92,9 @@
             <ion-col size-xs="12" size-md="6"
                      class="ion-align-items-center ion-justify-content-center"
                      *ngFor="let game of loadedOwnGames">
-              <ion-card class="dark-card">
-                <div class="background-image-container">
-                  <ion-img [src]="game.imgUrl" class="background-image"></ion-img>
-                </div>
-                <ion-card-header class="ion-no-padding">
-                  <ion-item lines="none">
-                    <div class="custom-align">
-                      <div class="custom-align-item">
-                        <ion-card-title class="justify-first">{{ game.name}}</ion-card-title>
-                      </div>
-                      <div class="custom-align-item justify-second">
-                        <ion-buttons slot="end" class="justify-second">
-                          <ion-button *ngIf="ownProfile" (click)="editGame(game.id)">
-                            <ion-icon name="pencil"></ion-icon>
-                          </ion-button>
-                          <ion-button *ngIf="ownProfile" (click)="deleteGame(game.id)">
-                            <ion-icon name="trash"></ion-icon>
-                          </ion-button>
-                          <app-favourite [gameId]="game.id"></app-favourite>
-                          <ion-button>
-                            <ion-icon name="share-social"></ion-icon>
-                          </ion-button>
-                          <ion-button disabled class="whiteDisabled">
-                            <ion-icon name="people"></ion-icon>
-                          </ion-button>
-                          <ion-badge slot="end" color="secondary">{{ game.numberOfAttempts }}</ion-badge>
-                        </ion-buttons>
-                      </div>
-                    </div>
-                  </ion-item>
-                  <ion-item lines="none">
-                    <ion-chip slot="start">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
-                  </ion-item>
-                </ion-card-header>
-                <ion-card-content>
-                  <ion-list lines="none">
-                    <ion-item>
-                      <ion-icon name="grid" size="small" class="rigt-padding"></ion-icon>
-                      <ion-label>{{ game.category }}</ion-label>
-                    </ion-item>
-                    <ion-item>
-                      <ion-icon name="map" size="small" class="rigt-padding"></ion-icon>
-                      <ion-label>{{ game.country }}</ion-label>
-                    </ion-item>
-                  </ion-list>
-                  <ion-buttons class="custom-align-2">
-                    <ion-button class="colored custom-align-item margin-top" fill="solid" size="small" shape="round"
-                                [routerLink]="['/', 'games', 'details', game.id]">
-                      Details
-                      <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                    </ion-button>
-                    <ion-button *ngIf="loggedUser" class="colored custom-align-item margin-top" fill="solid"
-                                size="small" shape="round" (click)="navigate(game.id)">
-                      Create event
-                      <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                    </ion-button>
-                    <ion-button class="colored custom-align-item margin-top" fill="solid" size="small" shape="round"
-                                [routerLink]="['/', 'game-mode']">
-                      Play
-                      <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                    </ion-button>
-                  </ion-buttons>
-                </ion-card-content>
-              </ion-card>
+              <app-game-card [game]="game" [profile]="true" [ownProfile]="ownProfile"
+                             [loggedUser]="loggedUser" [loadedUser]="loadedUser"
+                             (updateGamesList)="updateGames($event)"></app-game-card>
             </ion-col>
           </ion-row>
           <ng-template #noGame>
@@ -178,6 +117,44 @@
           </ng-template>
         </ng-template>
       </ng-container>
+      <ng-template #listEvents>
+        <ng-container *ngIf="eventsAreLoading; else eventsAreNotLoading">
+          <ion-row class="fill-item">
+            <ion-col class="ion-text-center ion-justify-content-center ion-align-items-center">
+              <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        <ng-template #eventsAreNotLoading>
+          <ion-row *ngIf="loadedOwnEvents && loadedOwnEvents.length > 0; else noEvent">
+            <ion-col size-xs="12" size-md="6"
+                     class="ion-align-items-center ion-justify-content-center"
+                     *ngFor="let event of loadedOwnEvents">
+              <app-event-card [event]="event" [profile]="true" [ownProfile]="ownProfile"
+                              [loggedUser]="loggedUser" [loadedUser]="loadedUser">
+              </app-event-card>
+            </ion-col>
+          </ion-row>
+          <ng-template #noEvent>
+            <ion-row class="ion-align-items-center ion-justify-content-center fill-item">
+              <ion-col size-xs="12" size-md="6"
+                       class="ion-align-items-center ion-justify-content-center">
+                <ion-list *ngIf="ownProfile" lines="none" class="ion-align-items-center ion-justify-content-center">
+                  <ion-item>
+                    <ion-label>Don't have your own event yet?</ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-button [routerLink]="['/', 'games']">
+                      <ion-icon slot="start" name="add"></ion-icon>
+                      <ion-label>Search for game</ion-label>
+                    </ion-button>
+                  </ion-item>
+                </ion-list>
+              </ion-col>
+            </ion-row>
+          </ng-template>
+        </ng-template>
+      </ng-template>
     </ion-grid>
   </ng-template>
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="listGames && loadedOwnGames && loadedOwnGames.length > 0">

@@ -16,8 +16,8 @@
     </ion-row>
   </ion-grid>
   <ng-template #loaded>
-    <app-edit-event *ngIf="!!gameId && event"
+    <app-event-editor *ngIf="gameId && event"
                     [gameId]="gameId" [event]="event"
-                    (done)="navigateToEvent($event)"></app-edit-event>
+                    (done)="navigateToEvent($event)"></app-event-editor>
   </ng-template>
 </ion-content>

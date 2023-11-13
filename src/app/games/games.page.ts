@@ -239,12 +239,6 @@ export class GamesPage implements OnInit, OnDestroy {
     console.log(this.filters, this.filtersObject);
   }
 
-  navigate(gameId: string) {
-    this.router.navigate(['/', 'events', 'create-event'], {
-      queryParams: { gameId: gameId }
-    });
-  }
-
   ngOnDestroy(): void {
     if (this.gamesSub) {
       this.gamesSub.unsubscribe();

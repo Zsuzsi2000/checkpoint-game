@@ -1,0 +1,92 @@
+<ion-card class="dark-card">
+  <div class="background-image-container">
+    <ion-img [src]="event.imgUrl" class="background-image"></ion-img>
+  </div>
+  <ion-card-header class="ion-no-padding">
+    <ion-item lines="none">
+      <div class="custom-align">
+        <div class="custom-align-item">
+          <ion-card-title class="justify-first">{{ event.name}}</ion-card-title>
+        </div>
+        <div class="custom-align-item justify-second">
+          <ion-buttons slot="end" class="justify-second">
+            <ion-button *ngIf="ownProfile" (click)="editEvent(event.id)">
+              <ion-icon name="pencil"></ion-icon>
+            </ion-button>
+            <ion-button *ngIf="ownProfile" (click)="deleteEvent(event.id)">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+            <app-saved [eventId]="event.id"></app-saved>
+            <ion-button *ngIf="loggedUser">
+              <ion-icon name="share-social"></ion-icon>
+            </ion-button>
+            <ion-button disabled class="whiteDisabled">
+              <ion-icon name="people"></ion-icon>
+            </ion-button>
+            <ion-badge slot="end" color="secondary">{{ event.players ? event.players.length : 0 }}</ion-badge>
+          </ion-buttons>
+        </div>
+      </div>
+    </ion-item>
+    <ion-item lines="none" class="ion-justify-content-center">
+      <ion-chip *ngIf="game">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
+      <ion-chip slot=end class="joined-chip" *ngIf="loadedUser && event.players.includes(loadedUser.id)">Joined</ion-chip>
+      <ion-chip slot=end class="joined-chip" *ngIf="loadedUser && event.creatorId === loadedUser.id">Creator</ion-chip>
+    </ion-item>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-icon name="calendar-clear" size="small" class="rigt-padding"></ion-icon>
+        <ion-label>{{ event.date | date: 'yyyy. MMM dd.' }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="hourglass-outline" size="small" class="rigt-padding"></ion-icon>
+        <ion-label>{{ getDays(event.date) + ' days from now' }}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="game">
+        <ion-icon name="grid" size="small" class="rigt-padding"></ion-icon>
+        <ion-label>{{ game.category }}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="game">
+        <ion-icon name="map" size="small" class="rigt-padding"></ion-icon>
+        <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
+        <ng-template #hasLocation>
+          <ion-label>{{ game.country }}</ion-label>
+        </ng-template>
+      </ion-item>
+    </ion-list>
+    <ion-buttons class="custom-align-2">
+      <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'" class="custom-align-item margin-top" fill="solid" size="small" shape="round"
+                  [routerLink]="['/', 'events', 'details', event.id]">
+        Details
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+      </ion-button>
+      <ng-container *ngIf="loggedUser && loggedUser.id">
+        <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
+                    class="custom-align-item margin-top" fill="solid"
+                    size="small" shape="round"
+                    [disabled]="!canJoin(event)"
+                    *ngIf="!event.players.includes(loggedUser.id)"
+                    (click)="joinEvent(event)">
+          Join event
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        </ion-button>
+        <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
+                    class="custom-align-item margin-top" fill="solid" size="small" shape="round"
+                    *ngIf="event.players.includes(loggedUser.id)"
+                    (click)="goToChat(event.id)">
+          Chat
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        </ion-button>
+        <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
+                    class="custom-align-item margin-top" fill="solid" size="small" shape="round"
+                    *ngIf="event.players.includes(loggedUser.id)"
+                    (click)="cancelEvent(event)">
+          Cancel join
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        </ion-button>
+      </ng-container>
+    </ion-buttons>
+  </ion-card-content>
+</ion-card>

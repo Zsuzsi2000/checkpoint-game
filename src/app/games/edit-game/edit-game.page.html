@@ -60,6 +60,10 @@
         </ng-template>
       </ng-container>
       <ion-item>
+        <ion-label>Available for everyone?</ion-label>
+        <ion-toggle formControlName="itIsPublic" labelPlacement="start" [value]="game.itIsPublic" color="secondary"></ion-toggle>
+      </ion-item>
+      <ion-item>
         <ion-textarea label="Description *"
                       labelPlacement="floating"
                       formControlName="description"

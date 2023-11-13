@@ -82,83 +82,9 @@
       <ion-col size-xs="12" size-md="6"
                class="ion-align-items-center"
                *ngFor="let event of actualEvents | filter:filter">
-        <ion-card class="dark-card">
-          <div class="background-image-container">
-            <ion-img [src]="event.event.imgUrl" class="background-image"></ion-img>
-          </div>
-          <ion-card-header class="ion-no-padding">
-            <ion-item lines="none">
-              <div class="custom-align">
-                <div class="custom-align-item">
-                  <ion-card-title class="justify-first">{{ event.event.name }}</ion-card-title>
-                </div>
-                <div class="custom-align-item justify-second">
-                  <ion-buttons slot="end" class="justify-second">
-                    <app-saved [eventId]="event.event.id"></app-saved>
-                    <ion-button *ngIf="user">
-                      <ion-icon name="share-social"></ion-icon>
-                    </ion-button>
-                    <ion-button disabled class="whiteDisabled">
-                      <ion-icon name="people"></ion-icon>
-                    </ion-button>
-                    <ion-badge slot="end" color="secondary">{{ event.event.players.length }}</ion-badge>
-                  </ion-buttons>
-                </div>
-              </div>
-            </ion-item>
-            <ion-item lines="none">
-              <ion-chip slot="start">{{ event.game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
-              <ion-chip slot="end" class="joined-chip" *ngIf="user && event.event.players.includes(user.id)">Joined</ion-chip>
-            </ion-item>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list lines="none">
-              <ion-item>
-                <ion-icon name="grid" size="small" class="rigt-padding"></ion-icon>
-                <ion-label>{{ event.game.category }}</ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="calendar-clear" size="small" class="rigt-padding"></ion-icon>
-                <ion-label>{{ event.event.date | date:'yyyy. MMM dd.' }}</ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="map" size="small" class="rigt-padding"></ion-icon>
-                <ion-label *ngIf="event.game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
-                <ng-template #hasLocation>
-                  <ion-label>{{ event.game.country }}</ion-label>
-                </ng-template>
-              </ion-item>
-            </ion-list>
-            <ion-buttons class="custom-align-2">
-              <ion-button class="event-color custom-align-item margin-top" fill="solid" size="small" shape="round"
-                          [routerLink]="['/', 'events', 'details', event.event.id]">
-                Details
-                <ion-icon slot="end" name="arrow-forward"></ion-icon>
-              </ion-button>
-              <ng-container *ngIf="user && user.id">
-                <ion-button class="event-color custom-align-item margin-top" fill="solid" size="small" shape="round"
-                            [disabled]="!canJoin(event.event)"
-                            *ngIf="!event.event.players.includes(user.id)"
-                            (click)="joinEvent(event.event)">
-                  Join event
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                </ion-button>
-                <ion-button class="event-color custom-align-item margin-top" fill="solid" size="small" shape="round"
-                            *ngIf="event.event.players.includes(user.id)"
-                            (click)="goToChat(event.event.id)">
-                  Chat
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                </ion-button>
-                <ion-button class="event-color custom-align-item margin-top" fill="solid" size="small" shape="round"
-                            *ngIf="event.event.players.includes(user.id)"
-                            (click)="cancelEvent(event.event)">
-                  Cancel join
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                </ion-button>
-              </ng-container>
-            </ion-buttons>
-          </ion-card-content>
-        </ion-card>
+        <app-event-card [event]="event.event" [profile]="false" [ownProfile]="!!user"
+                        [loggedUser]="user" [game]="event.game">
+        </app-event-card>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -31,7 +31,7 @@ export class EditEventPage implements OnInit {
         if (event) {
           this.event = event;
           this.gameId = this.event.gameId;
-          this.isLoading = true;
+          this.isLoading = false;
         } else {
           this.showALert();
         }
@@ -39,11 +39,11 @@ export class EditEventPage implements OnInit {
     });
   }
 
-  navigateToEvent(newId) {
-    if (newId) {
-      this.router.navigate(['/', 'events', 'details', newId])
+  navigateToEvent(res) {
+    if (res) {
+      this.router.navigate(['/', 'events', 'details', this.event.id])
     } else {
-      this.showALert('Something went wrong while creating the event');
+      this.showALert('Something went wrong while editing the event');
     }
   }
 

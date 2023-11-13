@@ -8,5 +8,5 @@
 </ion-header>
 
 <ion-content>
-  <app-edit-event *ngIf="!!gameId" [gameId]="gameId" (done)="navigateToEvent($event)"></app-edit-event>
+  <app-event-editor *ngIf="!!gameId" [gameId]="gameId" (done)="navigateToEvent($event)"></app-event-editor>
 </ion-content>

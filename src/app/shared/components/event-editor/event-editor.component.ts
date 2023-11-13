@@ -9,14 +9,15 @@ import {catchError, switchMap, take} from "rxjs/operators";
 import {LiveGameSettings} from "../../../models/liveGameSettings";
 import {EventsService} from "../../../events/events.service";
 import {of} from "rxjs";
+import {ISODateString} from "@capacitor/core";
 
 
 @Component({
-  selector: 'app-edit-event',
-  templateUrl: './edit-event.component.html',
-  styleUrls: ['./edit-event.component.scss'],
+  selector: 'app-event-editor',
+  templateUrl: './event-editor.component.html',
+  styleUrls: ['./event-editor.component.scss'],
 })
-export class EditEventComponent implements OnInit {
+export class EventEditorComponent implements OnInit {
 
   @Input() gameId!: string;
   @Input() event: Event;
@@ -28,6 +29,7 @@ export class EditEventComponent implements OnInit {
   today: string;
   GameMode = GameMode;
   actualGameMode: GameMode = GameMode.notSpecified;
+  canEditGameMode = true;
 
   constructor(private modalCtrl: ModalController,
               private loadingCtrl: LoadingController,
@@ -42,7 +44,11 @@ export class EditEventComponent implements OnInit {
     this.authService.userId.pipe(take(1)).subscribe(userid => this.userId = userid);
     if (this.event) {
       this.actualGameMode = this.event.liveGameSettings.gameMode;
-      this.defaultDate = this.event.date.toISOString();
+      console.log(this.event);
+      this.defaultDate = new Date(this.event.date).toISOString();
+      if (this.event.joined && this.event.joined.length > 0) {
+        this.canEditGameMode = false;
+      }
       this.eventForm = this.formBuilder.group({
         name: new FormControl(this.event.name, { updateOn: "change", validators: [Validators.required]}),
         date: new FormControl(this.event.date, { updateOn: "change", validators: [Validators.required]}),
@@ -80,7 +86,7 @@ export class EditEventComponent implements OnInit {
     }).then(loadingEl => {
       loadingEl.present();
 
-      let liveGameSettings = this.setLiveGameSettings();
+      let liveGameSettings = this.canEditGameMode ? this.setLiveGameSettings() : this.event.liveGameSettings;
       let newEvent = new Event(
         (this.event) ? this.event.id : null,
         this.eventForm.value.name,
@@ -162,11 +168,12 @@ export class EditEventComponent implements OnInit {
       if (this.eventForm.get('liveGameSettings').value.gameMode === GameMode.teamVsTeam) {
         liveGameSettings = new LiveGameSettings(GameMode.teamVsTeam, maxTeam ? maxTeam : 20, maxTeamMember ? maxTeamMember : 20);
       } else if (this.eventForm.get('liveGameSettings').value.gameMode === GameMode.teamGame) {
-        liveGameSettings = new LiveGameSettings(GameMode.teamVsTeam, 1, maxTeamMember ? maxTeamMember : 20);
+        liveGameSettings = new LiveGameSettings(GameMode.teamGame, 1, maxTeamMember ? maxTeamMember : 20);
       } else if (this.eventForm.get('liveGameSettings').value.gameMode === GameMode.againstEachOther) {
-        liveGameSettings = new LiveGameSettings(GameMode.teamVsTeam, maxTeam ? maxTeam : 20, 1);
+        liveGameSettings = new LiveGameSettings(GameMode.againstEachOther, maxTeam ? maxTeam : 20, 1);
       }
     }
+    console.log(liveGameSettings);
     return liveGameSettings;
   }
 

@@ -35,10 +35,6 @@
       <ion-col class="ion-text-center" size-sm="6">
         <ion-list class="ion-padding" lines="none">
           <ion-item class="ion-align-items-center">
-            <ion-label>Available for everyone?</ion-label>
-            <ion-toggle formControlName="isItPublic" labelPlacement="start" value="false" color="secondary"></ion-toggle>
-          </ion-item>
-          <ion-item class="ion-align-items-center">
             <ion-label class="ion-text-center">
               Pick an image for the event
             </ion-label>
@@ -61,10 +57,27 @@
       <ion-col class="ion-text-center ion-padding" size-sm="6">
         <ion-item class="ion-align-items-center" lines="none">
           <ion-label class="ion-text-center">
+            Do you want to share your event?
+          </ion-label>
+        </ion-item>
+        <ion-segment color="primary" (ionChange)="setPublic($event)" [value]="event ? event.isItPublic : true">
+          <ion-segment-button [value]="true">
+            <ion-label>PUBLIC</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="false">
+            <ion-label>PRIVATE</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center" *ngIf="canEditGameMode">
+      <ion-col class="ion-text-center ion-padding" size-sm="6">
+        <ion-item class="ion-align-items-center" lines="none">
+          <ion-label class="ion-text-center">
             Choose game mode
           </ion-label>
         </ion-item>
-        <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="GameMode.againstEachOther">
+        <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="event ? event.liveGameSettings.gameMode : GameMode.againstEachOther">
           <ion-segment-button [value]="GameMode.againstEachOther">
             <ion-label>AGAINST<br>EACH<br>OTHER</ion-label>
           </ion-segment-button>
@@ -77,24 +90,7 @@
         </ion-segment>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-justify-content-center">
-      <ion-col class="ion-text-center ion-padding" size-sm="6">
-        <ion-item class="ion-align-items-center" lines="none">
-          <ion-label class="ion-text-center">
-            Do you want to share your event?
-          </ion-label>
-        </ion-item>
-        <ion-segment color="primary" (ionChange)="setPublic($event)" [value]="true">
-          <ion-segment-button [value]="true">
-            <ion-label>PUBLIC</ion-label>
-          </ion-segment-button>
-          <ion-segment-button [value]="false">
-            <ion-label>PRIVATE</ion-label>
-          </ion-segment-button>
-        </ion-segment>
-      </ion-col>
-    </ion-row>
-    <ion-row class="ion-justify-content-center" *ngIf="actualGameMode !== GameMode.notSpecified" >
+    <ion-row class="ion-justify-content-center" *ngIf="actualGameMode !== GameMode.notSpecified && canEditGameMode" >
       <ion-col class="ion-text-center" size-sm="6">
         <ion-list class="ion-padding" lines="none" formGroupName="liveGameSettings">
           <ng-container *ngIf="actualGameMode === GameMode.teamVsTeam">

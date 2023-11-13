@@ -16,6 +16,7 @@ import {Game} from "../models/game.model";
 import {LocationType} from "../enums/LocationType";
 import {GameMode} from "../enums/GameMode";
 import {UserService} from "../services/user.service";
+import {JoinOrCreateTeamComponent} from "../shared/components/join-or-create-team/join-or-create-team.component";
 
 @Component({
   selector: 'app-events',
@@ -44,7 +45,6 @@ export class EventsPage implements OnInit {
   actualSortingMode: SortingMode = null;
   SortingMode = SortingMode;
   FilteringMode = FilteringMode;
-  LocationType = LocationType;
   descending = true;
   categories: { id: string, name: string }[];
   countries: string[] = [];
@@ -286,149 +286,6 @@ export class EventsPage implements OnInit {
       (this.filtersObject.ownCountry !== null) ? ["Own country"] : []);
 
     console.log(this.filters, this.filtersObject);
-  }
-
-
-  joinEvent(event: Event) {
-    switch (event.liveGameSettings.gameMode) {
-      case GameMode.notSpecified: {
-        this.setJoinOrCancel(event, true);
-        break;
-      }
-      case GameMode.teamVsTeam: {
-        //TODO: create team or join tem
-        break;
-      }
-      case GameMode.againstEachOther: {
-        if (event.joined) {
-          event.joined.push({ teamName: this.user.username , teamMembers: [this.user.id] });
-        } else {
-          event.joined = [{ teamName: this.user.username , teamMembers: [this.user.id] }];
-        }
-        this.setJoinOrCancel(event, true);
-        break;
-      }
-      case GameMode.teamGame: {
-        if (event.joined && event.joined[0]) {
-          event.joined[0].teamMembers.push(this.user.id);
-        } else {
-          event.joined = [{ teamName: "Team" , teamMembers: [this.user.id] }];
-        }
-        this.setJoinOrCancel(event, true);
-        break;
-      }
-    }
-
-    // this.alertCtrl.create({
-    //   header: "Choose team",
-    //   inputs: [{
-    //     placeholder: "Eamil",
-    //     type: "text",
-    //     name: "email",
-    //   }],
-    //   buttons: [
-    //     {
-    //       text: "Cancel",
-    //       role: "cancel"
-    //     },
-    //     {
-    //       text: "Get a new password",
-    //       handler: (event) => {
-    //         this.setNewPassword(event.email);
-    //       }
-    //     }
-    //   ]
-    // }).then(
-    //   alertEl => alertEl.present()
-    // );
-    // this.modalCtrl.create({
-    //   component: JoinEventComponent,
-    //   componentProps: { event: Event }
-    // }).then(modalEl => {
-    //   modalEl.onDidDismiss().then(modalData => {
-    //     console.log(modalData.data);
-    //   });
-    //   modalEl.present();
-    // })
-  }
-
-  canJoin(event: Event) {
-    let oke = false;
-    let canAddTeam = false;
-    let canAddMember = false;
-    if (event.liveGameSettings.gameMode === GameMode.notSpecified && event.players) {
-      oke = event.players.length < (event.liveGameSettings.maxTeam * event.liveGameSettings.maxTeamMember);
-    } else if (event.joined) {
-      canAddTeam = event.liveGameSettings.maxTeam > event.joined.length;
-      event.joined.forEach(team => {
-        if (event.liveGameSettings.maxTeamMember > team.teamMembers.length) canAddMember = true;
-      })
-    } else if (event.players) {
-      oke = event.players.length < (event.liveGameSettings.maxTeam * event.liveGameSettings.maxTeamMember);
-    } else { oke = true }
-    return (oke || canAddTeam || canAddMember)
-  }
-
-  cancelEvent(event: Event) {
-    event.players = event.players.filter(player => player !== this.user.id);
-    console.log(event);
-
-    switch (event.liveGameSettings.gameMode) {
-      case GameMode.teamVsTeam: {
-        event.joined[0].teamMembers = event.joined[0].teamMembers.filter(member => member !== this.user.id);
-        event.joined.map(team => {
-          return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t !== this.user.id) }
-        });
-
-        //TODO: event.joined-ből is törlés
-        break;
-      }
-      case GameMode.againstEachOther: {
-        event.joined.filter(team => team.teamMembers[0] !== this.user.id);
-        this.setJoinOrCancel(event, false);
-        break;
-      }
-      case GameMode.teamGame: {
-        event.joined[0].teamMembers = event.joined[0].teamMembers.filter(member => member !== this.user.id);
-        this.setJoinOrCancel(event, false);
-        break;
-      }
-    }
-    console.log(event);
-    this.setJoinOrCancel(event, false);
-  }
-
-  setJoinOrCancel(event: Event, join: boolean) {
-    if (join) event.players.push(this.user.id);
-    console.log(event);
-    this.eventService.updateEvent(event).pipe(
-      take(1),
-      catchError(error => {
-        return of(null)
-      }),
-      switchMap(eventId => {
-        return this.userService.updateUser(
-          this.user.id,
-          null,
-          null,
-          null,
-          null,
-          null,
-          true,
-          event.id,
-          join)
-      })).subscribe(response => {
-        if (response) {
-          this.showAlert((join ? "Join" : "Cancel") + " was succesful",
-            join ? "You joined to " + event.name + " event" : "You have unsubscribed from " + event.name + " event");
-        } else {
-          this.showAlert("Something went wrong", (join ? "Join" : "Cancel") + " was unsuccesful.");
-        }
-    });
-  }
-
-  goToChat(eventId: string) {
-    //TODO: goToChat
   }
 
   showAlert(header: string, message: string) {

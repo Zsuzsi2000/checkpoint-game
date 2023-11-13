@@ -3,8 +3,8 @@ import {AuthService} from "../auth/auth.service";
 import {GamesService} from "../games/games.service";
 import {UserService} from "../services/user.service";
 import {AlertController, IonModal, LoadingController, ModalController, NavController} from "@ionic/angular";
-import {switchMap, take} from "rxjs/operators";
-import {BehaviorSubject, Subscription} from "rxjs";
+import {catchError, switchMap, take} from "rxjs/operators";
+import {BehaviorSubject, forkJoin, of, Subscription} from "rxjs";
 import {Game} from "../models/game.model";
 import {User} from "../models/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -14,7 +14,8 @@ import {CountryService} from "../services/country.service";
 import {ImageService} from "../services/image.service";
 import {ImagePickerModalComponent} from "../shared/components/image-picker-modal/image-picker-modal.component";
 import {PickAThingComponent} from "../shared/components/pick-a-thing/pick-a-thing.component";
-
+import {EventsService} from "../events/events.service";
+import {Event} from "../models/event.model";
 
 @Component({
   selector: 'app-profile',
@@ -25,7 +26,9 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   userIsLoading = false;
   gamesAreLoading = false;
+  eventsAreLoading = false;
   loadedOwnGames: Game[];
+  loadedOwnEvents: Event[]; //amiket csináltum, plusz amikre jelentkeztem
   loadedUser: UserData;
   loadedUserId: string;
   loggedUser: User;
@@ -36,6 +39,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   firstTime = false;
 
   constructor(private gamesService: GamesService,
+              private eventsService: EventsService,
               private userService: UserService,
               private authService: AuthService,
               private alertCtrl: AlertController,
@@ -70,6 +74,7 @@ export class ProfilePage implements OnInit, OnDestroy {
               savedEvents: currentUser.savedEvents,
             };
             this.userIsLoading = false;
+            this.fetchLoadedUserData();
           } else {
             this.showALert();
           }
@@ -81,6 +86,8 @@ export class ProfilePage implements OnInit, OnDestroy {
           user => {
             this.loadedUser = user;
             this.userIsLoading = false;
+            this.fetchLoadedUserData();
+
           },
           error => {
             console.log("getUserError", error);
@@ -89,13 +96,8 @@ export class ProfilePage implements OnInit, OnDestroy {
         );
       }
 
-      this.authService.user.subscribe(currentUser => {
+      this.userSub = this.authService.user.subscribe(currentUser => {
         this.loggedUser = currentUser;
-      });
-
-      this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-        this.loadedOwnGames = games;
-        this.gamesAreLoading = false;
       });
 
       this.countries = ["1", "2", "3", "4", "5", "6", "7"];
@@ -112,20 +114,70 @@ export class ProfilePage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     if (this.loadedUserId && this.firstTime) {
       this.gamesAreLoading = true;
+      this.eventsAreLoading = true;
       this.userIsLoading = true;
       this.userService.getUserById(this.loadedUserId).subscribe(user => {
         this.loadedUser = user;
         this.userIsLoading = false;
+        this.fetchLoadedUserData();
       }, error => {
         console.log("getUserError", error);
         this.showALert();
       });
-      this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-        this.loadedOwnGames = games;
-        this.gamesAreLoading = false;
-      });
     } else {
       this.firstTime = true;
+    }
+  }
+
+  fetchLoadedUserData() {
+    this.authService.user.subscribe(currentUser => {
+      this.loggedUser = currentUser;
+    });
+
+    this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
+      this.loadedOwnGames = games;
+      this.gamesAreLoading = false;
+    });
+
+    this.eventsService.fetchOwnEvents(this.loadedUserId).subscribe(events => {
+      console.log("events", events);
+      this.loadedOwnEvents = events;
+      this.eventsAreLoading = false;
+      this.fetchJoinedEvents();
+    }, error => {
+      console.log(error);
+      this.fetchJoinedEvents();
+    });
+  }
+
+  fetchJoinedEvents() {
+    if (this.loadedUser.eventsUserSignedUpFor) {
+      let observables = [];
+      this.loadedUser.eventsUserSignedUpFor.forEach(eventId => {
+        observables.push(this.eventsService.fetchEvent(eventId).pipe(
+          catchError((error) => {
+            return of(null);
+          }),
+          switchMap(event => {
+            return of(event);
+          }))
+        );
+      });
+
+      forkJoin(observables).subscribe(events => {
+        console.log(events);
+        if (events) {
+          events.forEach(event => {
+            if (event instanceof Event && this.loadedOwnEvents.find(e => e.id === event.id) === undefined) {
+              if (this.loadedOwnEvents) {
+                this.loadedOwnEvents.push(event);
+              } else {
+                this.loadedOwnEvents = [event];
+              }
+            }
+          })
+        }
+      })
     }
   }
 
@@ -231,33 +283,10 @@ export class ProfilePage implements OnInit, OnDestroy {
       .then(alertEl => alertEl.present());
   }
 
-  deleteGame(id: string) {
-    this.alertCtrl.create({
-      header: "Delete game",
-      message: "Are you sure you want to delete the game?",
-      buttons: [
-        {
-          text: "Cancel",
-          role: "cancel"
-        },
-        {
-          text: "Delete",
-          handler: () => {
-            this.gamesService.deleteGame(id).subscribe(res => {
-              this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-                this.loadedOwnGames = games;
-              });
-            });
-          }
-        }
-      ]
-    }).then(
-      alertEl => alertEl.present()
-    );
-  }
-
-  editGame(id: string) {
-    this.router.navigate(['/', 'games', 'edit-game', id]);
+  updateGames(games: Game[]) {
+    if (games) {
+      this.loadedOwnGames = games;
+    }
   }
 
   showALert() {
@@ -316,12 +345,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       imageFile = imageData
     }
     return imageFile;
-  }
-
-  navigate(gameId: string) {
-    this.router.navigate(['/', 'events', 'create-event'], {
-      queryParams: { gameId: gameId }
-    });
   }
 
   ngOnDestroy() {

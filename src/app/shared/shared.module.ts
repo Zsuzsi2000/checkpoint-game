@@ -14,9 +14,13 @@ import {ImagePickerModalComponent} from "./components/image-picker-modal/image-p
 import {CheckpointsMapModalComponent} from "./maps/checkpoints-map-modal/checkpoints-map-modal.component";
 import {FavouriteComponent} from "./components/favourite/favourite.component";
 import {PickThingsComponent} from "./components/pick-things/pick-things.component";
-import {EditEventComponent} from "./components/edit-event/edit-event.component";
+import {EventEditorComponent} from "./components/event-editor/event-editor.component";
 import {JoinEventComponent} from "./components/join-event/join-event.component";
 import {SavedComponent} from "./components/saved/saved.component";
+import {JoinOrCreateTeamComponent} from "./components/join-or-create-team/join-or-create-team.component";
+import {EventCardComponent} from "./components/event-card/event-card.component";
+import {RouterModule} from "@angular/router";
+import {GameCardComponent} from "./components/game-card/game-card.component";
 
 
 
@@ -33,16 +37,20 @@ import {SavedComponent} from "./components/saved/saved.component";
     CheckpointsMapModalComponent,
     FavouriteComponent,
     PickThingsComponent,
-    EditEventComponent,
+    EventEditorComponent,
     JoinEventComponent,
-    SavedComponent
+    SavedComponent,
+    JoinOrCreateTeamComponent,
+    EventCardComponent,
+    GameCardComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     Ng2SearchPipeModule,
-    IonicModule
+    IonicModule,
+    RouterModule
   ],
   exports: [
     ListOfUsersComponent,
@@ -57,9 +65,12 @@ import {SavedComponent} from "./components/saved/saved.component";
     CheckpointsMapModalComponent,
     FavouriteComponent,
     PickThingsComponent,
-    EditEventComponent,
+    EventEditorComponent,
     JoinEventComponent,
-    SavedComponent
+    SavedComponent,
+    JoinOrCreateTeamComponent,
+    EventCardComponent,
+    GameCardComponent
   ]
 })
 export class SharedModule { }

@@ -1,4 +1,34 @@
 ion-toolbar {
   --background: var(--color-event);
   --color: white;
+
+  ion-button {
+    --padding-start: 1px;
+    --padding-end: 1px;
+  }
 }
+
+p {
+  margin-block-start:  0px;
+  margin-block-end:  0px;
+}
+
+#game-img {
+  height: 10rem;
+}
+
+#img-container {
+  background-color: #222428;
+}
+
+.brown {
+  --background: var(--ion-color-secondary);
+  --color: white;
+}
+
+ion-icon {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+

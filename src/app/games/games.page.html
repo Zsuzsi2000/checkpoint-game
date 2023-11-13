@@ -80,66 +80,8 @@
       <ion-col size-xs="12" size-md="6"
                class="ion-align-items-center"
                *ngFor="let game of actualGames | filter:filter">
-        <ion-card class="dark-card">
-          <div class="background-image-container">
-            <ion-img [src]="game.imgUrl" class="background-image"></ion-img>
-          </div>
-          <ion-card-header class="ion-no-padding">
-            <ion-item lines="none">
-              <div class="custom-align">
-                <div class="custom-align-item">
-                  <ion-card-title class="justify-first">{{ game.name}}</ion-card-title>
-                </div>
-                <div class="custom-align-item justify-second">
-                  <ion-buttons slot="end" class="justify-second">
-                    <app-favourite [gameId]="game.id"></app-favourite>
-                    <ion-button *ngIf="user">
-                      <ion-icon name="share-social"></ion-icon>
-                    </ion-button>
-                    <ion-button disabled class="whiteDisabled">
-                      <ion-icon name="people"></ion-icon>
-                    </ion-button>
-                    <ion-badge slot="end" color="secondary">{{ game.numberOfAttempts }}</ion-badge>
-                  </ion-buttons>
-                </div>
-              </div>
-            </ion-item>
-            <ion-item lines="none">
-              <ion-chip slot="start">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
-            </ion-item>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list lines="none">
-              <ion-item>
-                <ion-icon name="grid" size="small" class="rigt-padding"></ion-icon>
-                <ion-label>{{ game.category }}</ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="map" size="small" class="rigt-padding"></ion-icon>
-                <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
-                <ng-template #hasLocation>
-                  <ion-label>{{ game.country }}</ion-label>
-                </ng-template>
-              </ion-item>
-            </ion-list>
-            <ion-buttons class="custom-align-2">
-              <ion-button class="green custom-align-item margin-top" fill="solid" size="small" shape="round"
-                          [routerLink]="['/', 'games', 'details', game.id]">
-                Details
-                <ion-icon slot="end" name="arrow-forward"></ion-icon>
-              </ion-button>
-              <ion-button class="green custom-align-item margin-top" fill="solid" size="small" shape="round" (click)="navigate(game.id)">
-                Create event
-                <ion-icon slot="end" name="arrow-forward"></ion-icon>
-              </ion-button>
-              <ion-button class="green custom-align-item margin-top" fill="solid" size="small" shape="round"
-                          [routerLink]="['/', 'game-mode']">
-                Play
-                <ion-icon slot="end" name="arrow-forward"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-card-content>
-        </ion-card>
+        <app-game-card [game]="game" [profile]="false" [ownProfile]="!!user"
+                       [loggedUser]="user"></app-game-card>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -16,7 +16,7 @@ const routes: Routes = [
     canLoad: [AuthGuard]
   },
   {
-    path: 'edit-event/:eventId',
+    path: 'event-editor/:eventId',
     loadChildren: () => import('./edit-event/edit-event.module').then( m => m.EditEventPageModule),
     canLoad: [AuthGuard]
   },
