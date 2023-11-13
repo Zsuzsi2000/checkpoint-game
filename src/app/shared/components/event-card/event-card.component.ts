@@ -81,7 +81,7 @@ export class EventCardComponent implements OnInit {
         break;
       }
       case GameMode.teamGame: {
-        if (event.joined && event.joined[0]) {
+        if (event.joined && event.joined[0] && event.joined[0].teamMembers) {
           event.joined[0].teamMembers.push(this.loggedUser.id);
         } else {
           event.joined = [{ teamName: "Team" , teamMembers: [this.loggedUser.id] }];
@@ -115,22 +115,19 @@ export class EventCardComponent implements OnInit {
 
     switch (event.liveGameSettings.gameMode) {
       case GameMode.teamVsTeam: {
-        event.joined[0].teamMembers = event.joined[0].teamMembers.filter(member => member !== this.loggedUser.id);
-        event.joined.map(team => {
+        event.joined = event.joined.map(team => {
           return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t !== this.loggedUser.id) }
         });
-
-        //TODO: event.joined-ből is törlés
+        event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
         break;
       }
       case GameMode.againstEachOther: {
-        event.joined.filter(team => team.teamMembers[0] !== this.loggedUser.id);
-        this.setJoinOrCancel(event, false);
+        event.joined = event.joined.filter(team => team.teamMembers[0] !== this.loggedUser.id);
         break;
       }
       case GameMode.teamGame: {
         event.joined[0].teamMembers = event.joined[0].teamMembers.filter(member => member !== this.loggedUser.id);
-        this.setJoinOrCancel(event, false);
+        event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
         break;
       }
     }
@@ -141,6 +138,7 @@ export class EventCardComponent implements OnInit {
   setJoinOrCancel(event: Event, join: boolean) {
     if (join) {
       if (event.players) {
+        console.log("push id")
         event.players.push(this.loggedUser.id);
       }
       event.players = [this.loggedUser.id];

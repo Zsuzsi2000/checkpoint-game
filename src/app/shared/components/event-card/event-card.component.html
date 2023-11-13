@@ -2,6 +2,9 @@
   <div class="background-image-container">
     <ion-img [src]="event.imgUrl" class="background-image"></ion-img>
   </div>
+  <div *ngIf="!canJoin(event)" class="background-image-container">
+    <h1>FULL</h1>
+  </div>
   <ion-card-header class="ion-no-padding">
     <ion-item lines="none">
       <div class="custom-align">

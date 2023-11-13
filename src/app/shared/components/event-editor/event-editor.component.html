@@ -90,7 +90,7 @@
         </ion-segment>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-justify-content-center" *ngIf="actualGameMode !== GameMode.notSpecified && canEditGameMode" >
+    <ion-row class="ion-justify-content-center" *ngIf="actualGameMode !== GameMode.notSpecified" >
       <ion-col class="ion-text-center" size-sm="6">
         <ion-list class="ion-padding" lines="none" formGroupName="liveGameSettings">
           <ng-container *ngIf="actualGameMode === GameMode.teamVsTeam">
@@ -103,6 +103,14 @@
                 formControlName="maxTeam"
               ></ion-input>
             </ion-item>
+            <ion-item
+              class="ion-align-items-center"
+              *ngIf="showWarningMessage(true)"
+              lines="none">
+              <ion-label color="danger">
+                You can only enter a higher value than the previous one.
+              </ion-label>
+            </ion-item>
             <ion-item class="ion-align-items-center">
               <ion-label position="stacked">Number of team members</ion-label>
               <ion-input
@@ -111,6 +119,14 @@
                 placeholder="Enter the maximum number of people in a team"
                 formControlName="maxTeamMember"
               ></ion-input>
+            </ion-item>
+            <ion-item
+              class="ion-align-items-center"
+              *ngIf="showWarningMessage(false)"
+              lines="none">
+              <ion-label color="danger">
+                You can only enter a higher value than the previous one.
+              </ion-label>
             </ion-item>
           </ng-container>
           <ng-container *ngIf="actualGameMode === GameMode.teamGame">
@@ -123,6 +139,14 @@
                 formControlName="maxTeam"
               ></ion-input>
             </ion-item>
+            <ion-item
+              class="ion-align-items-center"
+              *ngIf="showWarningMessage(true)"
+              lines="none">
+              <ion-label color="danger">
+                You can only enter a higher value than the previous one.
+              </ion-label>
+            </ion-item>
           </ng-container>
           <ng-container *ngIf="actualGameMode === GameMode.againstEachOther">
             <ion-item class="ion-align-items-center">
@@ -133,6 +157,14 @@
                 placeholder="Enter the number of members"
                 formControlName="maxTeamMember"
               ></ion-input>
+            </ion-item>
+            <ion-item
+              class="ion-align-items-center"
+              *ngIf="showWarningMessage(false)"
+              lines="none">
+              <ion-label color="danger">
+                You can only enter a higher value than the previous one.
+              </ion-label>
             </ion-item>
           </ng-container>
         </ion-list>
@@ -145,7 +177,7 @@
           type="submit"
           color="secondary"
           size="large"
-          [disabled]="!eventForm.valid">
+          [disabled]="!eventForm.valid || showWarningMessage(true) || showWarningMessage(false)">
           <ion-label>Save the event</ion-label>
         </ion-button>
       </ion-col>

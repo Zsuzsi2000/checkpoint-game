@@ -1,3 +1,11 @@
+h1 {
+  text-align: center;
+  transform: rotate(45deg);
+  letter-spacing: 10px;
+  text-shadow: 2px 2px 5px var(--color-event);
+  font-size: 50px;
+  font-weight: 900;
+}
 
 ion-list {
   width: 100%;
@@ -11,6 +19,11 @@ ion-item > ion-button {
 ion-chip {
   background-color: white;
   color: black;
+}
+
+ion-chip.joined-chip {
+  background-color: var(--ion-color-secondary);
+  color: white;
 }
 
 .dark-card {

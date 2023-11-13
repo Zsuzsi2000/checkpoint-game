@@ -1,9 +1,67 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>game-mode</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Time to play</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center">
+    <ion-row class="ion-align-items-center full-fill">
+      <ion-col class="ion-align-items-center">
+        <ion-grid class="ion-no-padding ion-no-margin ion-align-items-center ion-text-center full-fill">
+          <ion-row>
+            <ion-col size-xs="8" offset-xs="2" size-sm="6" offset-sm="3" size-md="4" offset-md="4">
+              <ion-img [src]="'assets/logo.png'" alt="Logo" class="logo-img-height"></ion-img>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-no-margin">
+            <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+              <ion-button
+                class="modeSelectionButtons"
+                color="primary"
+                expand="full">
+                SOLO
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="!getGame">
+            <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+              <ion-button
+                class="modeSelectionButtons"
+                color="primary"
+                expand="full"
+                [disabled]="user === null">
+                JOIN
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-no-margin">
+            <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+              <ion-button
+                class="modeSelectionButtons"
+                color="primary"
+                expand="full"
+                [disabled]="user === null">
+                CREATE MULTIPLAYER GAME
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="!getGame">
+            <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+              <ion-button
+                class="modeSelectionButtons"
+                color="primary"
+                expand="full"
+                [disabled]="user === null">
+                START EVENT
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

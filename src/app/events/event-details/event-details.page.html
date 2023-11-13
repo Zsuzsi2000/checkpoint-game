@@ -26,6 +26,9 @@
   <ion-grid class="ion-no-padding" *ngIf="!isLoading">
     <ion-row id="img-container">
       <ion-col>
+        <div *ngIf="!canJoin()" class="background-image-container">
+          <h1>FULL</h1>
+        </div>
         <ion-img id="game-img"
                  [src]="event.imgUrl">
         </ion-img>
@@ -111,8 +114,7 @@
       </ion-col>
     </ion-row>
     <ion-row class="ion-padding">
-      <ion-col class="ion-no-padding">
-        <ion-buttons class="ion-justify-content-between">
+      <ion-col size="12" class="ion-no-padding">
           <ion-button color="secondary" fill="solid" size="small" shape="round" (click)="navigateToGame()">
             Go to the game
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
@@ -138,7 +140,6 @@
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
           </ng-container>
-        </ion-buttons>
       </ion-col>
     </ion-row>
   </ion-grid>

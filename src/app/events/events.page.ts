@@ -4,7 +4,6 @@ import {Event} from "../models/event.model";
 import {combineLatest, forkJoin, of, Subscription} from "rxjs";
 import {AuthService} from "../auth/auth.service";
 import {AlertController, ModalController} from "@ionic/angular";
-import {Router} from "@angular/router";
 import {CountryService} from "../services/country.service";
 import {catchError, map, switchMap, take} from "rxjs/operators";
 import {PickThingsComponent} from "../shared/components/pick-things/pick-things.component";
@@ -14,9 +13,7 @@ import {EventsService} from "./events.service";
 import {GamesService} from "../games/games.service";
 import {Game} from "../models/game.model";
 import {LocationType} from "../enums/LocationType";
-import {GameMode} from "../enums/GameMode";
 import {UserService} from "../services/user.service";
-import {JoinOrCreateTeamComponent} from "../shared/components/join-or-create-team/join-or-create-team.component";
 
 @Component({
   selector: 'app-events',
@@ -57,7 +54,6 @@ export class EventsPage implements OnInit {
               private userService: UserService,
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
-              private router: Router,
               private countryService: CountryService) { }
 
   ngOnInit() {
@@ -172,7 +168,7 @@ export class EventsPage implements OnInit {
     const second = (this.descending) ? 1 : -1;
     switch (this.actualSortingMode) {
       case SortingMode.byCreationDate: {
-        this.actualEvents = this.actualEvents.sort((a, b) =>  a.event.date < b.event.date ? first : (a.event.date > b.event.date ? second : 0));
+        this.actualEvents = this.actualEvents.sort((a, b) =>  a.event.creationDate < b.event.creationDate ? first : (a.event.creationDate > b.event.creationDate ? second : 0));
         break;
       }
       case SortingMode.byPopularity: {
@@ -181,6 +177,10 @@ export class EventsPage implements OnInit {
       }
       case SortingMode.byGameName: {
         this.actualEvents = this.actualEvents.sort((a, b) =>  a.event.name < b.event.name ? first : (a.event.name > b.event.name ? second : 0));
+        break;
+      }
+      case SortingMode.byDate: {
+        this.actualEvents = this.actualEvents.sort((a, b) =>  a.event.date < b.event.date ? first : (a.event.date > b.event.date ? second : 0));
         break;
       }
     }

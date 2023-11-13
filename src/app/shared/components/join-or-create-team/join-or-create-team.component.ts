@@ -14,21 +14,35 @@ export class JoinOrCreateTeamComponent implements OnInit {
   join: boolean;
   chosenTeam = "";
   canJoinToATeam: boolean;
+  canCreateATeam: boolean;
 
   constructor(private modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.canJoinToATeam = false;
+    this.canCreateATeam = false;
     this.join = false;
     console.log(this.event);
     if (this.event.joined) {
+      console.log("letezik joined");
       this.chosenTeam = this.event.joined.length > 0 ? this.event.joined[0].teamName : "";
+      if (this.event.joined.length < this.event.liveGameSettings.maxTeam) {
+        console.log("canCreate");
+        this.canCreateATeam = true;
+        this.join = false;
+      }
       this.event.joined.forEach(team => {
         if (team.teamMembers.length < this.event.liveGameSettings.maxTeamMember) {
+          console.log("canJoin");
           this.canJoinToATeam = true;
           this.join = true;
         }
       })
+    } else {
+      this.event.joined = [];
+      this.canCreateATeam = true;
+      this.canJoinToATeam = true;
+      this.join = true;
     }
   }
 
@@ -38,7 +52,7 @@ export class JoinOrCreateTeamComponent implements OnInit {
 
   setJoin(event) {
     console.log(event, this.join);
-    this.join = event.detail.value;
+    this.join = event.detail.value === "true";
     this.chosenTeam = "";
     console.log(event, this.join);
   }
@@ -51,7 +65,11 @@ export class JoinOrCreateTeamComponent implements OnInit {
     if (this.join) {
       this.event.joined = this.event.joined.map(team => {
         if (team.teamName === this.chosenTeam) {
-          team.teamMembers.push(this.userId);
+          if (team.teamMembers) {
+            team.teamMembers.push(this.userId);
+          } else {
+            team.teamMembers = [this.userId];
+          }
         }
         return team;
       })

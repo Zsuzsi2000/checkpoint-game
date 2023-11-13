@@ -61,7 +61,7 @@
       </ion-button>
       <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                   class="custom-align-item margin-top" fill="solid" size="small" shape="round"
-                  [routerLink]="['/', 'game-mode']">
+                  (click)="navigateToGameMode()">
         Play
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
       </ion-button>

@@ -12,24 +12,24 @@
 <ion-content>
   <ion-grid class="ion-justify-content-center ion-align-items-center">
     <ion-row class="ion-justify-content-center">
-      <ion-col class="ion-align-items-center">
+      <ion-col>
         <ion-item class="ion-align-items-center" lines="none">
           <ion-label class="ion-text-center">
             Do you want to create a new team or join an existing one?
           </ion-label>
         </ion-item>
-        <ion-segment color="primary" (ionChange)="setJoin($event)" >
+        <ion-segment color="primary" (ionChange)="setJoin($event)" [value]="join">
           <ion-segment-button [value]="true" [disabled]="!canJoinToATeam">
             <ion-label>Join</ion-label>
           </ion-segment-button>
-          <ion-segment-button [value]="false">
+          <ion-segment-button [value]="false" [disabled]="!canCreateATeam">
             <ion-label>Create</ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-col>
     </ion-row>
     <ion-row class="ion-justify-content-center" *ngIf="join">
-      <ion-col class="ion-align-items-center">
+      <ion-col>
         <ion-list lines="none">
           <ion-item class="ion-text-center">
             <ion-label>Teams</ion-label>
@@ -38,7 +38,7 @@
               <ng-container *ngFor="let team of event.joined">
                 <ion-button (click)="setTeam(team.teamName)" color="secondary" size="small" shape="round"
                             [disabled]="team.teamMembers.length === event.liveGameSettings.maxTeamMember">
-                  {{ team.teamName }}
+                  <ion-label>{{ team.teamName }}</ion-label>
                   <ion-icon *ngIf="team.teamMembers.length === event.liveGameSettings.maxTeamMember" slot="end" name="checkmark"></ion-icon>
                 </ion-button>
               </ng-container>
@@ -50,7 +50,7 @@
       </ion-col>
     </ion-row>
     <ion-row class="ion-justify-content-center" *ngIf="!join">
-      <ion-col class="ion-align-items-center">
+      <ion-col>
         <ion-item lines="none">
           <ion-label position="stacked">Name of the team</ion-label>
           <ion-input

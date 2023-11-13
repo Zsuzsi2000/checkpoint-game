@@ -3,11 +3,6 @@ ion-toolbar {
   --color: white;
 }
 
-.green {
-  --background: var(--color-games);
-  --color: white;
-}
-
 .filter-group {
 
   ion-chip {
@@ -25,75 +20,6 @@ ion-chip {
   color: black;
 }
 
-.justify-second {
-  display: flex;
-  justify-content: end;
-}
-
-.rigt-padding {
-  padding-right: 5px;
-}
-
-
-.custom-align {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.custom-align-2 {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: center;
-  flex-direction: row;
-  width: 100%;
-  margin-top: 4px;
-}
-
-.margin-top {
-  margin-top: 2px;
-  margin-bottom: 2px;
-}
-
-.custom-align-item {
-  display: flex;
-  flex: 1;
-}
-
-.rotate-icon {
-  color: black;
-  transform: rotate(45deg);
-}
-
-.rotate-icon-135 {
-  color: black;
-  transform: rotate(135deg);
-}
-
 .black {
   color: black;
-}
-
-
-@media (max-width: 437px) {
-  .custom-align-item {
-    display: flex;
-    justify-content: center;
-    flex: 1;
-  }
-
-  .custom-align-2 {
-    justify-content: center;
-
-  }
-
-  .justify-second, .justify-first {
-    display: flex;
-    justify-content: center;
-  }
 }

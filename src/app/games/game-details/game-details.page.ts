@@ -127,6 +127,10 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     this.router.navigate(['/', 'games', 'edit-game', id]);
   }
 
+  navigateToGameMode() {
+    this.router.navigate(['/', 'game-mode'], { queryParams: { gameId: this.game.id }});
+  }
+
   ngOnDestroy(): void {
     if (this.gameSub) {
       this.gameSub.unsubscribe();

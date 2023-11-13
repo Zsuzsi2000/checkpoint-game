@@ -26,9 +26,11 @@
         <ion-item>
           <ion-select placeholder="Select a sorting mode" (ionChange)="sortEventsEvent($event)">
             <div slot="label">Sorting *</div>
+            <ion-select-option [value]="SortingMode.byDate">By date
+            </ion-select-option>
             <ion-select-option [value]="SortingMode.byCreationDate">By creation date
             </ion-select-option>
-            <ion-select-option [value]="SortingMode.byGameName">By game name
+            <ion-select-option [value]="SortingMode.byGameName">By event name
             </ion-select-option>
             <ion-select-option [value]="SortingMode.byPopularity">By popularity
             </ion-select-option>

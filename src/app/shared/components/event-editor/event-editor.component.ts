@@ -86,19 +86,20 @@ export class EventEditorComponent implements OnInit {
     }).then(loadingEl => {
       loadingEl.present();
 
-      let liveGameSettings = this.canEditGameMode ? this.setLiveGameSettings() : this.event.liveGameSettings;
+      let liveGameSettings = this.canEditGameMode ? this.setLiveGameSettings() : this.setMax();
       let newEvent = new Event(
         (this.event) ? this.event.id : null,
         this.eventForm.value.name,
         this.eventForm.value.date,
+        this.event ? (this.event.creationDate ? this.event.creationDate : new Date()) : new Date(),
         this.eventForm.value.isItPublic,
         this.eventForm.value.imgUrl,
         this.userId,
         this.gameId,
         this.eventForm.value.description,
         liveGameSettings,
-        (this.event) ? this.event.players : [],
-        (this.event) ? this.event.joined : [],
+        this.event ? this.event.players : [],
+        this.event ? this.event.joined : [],
       );
 
       if (this.imageFile) {
@@ -175,6 +176,23 @@ export class EventEditorComponent implements OnInit {
     }
     console.log(liveGameSettings);
     return liveGameSettings;
+  }
+
+  setMax(): LiveGameSettings {
+    let live = this.event.liveGameSettings;
+    if (this.eventForm.get('liveGameSettings').value.maxTeam) live.maxTeam = this.eventForm.get('liveGameSettings').value.maxTeam;
+    if (this.eventForm.get('liveGameSettings').value.maxTeamMember) live.maxTeamMember = this.eventForm.get('liveGameSettings').value.maxTeamMember;
+    return this.event.liveGameSettings;
+  }
+
+  showWarningMessage(maxTeam: boolean) {
+    if (!this.canEditGameMode) {
+      if (maxTeam) {
+        return this.eventForm.get('liveGameSettings').value.maxTeam < this.event.liveGameSettings.maxTeam;
+      } else {
+        return this.eventForm.get('liveGameSettings').value.maxTeamMember < this.event.liveGameSettings.maxTeamMember;
+      }
+    } else { return false }
   }
 
 }

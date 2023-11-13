@@ -65,4 +65,8 @@ export class GameCardComponent implements OnInit {
     });
   }
 
+  navigateToGameMode() {
+    this.router.navigate(['/', 'game-mode'], { queryParams: { gameId: this.game.id }});
+  }
+
 }

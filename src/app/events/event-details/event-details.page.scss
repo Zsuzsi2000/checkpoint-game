@@ -9,8 +9,21 @@ ion-toolbar {
 }
 
 p {
-  margin-block-start:  0px;
-  margin-block-end:  0px;
+  margin-block-start:  0;
+  margin-block-end:  0;
+}
+
+.background-image-container {
+  align-items: flex-start;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+  letter-spacing: 20px;
+  text-shadow: 2px 2px 5px var(--color-event);
+  font-size: 40px;
+  font-weight: 900;
 }
 
 #game-img {

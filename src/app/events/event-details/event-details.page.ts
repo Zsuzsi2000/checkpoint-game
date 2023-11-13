@@ -177,7 +177,7 @@ export class EventDetailsPage implements OnInit {
         break;
       }
       case GameMode.teamGame: {
-        if (this.event.joined && this.event.joined[0]) {
+        if (this.event.joined && this.event.joined[0] && this.event.joined[0].teamMembers) {
           this.event.joined[0].teamMembers.push(this.user.id);
         } else {
           this.event.joined = [{ teamName: "Team" , teamMembers: [this.user.id] }];
@@ -197,7 +197,7 @@ export class EventDetailsPage implements OnInit {
     } else if (this.event.joined) {
       canAddTeam = this.event.liveGameSettings.maxTeam > this.event.joined.length;
       this.event.joined.forEach(team => {
-        if (this.event.liveGameSettings.maxTeamMember > team.teamMembers.length) canAddMember = true;
+        if (this.event.liveGameSettings.maxTeamMember > (team.teamMembers ? team.teamMembers.length : 0)) canAddMember = true;
       })
     } else if (this.event.players) {
       oke = this.event.players.length < (this.event.liveGameSettings.maxTeam * this.event.liveGameSettings.maxTeamMember);
@@ -211,7 +211,6 @@ export class EventDetailsPage implements OnInit {
 
     switch (this.event.liveGameSettings.gameMode) {
       case GameMode.teamVsTeam: {
-        this.event.joined[0].teamMembers = this.event.joined[0].teamMembers.filter(member => member !== this.user.id);
         this.event.joined = this.event.joined.map(team => {
           return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t !== this.user.id) }
         });
@@ -220,25 +219,22 @@ export class EventDetailsPage implements OnInit {
       }
       case GameMode.againstEachOther: {
         this.event.joined = this.event.joined.filter(team => team.teamMembers[0] !== this.user.id);
-        this.setJoinOrCancel(false);
         break;
       }
       case GameMode.teamGame: {
         this.event.joined[0].teamMembers = this.event.joined[0].teamMembers.filter(member => member !== this.user.id);
         this.event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
-        this.setJoinOrCancel(false);
         break;
       }
-      default: {
-        this.setJoinOrCancel(false);
-      }
     }
+    this.setJoinOrCancel(false);
     console.log(this.event);
   }
 
   setJoinOrCancel(join: boolean) {
     if (join) {
       if (this.event.players) {
+        console.log("push id");
         this.event.players.push(this.user.id);
       }
       this.event.players = [this.user.id];
