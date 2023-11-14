@@ -7,6 +7,7 @@ import {CreateGamePage} from "./create-game.page";
 import {SharedModule} from "../../shared/shared.module";
 import {CreateCheckpointsPage} from "./create-checkpoints/create-checkpoints.page";
 import {CreateGamePageRoutingModule} from "./create-game-routing.module";
+import {QRCodeModule} from "angularx-qrcode";
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import {CreateGamePageRoutingModule} from "./create-game-routing.module";
     CreateGamePageRoutingModule,
     Ng2SearchPipeModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    QRCodeModule
   ],
   declarations: [
     CreateGamePage,

@@ -48,7 +48,8 @@
           labelPlacement="stacked"
           placeholder="Give a description of where the checkpoint is located"
           formControlName="locationDescription"
-        ></ion-input>
+        >
+        </ion-input>
       </ion-item>
       <ng-container *ngIf="locationType === LocationType.location">
         <app-location-picker *ngIf="checkpointForm.get('locationAddress').value; else noAddressYet"

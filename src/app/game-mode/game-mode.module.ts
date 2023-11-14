@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { GameModePageRoutingModule } from './game-mode-routing.module';
 
 import { GameModePage } from './game-mode.page';
+import {QrCodeScannerComponent} from "./qr-code-scanner/qr-code-scanner.component";
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { GameModePage } from './game-mode.page';
     IonicModule,
     GameModePageRoutingModule
   ],
-  declarations: [GameModePage]
+  declarations: [GameModePage, QrCodeScannerComponent]
 })
 export class GameModePageModule {}

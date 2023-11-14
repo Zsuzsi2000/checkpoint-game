@@ -131,7 +131,7 @@ export class CheckpointsEditorComponent implements OnInit {
         }
         forkJoin(observables).subscribe( (data: {location: Location, index: number}[]) => {
           data.forEach(d => {
-            let newCheckpoint = new Checkpoint(actualLength + d.index,null,null, null, null, d.location, null, null);
+            let newCheckpoint = new Checkpoint(actualLength + d.index,null,null, null, null, d.location, null, null, null, null);
             this.checkpoints.push({ checkpoint: newCheckpoint, imageFile: null});
           });
 

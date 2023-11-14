@@ -10,6 +10,8 @@ export class Checkpoint {
     public imgUrl: string,
     public locationDescription: string,
     public locationAddress: Location,
+    public locationAccessCode: string,
+    public LocationQrCodeUrl: Location,
     public quiz: Quiz,
     public info: string
   ) {}

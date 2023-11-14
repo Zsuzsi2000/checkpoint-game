@@ -20,6 +20,7 @@ import {JoinOrCreateTeamComponent} from "./components/join-or-create-team/join-o
 import {EventCardComponent} from "./components/event-card/event-card.component";
 import {RouterModule} from "@angular/router";
 import {GameCardComponent} from "./components/game-card/game-card.component";
+import {QRCodeModule} from "angularx-qrcode";
 
 
 
@@ -48,7 +49,8 @@ import {GameCardComponent} from "./components/game-card/game-card.component";
     ReactiveFormsModule,
     Ng2SearchPipeModule,
     IonicModule,
-    RouterModule
+    RouterModule,
+    QRCodeModule
   ],
   exports: [
     ListOfUsersComponent,

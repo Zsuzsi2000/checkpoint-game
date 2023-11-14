@@ -25,6 +25,7 @@ export class CheckpointEditorComponent implements OnInit {
   checkpointForm: FormGroup;
   answers: { answer: string, correct: boolean }[] = [];
   LocationType = LocationType;
+  qrString = '';
 
   constructor(private modalCtrl: ModalController,
               private formBuilder: FormBuilder,
@@ -57,6 +58,9 @@ export class CheckpointEditorComponent implements OnInit {
         info: new FormControl(this.checkpoint.info, { updateOn: "change"}),
       });
     } else {
+      if (this.locationType === LocationType.description) {
+
+      }
       this.checkpointForm = new FormGroup({
         name: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
         description: new FormControl(null, { updateOn: "change"}),
@@ -90,6 +94,8 @@ export class CheckpointEditorComponent implements OnInit {
       help: (this.checkpointForm.get('quiz').value.help)
     } : null;
 
+    let locationAccessCode = (this.locationType === LocationType.description) ? "id" + Math.random().toString(16).slice(2) : null;
+
     let checkpoint1 = new Checkpoint(
       (this.checkpoint) ? this.checkpoint.index : null,
       this.checkpointForm.value.name,
@@ -97,9 +103,12 @@ export class CheckpointEditorComponent implements OnInit {
       (this.checkpoint && this.checkpoint.imgUrl) ? this.checkpoint.imgUrl : null,
       this.checkpointForm.value.locationDescription,
       this.checkpointForm.value.locationAddress,
+      locationAccessCode,
+      null,
       quiz,
       info
     );
+    console.log(checkpoint1);
 
     this.modalCtrl.dismiss({ checkpoint: checkpoint1, imageFile: this.checkpointForm.value.imgUrl});
   }
