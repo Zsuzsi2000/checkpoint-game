@@ -6,7 +6,7 @@ export class LiveGame {
     public id: string,
     public gameId: string,
     public liveGameSettings: LiveGameSettings,
-    public accessCode: number,
+    public accessCode: string,
     public startDate: Date,
     public players: Player[] = [],
   ) {}

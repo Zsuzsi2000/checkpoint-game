@@ -11,7 +11,7 @@ export class Checkpoint {
     public locationDescription: string,
     public locationAddress: Location,
     public locationAccessCode: string,
-    public LocationQrCodeUrl: Location,
+    public LocationQrCodeUrl: string,
     public quiz: Quiz,
     public info: string
   ) {}

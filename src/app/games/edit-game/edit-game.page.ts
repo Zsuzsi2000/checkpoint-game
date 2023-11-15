@@ -14,7 +14,6 @@ import {LocationIdentification} from "../../enums/LocationIdentification";
 import {Game} from "../../models/game.model";
 import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
 import {environment} from "../../../environments/environment";
-import {Preferences} from "@capacitor/preferences";
 
 @Component({
   selector: 'app-edit-game',
@@ -32,6 +31,7 @@ export class EditGamePage implements OnInit {
   LocationIdentification = LocationIdentification;
   checkpoints: { checkpoint: Checkpoint, imageFile: File | Blob | string }[] = [];
   mapUrl = "";
+  checkpointsChanged = false;
   isLoading = false;
   first = true;
 
@@ -99,6 +99,7 @@ export class EditGamePage implements OnInit {
     if (this.activatedRoute.snapshot.queryParamMap.has('checkpoints')) {
       console.log(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
       this.checkpoints = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
+      this.checkpointsChanged = true;
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('mapUrl')) {
       console.log(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
@@ -155,7 +156,7 @@ export class EditGamePage implements OnInit {
             ? (uploadResponse.imageUrl) ? uploadResponse.imageUrl : uploadResponse
             : (this.gameForm.value.pointOfDeparture) ? (this.gameForm.value.pointOfDeparture as Location).staticMapImageUrl : null;
 
-          return (this.gameForm.value.locationType === LocationType.description && (this.gameForm.get('mapUrl').value !== this.game.mapUrl))
+          return (this.game.locationType === LocationType.description && (this.gameForm.get('mapUrl').value !== this.game.mapUrl))
             ? this.imageService.uploadImage(this.gameForm.get('mapUrl').value) : of(null);
         })).pipe(
         catchError(error => {
@@ -346,6 +347,16 @@ export class EditGamePage implements OnInit {
       .then(alertEl => {
         alertEl.present();
       });
+  }
+
+  saveUrl(index: number, event){
+    console.log(index, event);
+    this.checkpoints = this.checkpoints.map(check => {
+      if (check.checkpoint.index === index) {
+        check.checkpoint.LocationQrCodeUrl = event.changingThisBreaksApplicationSecurity;
+      }
+      return check;
+    });
   }
 
 }

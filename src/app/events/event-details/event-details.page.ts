@@ -169,18 +169,18 @@ export class EventDetailsPage implements OnInit {
       }
       case GameMode.againstEachOther: {
         if (this.event.joined) {
-          this.event.joined.push({ teamName: this.user.username , teamMembers: [this.user.id] });
+          this.event.joined.push({ teamName: this.user.username , teamMembers: [{id: this.user.id, name: this.user.username}] });
         } else {
-          this.event.joined = [{ teamName: this.user.username , teamMembers: [this.user.id] }];
+          this.event.joined = [{ teamName: this.user.username , teamMembers: [{id: this.user.id, name: this.user.username}] }];
         }
         this.setJoinOrCancel(true);
         break;
       }
       case GameMode.teamGame: {
         if (this.event.joined && this.event.joined[0] && this.event.joined[0].teamMembers) {
-          this.event.joined[0].teamMembers.push(this.user.id);
+          this.event.joined[0].teamMembers.push({id: this.user.id, name: this.user.username});
         } else {
-          this.event.joined = [{ teamName: "Team" , teamMembers: [this.user.id] }];
+          this.event.joined = [{ teamName: "Team" , teamMembers: [{id: this.user.id, name: this.user.username}] }];
         }
         this.setJoinOrCancel(true);
         break;
@@ -212,17 +212,17 @@ export class EventDetailsPage implements OnInit {
     switch (this.event.liveGameSettings.gameMode) {
       case GameMode.teamVsTeam: {
         this.event.joined = this.event.joined.map(team => {
-          return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t !== this.user.id) }
+          return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t.id !== this.user.id) }
         });
         this.event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
         break;
       }
       case GameMode.againstEachOther: {
-        this.event.joined = this.event.joined.filter(team => team.teamMembers[0] !== this.user.id);
+        this.event.joined = this.event.joined.filter(team => team.teamMembers[0].id !== this.user.id);
         break;
       }
       case GameMode.teamGame: {
-        this.event.joined[0].teamMembers = this.event.joined[0].teamMembers.filter(member => member !== this.user.id);
+        this.event.joined[0].teamMembers = this.event.joined[0].teamMembers.filter(member => member.id !== this.user.id);
         this.event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
         break;
       }

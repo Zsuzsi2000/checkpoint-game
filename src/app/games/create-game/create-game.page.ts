@@ -30,7 +30,6 @@ export class CreateGamePage implements OnInit {
   checkpointsReady = false;
   checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[] = [];
   mapUrl = "";
-  qrCodes: {index: number, url: string}[] = [];
 
   constructor(private gamesService: GamesService,
               private countryService: CountryService,
@@ -253,68 +252,11 @@ export class CreateGamePage implements OnInit {
 
   saveUrl(index: number, event){
     console.log(index, event);
-    this.qrCodes.push({index: index, url: event.changingThisBreaksApplicationSecurity});
-  }
-
-  generatePDF( qrcodes: {index: number, url: string}[]) {
-    const pdf = new jsPDF();
-
-    qrcodes.forEach((code => {
-      if (code.index > 0) {
-        pdf.addPage(); // Add a new page for each image after the first one
+    this.checkpoints = this.checkpoints.map(check => {
+      if (check.checkpoint.index === index) {
+        check.checkpoint.LocationQrCodeUrl = event.changingThisBreaksApplicationSecurity;
       }
-
-      // Adjust the dimensions as needed
-      pdf.addImage(code.url, 'png', 10, 10, 190, 150);
-    }));
-
-    // Save or open the PDF
-    pdf.save('generated.pdf');
-    console.log(pdf);
-
-    // Save or open the PDF
-    const pdfBlob = pdf.output('blob');
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-
-    // Create a download link and trigger the download
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = 'generated.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-  }
-
-  convertBlobToBase64(qrcode: {index: number, url: string}): Promise<{index: number, url: string}> {
-    return new Promise((resolve, reject) => {
-      fetch(qrcode.url)
-        .then(response => response.blob())
-        .then(blob => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64DataUrl = reader.result as string;
-            qrcode.url = base64DataUrl;
-            console.log(qrcode)
-            resolve(qrcode);
-          };
-          reader.readAsDataURL(blob);
-        })
-        .catch(error => reject(`Error converting blob to base64 for ${qrcode.url}: ${error}`));
+      return check;
     });
   }
-
-  convertBlobsToBase64() {
-    const promises = this.qrCodes.map(image => this.convertBlobToBase64(image));
-
-    Promise.all(promises)
-      .then(base64DataUrls => {
-        console.log(base64DataUrls);
-
-        this.generatePDF(base64DataUrls);
-      })
-      .catch(error => console.error('Error converting blobs to base64:', error));
-  }
-
-
 }

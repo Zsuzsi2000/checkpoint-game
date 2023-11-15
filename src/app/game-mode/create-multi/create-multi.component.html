@@ -1,0 +1,73 @@
+<ion-grid>
+  <ion-row class="ion-justify-content-center">
+    <ion-col class="ion-text-center ion-padding" size-sm="6">
+      <ion-item class="ion-align-items-center" lines="none">
+        <ion-label class="ion-text-center">
+          Choose game mode
+        </ion-label>
+      </ion-item>
+      <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="GameMode.againstEachOther">
+        <ion-segment-button [value]="GameMode.againstEachOther">
+          <ion-label>AGAINST<br>EACH<br>OTHER</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="GameMode.teamGame">
+          <ion-label>TEAM<br>GAME</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="GameMode.teamVsTeam">
+          <ion-label>TEAM<br>VS<br>TEAM</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-justify-content-center">
+    <ion-col class="ion-text-center" size-sm="6">
+      <ion-list class="ion-padding" lines="none">
+        <ion-item class="ion-align-items-center" *ngIf="liveGameSetting.gameMode !== GameMode.teamGame">
+          <ion-label position="stacked">{{ liveGameSetting.gameMode === GameMode.teamVsTeam ? 'Number of teams' : 'Number of members'}}</ion-label>
+          <ion-input
+            [(ngModel)]="maxTeam"
+            type="number"
+            labelPlacement="stacked"
+            placeholder="Enter the number"
+          ></ion-input>
+        </ion-item>
+        <ion-item
+          class="ion-align-items-center"
+          *ngIf="maxTeam < 1 || maxTeam > 20"
+          lines="none">
+          <ion-label color="danger">
+            The max value is 20.
+          </ion-label>
+        </ion-item>
+        <ion-item class="ion-align-items-center" *ngIf="liveGameSetting.gameMode !== GameMode.againstEachOther">
+          <ion-label position="stacked">Number of team members</ion-label>
+          <ion-input
+            [(ngModel)]="maxTeamMember"
+            type="number"
+            labelPlacement="stacked"
+            placeholder="Enter the maximum number of people in a team"
+          ></ion-input>
+        </ion-item>
+        <ion-item
+          class="ion-align-items-center"
+          *ngIf="maxTeamMember < 1 || maxTeamMember > 20"
+          lines="none">
+          <ion-label color="danger">
+            The max value is 20.
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-justify-content-center">
+    <ion-col class="ion-text-center" size-sm="6">
+      <ion-button
+      class="ion-text-center ion-justify-content-center ion-margin ion-padding"
+      color="secondary"
+      [disabled]="maxTeamMember < 1 || maxTeamMember > 20 || maxTeam < 1 || maxTeam > 20"
+      (click)="createLiveGameSettings()">
+        <ion-label>Save settings</ion-label>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

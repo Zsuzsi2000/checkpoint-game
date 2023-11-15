@@ -19,7 +19,7 @@ interface EventData {
   description: string,
   liveGameSettings: LiveGameSettings,
   players: string[],
-  joined: { teamName: string, teamMembers: string[]}[],
+  joined: { teamName: string, teamMembers: {id: string, name: string}[]}[],
 }
 
 @Injectable({

@@ -9,6 +9,9 @@ import {User} from "../../models/user.model";
 import {catchError, switchMap, take} from "rxjs/operators";
 import {LocationType} from "../../enums/LocationType";
 import {UserService} from "../../services/user.service";
+import {jsPDF} from "jspdf";
+import {Checkpoint} from "../../models/checkpoint.model";
+import {LocationIdentification} from "../../enums/LocationIdentification";
 
 @Component({
   selector: 'app-game-details',
@@ -135,6 +138,68 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     if (this.gameSub) {
       this.gameSub.unsubscribe();
     }
+  }
+
+  getPdf() {
+    if (this.game.locationIdentification === LocationIdentification.qr) {
+      const promises = this.game.checkpoints.map(check => this.convertBlobToBase64(check));
+
+      Promise.all(promises)
+        .then(base64DataUrls => {
+          console.log(base64DataUrls);
+          this.generatePDFFromQRCodes(base64DataUrls);
+        })
+        .catch(error => {
+          console.error('Error converting blobs to base64:', error);
+          this.generatePDFFromAccessCodes();
+        });
+    } else {
+      this.generatePDFFromAccessCodes();
+    }
+  }
+
+  generatePDFFromQRCodes( checks: {checkpoint: Checkpoint, url: string}[]) {
+    const pdf = new jsPDF('p', 'cm','a4');
+
+    pdf.text(this.game.name, 2, 2);
+    checks.forEach((check, index) => {
+      if ( index > 0 && index % 4 === 0) { pdf.addPage() }
+      pdf.text(check.checkpoint.index + '. ' + check.checkpoint.name, (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 4 : 15);
+      pdf.addImage(check.url, 'PNG', (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 6 : 17, 7, 7);
+    });
+
+    pdf.save(this.game.name.replace(/\s/g, "") + '.pdf');
+    console.log(pdf);
+  }
+
+  generatePDFFromAccessCodes() {
+    const pdf = new jsPDF('p', 'cm','a4');
+
+    pdf.text(this.game.name, 2, 2);
+    this.game.checkpoints.forEach((check, index) => {
+      if ( index > 0 && index % 20 === 0) { pdf.addPage() }
+      pdf.text(check.index + '. ' + check.name + ': ' + check.locationAccessCode, 2, 3 + index);
+    });
+
+    pdf.save(this.game.name.replace(/\s/g, "") + '.pdf');
+    console.log(pdf);
+  }
+
+  convertBlobToBase64(check: Checkpoint): Promise<{checkpoint: Checkpoint, url: string}> {
+    return new Promise((resolve, reject) => {
+      fetch(check.LocationQrCodeUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64DataUrl = reader.result as string;
+            console.log(base64DataUrl);
+            resolve({ checkpoint: check, url: base64DataUrl });
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(error => reject(`Error converting blob to base64 for ${check.name}: ${error}`));
+    });
   }
 
 }

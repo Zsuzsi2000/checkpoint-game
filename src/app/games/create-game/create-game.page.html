@@ -156,7 +156,7 @@
       </ion-item>
       <app-image-picker (imagePick)="onImagePick($event, 'image')"
                         [showPreview]="gameForm.get('imgUrl').value"></app-image-picker>
-      <ng-container *ngIf="this.gameForm.get('locationType').value === LocationType.description">
+      <ng-container *ngIf="gameForm.get('locationType').value === LocationType.description">
         <ion-item>
           <ion-label class="ion-text-center">
             Pick map image
@@ -178,15 +178,14 @@
       type="submit"
       color="primary"
       expand="full"
-      [disabled]="!gameForm.valid || (this.gameForm.get('locationType').value === LocationType.description
-      && this.gameForm.get('locationIdentification').value === null) || !checkpointsReady">
+      [disabled]="!gameForm.valid || (gameForm.get('locationType').value === LocationType.description
+      && gameForm.get('locationIdentification').value === null) || !checkpointsReady">
       Save the game
     </ion-button>
-    <ion-item *ngIf="this.gameForm.get('locationType').value === LocationType.description && this.gameForm.get('locationIdentification').value === LocationIdentification.qr && checkpointsReady">
+    <ion-item [hidden]=true *ngIf="gameForm.get('locationType').value === LocationType.description && gameForm.get('locationIdentification').value === LocationIdentification.qr && checkpointsReady">
       <ng-container *ngFor="let checkpoint of checkpoints">
         <qrcode [qrdata]="checkpoint.checkpoint.locationAccessCode" [width]="256" (qrCodeURL)="saveUrl(checkpoint.checkpoint.index, $event)"></qrcode>
       </ng-container>
     </ion-item>
-    <ion-button (click)="convertBlobsToBase64()">Get pdf</ion-button>
   </form>
 </ion-content>

@@ -61,7 +61,7 @@ export class EventCardComponent implements OnInit {
       case GameMode.teamVsTeam: {
         this.modalCtrl.create({
           component: JoinOrCreateTeamComponent,
-          componentProps: { event: event, userId: this.loggedUser.id }
+          componentProps: { event: event, user: this.loggedUser }
         }).then(modalEl => {
           modalEl.onDidDismiss().then(modalData => {
             console.log(modalData.data);
@@ -73,18 +73,18 @@ export class EventCardComponent implements OnInit {
       }
       case GameMode.againstEachOther: {
         if (event.joined) {
-          event.joined.push({ teamName: this.loggedUser.username , teamMembers: [this.loggedUser.id] });
+          event.joined.push({ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] });
         } else {
-          event.joined = [{ teamName: this.loggedUser.username , teamMembers: [this.loggedUser.id] }];
+          event.joined = [{ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
         }
         this.setJoinOrCancel(event, true);
         break;
       }
       case GameMode.teamGame: {
         if (event.joined && event.joined[0] && event.joined[0].teamMembers) {
-          event.joined[0].teamMembers.push(this.loggedUser.id);
+          event.joined[0].teamMembers.push({id: this.loggedUser.id, name: this.loggedUser.username});
         } else {
-          event.joined = [{ teamName: "Team" , teamMembers: [this.loggedUser.id] }];
+          event.joined = [{ teamName: "Team" , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
         }
         this.setJoinOrCancel(event, true);
         break;
@@ -116,17 +116,17 @@ export class EventCardComponent implements OnInit {
     switch (event.liveGameSettings.gameMode) {
       case GameMode.teamVsTeam: {
         event.joined = event.joined.map(team => {
-          return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t !== this.loggedUser.id) }
+          return { teamName: team.teamName, teamMembers: team.teamMembers.filter(t => t.id !== this.loggedUser.id) }
         });
         event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
         break;
       }
       case GameMode.againstEachOther: {
-        event.joined = event.joined.filter(team => team.teamMembers[0] !== this.loggedUser.id);
+        event.joined = event.joined.filter(team => team.teamMembers[0].id !== this.loggedUser.id);
         break;
       }
       case GameMode.teamGame: {
-        event.joined[0].teamMembers = event.joined[0].teamMembers.filter(member => member !== this.loggedUser.id);
+        event.joined[0].teamMembers = event.joined[0].teamMembers.filter(member => member.id !== this.loggedUser.id);
         event.joined = this.event.joined.filter(team => team.teamMembers.length !== 0);
         break;
       }

@@ -8,6 +8,10 @@ import {GameMode} from "../enums/GameMode";
 import {AuthService} from "../auth/auth.service";
 import {Subscription} from "rxjs";
 import {User} from "../models/user.model";
+import {LiveGameSettings} from "../models/liveGameSettings";
+import {LiveGame} from "../models/liveGame";
+import {CheckpointState} from "../interfaces/CheckpointState";
+import {Player} from "../interfaces/Player";
 
 @Component({
   selector: 'app-game-mode',
@@ -19,10 +23,14 @@ export class GameModePage implements OnInit, OnDestroy {
   game: Game;
   event: Event;
   user: User = null;
+  liveGame: LiveGame;
   gameMode: GameMode = GameMode.notSpecified;
   getGame = false;
   getEvent = false;
   userSub: Subscription;
+  liveGameSettings: LiveGameSettings;
+  GameMode = GameMode;
+  creatingLiveGameSetting = false;
 
   constructor(private activatedRoute: ActivatedRoute,
               private eventsService: EventsService,
@@ -50,6 +58,50 @@ export class GameModePage implements OnInit, OnDestroy {
     }
 
   }
+
+  setSolo() {
+    this.gameMode = GameMode.solo;
+    let accessCode = Math.random().toString(16).slice(7);
+    console.log(accessCode);
+    let checkpointStates: CheckpointState[] = [];
+    for (let i = 0; i++; i< this.game.checkpoints.length) {
+      checkpointStates.push({
+        checkIndex: i,
+        done: false,
+        correctAnswer: null,
+        useHelp: null,
+        startTimestap: null,
+        endTimestap: null
+      })
+    }
+    let players: Player[] = [{
+      teamName: this.user.username,
+      teamMembers: [{id: this.user.id, name: this.user.username}],
+      score: 0,
+      duration: null,
+      checkpointsState: checkpointStates
+    }];
+
+    this.liveGame = new LiveGame(
+      null,
+      this.game.id,
+      new LiveGameSettings(this.gameMode,1, 1),
+      accessCode,
+      new Date(),
+      players
+    )
+  }
+
+  createMultiplayer() {
+    this.creatingLiveGameSetting = true;
+  }
+
+  setLiveGameSettings(event) {
+    console.log(event);
+    this.creatingLiveGameSetting = false;
+    this.liveGameSettings = event;
+  }
+
 
   ngOnDestroy(): void {
     if (this.userSub) this.userSub.unsubscribe();

@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from "@ionic/angular";
 import {Event} from "../../../models/event.model"
+import {User} from "../../../models/user.model";
 
 @Component({
   selector: 'app-join-or-create-team',
@@ -10,7 +11,7 @@ import {Event} from "../../../models/event.model"
 export class JoinOrCreateTeamComponent implements OnInit {
 
   @Input() event: Event;
-  @Input() userId: string;
+  @Input() user: User;
   join: boolean;
   chosenTeam = "";
   canJoinToATeam: boolean;
@@ -66,17 +67,17 @@ export class JoinOrCreateTeamComponent implements OnInit {
       this.event.joined = this.event.joined.map(team => {
         if (team.teamName === this.chosenTeam) {
           if (team.teamMembers) {
-            team.teamMembers.push(this.userId);
+            team.teamMembers.push({id: this.user.id, name: this.user.username});
           } else {
-            team.teamMembers = [this.userId];
+            team.teamMembers = [{id: this.user.id, name: this.user.username }];
           }
         }
         return team;
       })
     } else {
       this.event.joined
-        ? this.event.joined.push({ teamName: this.chosenTeam, teamMembers: [this.userId] })
-        : [{ teamName: this.chosenTeam, teamMembers: [this.userId] }];
+        ? this.event.joined.push({ teamName: this.chosenTeam, teamMembers: [{id: this.user.id, name: this.user.username }] })
+        : [{ teamName: this.chosenTeam, teamMembers: [{id: this.user.id, name: this.user.username }] }];
     }
     console.log(this.event);
     this.modalCtrl.dismiss(this.event);

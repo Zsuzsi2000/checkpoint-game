@@ -105,6 +105,14 @@
             </ion-item>
             <ion-item
               class="ion-align-items-center"
+              *ngIf="(!eventForm.get('liveGameSettings').get('maxTeam').valid && eventForm.get('liveGameSettings').get('maxTeam').touched)"
+              lines="none">
+              <ion-label color="danger">
+                Should be less than 20.
+              </ion-label>
+            </ion-item>
+            <ion-item
+              class="ion-align-items-center"
               *ngIf="showWarningMessage(true)"
               lines="none">
               <ion-label color="danger">
@@ -119,6 +127,14 @@
                 placeholder="Enter the maximum number of people in a team"
                 formControlName="maxTeamMember"
               ></ion-input>
+            </ion-item>
+            <ion-item
+              class="ion-align-items-center"
+              *ngIf="(!eventForm.get('liveGameSettings').get('maxTeamMember').valid && eventForm.get('liveGameSettings').get('maxTeamMember').touched)"
+              lines="none">
+              <ion-label color="danger">
+                Should be less than 20.
+              </ion-label>
             </ion-item>
             <ion-item
               class="ion-align-items-center"
@@ -141,6 +157,14 @@
             </ion-item>
             <ion-item
               class="ion-align-items-center"
+              *ngIf="(!eventForm.get('liveGameSettings').get('maxTeam').valid && eventForm.get('liveGameSettings').get('maxTeam').touched)"
+              lines="none">
+              <ion-label color="danger">
+                Should be less than 20.
+              </ion-label>
+            </ion-item>
+            <ion-item
+              class="ion-align-items-center"
               *ngIf="showWarningMessage(true)"
               lines="none">
               <ion-label color="danger">
@@ -157,6 +181,14 @@
                 placeholder="Enter the number of members"
                 formControlName="maxTeamMember"
               ></ion-input>
+            </ion-item>
+            <ion-item
+              class="ion-align-items-center"
+              *ngIf="(!eventForm.get('liveGameSettings').get('maxTeamMember').valid && eventForm.get('liveGameSettings').get('maxTeamMember').touched)"
+              lines="none">
+              <ion-label color="danger">
+                Should be less than 20.
+              </ion-label>
             </ion-item>
             <ion-item
               class="ion-align-items-center"

@@ -57,8 +57,10 @@ export class EventEditorComponent implements OnInit {
         description: new FormControl(this.event.description, { updateOn: "change"}),
         liveGameSettings: this.formBuilder.group({
           gameMode: new FormControl(this.event.liveGameSettings.gameMode, { updateOn: "change"}),
-          maxTeam: new FormControl(this.event.liveGameSettings.maxTeam, { updateOn: "change"}),
-          maxTeamMember: new FormControl(this.event.liveGameSettings.maxTeamMember, { updateOn: "change"}),
+          maxTeam: new FormControl(this.event.liveGameSettings.maxTeam, { updateOn: "change",
+            validators: [Validators.min(1), Validators.max(20)]}),
+          maxTeamMember: new FormControl(this.event.liveGameSettings.maxTeamMember, { updateOn: "change",
+            validators: [Validators.min(1), Validators.max(20)]}),
         }),
       });
     } else {
@@ -70,8 +72,8 @@ export class EventEditorComponent implements OnInit {
         description: new FormControl(null, { updateOn: "change"}),
         liveGameSettings: this.formBuilder.group({
           gameMode: new FormControl(null, { updateOn: "change"}),
-          maxTeam: new FormControl(null, { updateOn: "change"}),
-          maxTeamMember: new FormControl(null, { updateOn: "change"}),
+          maxTeam: new FormControl(5, { updateOn: "change", validators: [Validators.min(1), Validators.max(20)]}),
+          maxTeamMember: new FormControl(5, { updateOn: "change", validators: [Validators.min(1), Validators.max(20)]}),
         }),
       });
     }

@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center">
+  <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center" *ngIf="!creatingLiveGameSetting">
     <ion-row class="ion-align-items-center full-fill">
       <ion-col class="ion-align-items-center">
         <ion-grid class="ion-no-padding ion-no-margin ion-align-items-center ion-text-center full-fill">
@@ -17,17 +17,27 @@
               <ion-img [src]="'assets/logo.png'" alt="Logo" class="logo-img-height"></ion-img>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-no-padding ion-no-margin">
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="!getGame && !getEvent">
             <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
-              <ion-button
+              <ion-button [routerLink]="['/','games']"
                 class="modeSelectionButtons"
                 color="primary"
                 expand="full">
+                CHOOSE GAME
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="getGame">
+            <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+              <ion-button (click)="setSolo()"
+                          class="modeSelectionButtons"
+                          color="primary"
+                          expand="full">
                 SOLO
               </ion-button>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-no-padding ion-no-margin" *ngIf="!getGame">
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="!getGame && !getEvent">
             <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
               <ion-button
                 class="modeSelectionButtons"
@@ -38,13 +48,14 @@
               </ion-button>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-no-padding ion-no-margin">
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="getGame">
             <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
               <ion-button
                 class="modeSelectionButtons"
                 color="primary"
                 expand="full"
-                [disabled]="user === null">
+                [disabled]="user === null"
+                (click)="createMultiplayer()">
                 CREATE MULTIPLAYER GAME
               </ion-button>
             </ion-col>
@@ -64,4 +75,5 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <app-create-multi *ngIf="creatingLiveGameSetting" (sendLiveGameSetting)="setLiveGameSettings($event)"></app-create-multi>
 </ion-content>
