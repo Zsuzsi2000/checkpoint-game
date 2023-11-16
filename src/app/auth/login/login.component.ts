@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit {
     this.alertCtrl.create({
       header: "Enter your email address",
       inputs: [{
-        placeholder: "Eamil",
+        placeholder: "Email",
         type: "text",
         name: "email",
       }],
@@ -140,7 +140,7 @@ export class LoginComponent implements OnInit {
   }
 
   setNewPassword(email: string) {
-    this.authService.sendPasswordResetEamil(email).subscribe(
+    this.authService.sendPasswordResetEmail(email).subscribe(
       resData => {
         this.showAlert("You can set a new password if you follow the instructions in the email",
           "Password change email has been sent");

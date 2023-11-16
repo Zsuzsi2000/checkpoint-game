@@ -1,0 +1,21 @@
+ion-toolbar {
+  --background: var(--color-game-mode);
+  --color: white;
+}
+
+.game-img {
+  height: 10rem;
+}
+
+.img-container {
+  background-color: #222428;
+}
+
+.flex-set {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-border {
+  border-radius: 10px;
+}

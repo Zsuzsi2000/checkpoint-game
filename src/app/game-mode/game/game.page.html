@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isLoading ? 'Loading...' : actualCheckpoint.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="ion-no-padding" *ngIf="!isLoading">
+    <ion-row *ngIf="isLoading; else loaded" class="ion-justify-content-center">
+      <ion-col class="ion-text-center ion-justify-content-center ion-align-items-center">
+        <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    <ng-template #loaded>
+      <ion-row class="img-container ion-justify-content-center">
+        <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
+          <ion-img class="game-img"
+                   [src]="actualCheckpoint.imgUrl">
+          </ion-img>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="actualCheckpoint.description" class="ion-justify-content-center">
+        <ion-col class="ion-justify-content-center ion-align-items-center" size-sm="10" size-md="8">
+          <ion-card>
+            <ion-card-header>
+              <ion-label>Description</ion-label>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label>{{ actualCheckpoint.description }}</ion-label>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="game.locationType !== LocationType.anywhere" class="ion-justify-content-center">
+        <ion-col class="ion-justify-content-center ion-align-items-center" size-sm="10" size-md="8">
+          <ion-card>
+            <ion-card-header>
+              <ion-label>How to get there</ion-label>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-label>{{ game.locationType === LocationType.location ? actualCheckpoint.locationAddress.address : actualCheckpoint.locationDescription }}</ion-label>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-justify-content-center ion-margin">
+        <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
+          <ion-button color="secondary" fill="solid" class="button-border" (click)="identifyLocation()">
+            {{ game.quiz ? 'Get a question' : 'Get a new info' }}
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-justify-content-center">
+        <ion-col class="flex-set ion-justify-content-center ion-align-items-center">
+          <ion-button fill="solid" size="small" shape="round" (click)="showLeaderboard()" class="ion-margin">
+            Leaderboard
+            <ion-icon slot="end" name="trophy"></ion-icon>
+          </ion-button>
+          <ion-button fill="solid" size="small" shape="round" (click)="showCheckpoints()" class="ion-margin">
+            Checkpoints
+            <ion-icon slot="end" name="flag"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ng-template>
+  </ion-grid>
+</ion-content>

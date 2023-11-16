@@ -88,7 +88,7 @@ export class AuthService implements OnDestroy {
     );
   }
 
-  sendPasswordResetEamil(email: string) {
+  sendPasswordResetEmail(email: string) {
     return this.http.post<AuthResponseData>(
       `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${
         environment.firebaseAPIKey

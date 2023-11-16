@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="onCancel()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>Leaderboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="ion-justify-content-center ion-align-items-center">
+    <ion-row *ngIf="isLoading; else loaded">
+      <ion-col class="ion-text-center ion-justify-content-center ion-align-items-center">
+        <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    <ng-template #loaded>
+      <ion-row>
+        <ion-col>
+          <ion-segment value="Done" (ionChange)="sort($event)">
+            <ion-segment-button value="Done">
+              <ion-label>Checkpoints</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="Score">
+              <ion-label>Score</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-list class="ion-padding">
+            <ion-item *ngFor="let player of players; let index">
+              <ion-label>{{ ( 1) + '. ' + player.player.teamName }}</ion-label>
+              <ion-badge slot="end">{{ player.score + ' pont' }}</ion-badge>
+              <ion-label slot="end" class="ion-no-margin ion-no-padding">{{ player.doneNumber }}</ion-label>
+              <ion-icon name="flag" slot="end" class="ion-no-margin ion-no-padding"></ion-icon>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ng-template>
+  </ion-grid>
+</ion-content>
+

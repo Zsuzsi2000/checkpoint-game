@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: GameModePage
+  },
+  {
+    path: 'game/:liveGame',
+    loadChildren: () => import('./game/game.module').then( m => m.GamePageModule)
   }
 ];
 

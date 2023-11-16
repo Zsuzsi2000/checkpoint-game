@@ -24,12 +24,12 @@
     <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
   </div>
   <ion-grid class="ion-no-padding" *ngIf="!isLoading">
-    <ion-row id="img-container">
+    <ion-row class="img-container">
       <ion-col>
         <div *ngIf="!canJoin()" class="background-image-container">
           <h1>FULL</h1>
         </div>
-        <ion-img id="game-img"
+        <ion-img class="game-img"
                  [src]="event.imgUrl">
         </ion-img>
       </ion-col>
