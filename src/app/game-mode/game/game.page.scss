@@ -19,3 +19,30 @@ ion-toolbar {
 .button-border {
   border-radius: 10px;
 }
+
+.white-background {
+  --background: #ffffff;
+  --color: black;
+  border-radius: 10px;
+  min-height: 40px;
+}
+
+.selected-answer {
+  --background: var(--ion-color-primary);
+  --color: white;
+}
+
+.good-answer {
+  --background: #04724d;;
+  --color: white;
+}
+
+.bad-answer {
+  --background: var(--ion-color-danger);
+  --color: white;
+}
+
+.border-and-radius {
+  border: 1px solid var(--ion-color-secondary);
+  border-radius: 10px;
+}

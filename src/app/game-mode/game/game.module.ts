@@ -6,6 +6,7 @@ import { GamePageRoutingModule } from './game-routing.module';
 import { GamePage } from './game.page';
 import {LeaderboardComponent} from "./leaderboard/leaderboard.component";
 import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
+import {QrCodeScannerComponent} from "./qr-code-scanner/qr-code-scanner.component";
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
   declarations: [
     GamePage,
     LeaderboardComponent,
-    CheckpointsComponent
+    CheckpointsComponent,
+    QrCodeScannerComponent
   ]
 })
 export class GamePageModule {}

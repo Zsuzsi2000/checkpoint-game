@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Barcode, BarcodeScanner} from "@capacitor-mlkit/barcode-scanning";
 import {AlertController} from "@ionic/angular";
-import {SUPPORTED_FORMAT_PROPERTIES} from "@angular/compiler-cli/ngcc/src/packages/entry_point";
 
 @Component({
   selector: 'app-qr-code-scanner',
@@ -17,6 +16,7 @@ export class QrCodeScannerComponent implements OnInit {
 
   ngOnInit() {
     BarcodeScanner.isSupported().then((result) => {
+      console.log(result);
       this.isSupported = result.supported;
     });
   }

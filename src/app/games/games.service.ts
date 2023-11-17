@@ -27,7 +27,7 @@ interface GameData {
   creationDate: Date;
   itIsPublic: boolean;
   checkpoints: Checkpoint[];
-  ratings: string[];
+  ratings: { username: string, text: string }[];
   userId: string;
   mapUrl: string;
 }
@@ -206,7 +206,7 @@ export class GamesService {
              checkpoints: Checkpoint[],
              numberOfAttempts: number,
              creationDate: Date,
-             ratings: string[]) {
+             ratings: { username: string, text: string }[]) {
 
     let updatedGames: Game[];
     return this.games.pipe(

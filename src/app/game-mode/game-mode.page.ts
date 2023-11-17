@@ -14,8 +14,6 @@ import {CheckpointState} from "../interfaces/CheckpointState";
 import {LiveGameService} from "./live-game.service";
 import {Player} from "../models/Player";
 import {AlertController, ModalController, NavController} from "@ionic/angular";
-import {JoinOrCreateTeamComponent} from "../shared/components/join-or-create-team/join-or-create-team.component";
-import {catchError, switchMap, take} from "rxjs/operators";
 
 @Component({
   selector: 'app-game-mode',
@@ -304,6 +302,7 @@ export class GameModePage implements OnInit, OnDestroy {
     for (let i = 0; i < this.game.checkpoints.length; i++) {
       let checkpointState: CheckpointState = {
         checkIndex: i,
+        find: false,
         done: false,
         correctAnswer: null,
         useHelp: null,

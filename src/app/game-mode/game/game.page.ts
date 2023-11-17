@@ -5,7 +5,6 @@ import {LiveGameService} from "../live-game.service";
 import {Player} from "../../models/Player";
 import {LiveGame} from "../../models/liveGame";
 import {forkJoin, of, Subscription} from "rxjs";
-import {GameMode} from "../../enums/GameMode";
 import {LeaderboardComponent} from "./leaderboard/leaderboard.component";
 import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
 import {GamesService} from "../../games/games.service";
@@ -15,6 +14,8 @@ import {User} from "../../models/user.model";
 import {Game} from "../../models/game.model";
 import {Checkpoint} from "../../models/checkpoint.model";
 import {LocationType} from "../../enums/LocationType";
+import {LocationIdentification} from "../../enums/LocationIdentification";
+import {QrCodeScannerComponent} from "./qr-code-scanner/qr-code-scanner.component";
 
 @Component({
   selector: 'app-game',
@@ -32,6 +33,11 @@ export class GamePage implements OnInit, OnDestroy {
   actualCheckpoint: Checkpoint;
   playersSub: Subscription;
   LocationType = LocationType;
+  showQuizOrInfo = false;
+  answer = "";
+  correctAnswer = null;
+  useHelp = false;
+  endDate: Date;
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
@@ -40,7 +46,8 @@ export class GamePage implements OnInit, OnDestroy {
               private authService: AuthService,
               private alertController: AlertController,
               private modalController: ModalController,
-              private router: Router) { }
+              private router: Router) {
+  }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => this.handleParamMap(paramMap));
@@ -63,7 +70,7 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   handlePlayersAndUser(): void {
-    this.playersSub = this.liveGameService.players.subscribe(players => {
+    this.playersSub = this.liveGameService.fetchPlayers().subscribe(players => {
       this.players = players.filter(player => player.liveGameId === this.liveGame.id);
       console.log(this.players);
       this.authService.user.pipe(take(1)).subscribe(user => {
@@ -101,20 +108,21 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   setActualCheckpoint() {
-    let state = this.player.checkpointsState.find(state => state.done === false);
+    const state = this.player.checkpointsState.find(s => s.done === false);
     if (state) {
       this.actualCheckpoint = this.game.checkpoints.find(check => check.index === state.checkIndex);
+      this.showQuizOrInfo = state.find;
     } else {
-      //TODO: game over
+      this.router.navigate(['/', 'game-mode', 'end', this.liveGame.id], {queryParams: {playerId: this.player.id}});
     }
     this.isLoading = false;
   }
 
-  showALert() {
+  showALert(message: string = 'Game could not be fetched. Please try again later.') {
     this.alertController
       .create({
         header: 'An error occured',
-        message: 'Game could not be fetched. Please try again later.',
+        message: message,
         buttons: [{
           text: 'Okay', handler: () => {
             this.router.navigate(['/', 'game-mode']);
@@ -133,7 +141,17 @@ export class GamePage implements OnInit, OnDestroy {
         break;
       }
       case LocationType.description: {
-        //TODO: qr or access code check
+        if (this.game.locationIdentification === LocationIdentification.qr) {
+          this.modalController.create({component: QrCodeScannerComponent}).then(modalEl => {
+            modalEl.onDidDismiss().then(modalData => {
+              console.log(modalData.data);
+            });
+            modalEl.present();
+          });
+        } else {
+          this.checkAccessCode();
+        }
+        this.checkAccessCode();
         break;
       }
       case LocationType.anywhere: {
@@ -143,10 +161,153 @@ export class GamePage implements OnInit, OnDestroy {
     }
   }
 
+  checkAccessCode() {
+    this.alertController.create({
+      header: "Enter the access code",
+      inputs: [{
+        placeholder: "Access code",
+        type: "text",
+        name: "accessCode",
+      }],
+      buttons: [
+        {
+          text: "Cancel",
+          role: "cancel"
+        },
+        {
+          text: "Go",
+          handler: (event) => {
+            console.log(event.accessCode);
+            if (event.accessCode && this.actualCheckpoint.locationAccessCode === event.accessCode) {
+              this.findCheckpoint();
+            } else {
+              this.showALert('Unfortunately, the access code does not match..');
+            }
+          }
+        }
+      ]
+    }).then(
+      alertEl => alertEl.present()
+    );
+  }
+
+  findCheckpoint() {
+    this.player.checkpointsState = this.player.checkpointsState.map(c => {
+      if (c.checkIndex === this.actualCheckpoint.index) {
+        c.find = true;
+        c.startTimestap = new Date();
+      }
+      return c;
+    });
+    this.player.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
+    this.liveGameService.fetchPlayer(this.player.id).pipe(take(1)).subscribe(p => {
+      if (p) {
+        let canUpdate = false;
+        p.checkpointsState.forEach(c => {
+          if (c.checkIndex === this.actualCheckpoint.index && c.find !== true) {
+            canUpdate = true;
+          }
+        });
+
+        if (canUpdate) {
+          this.liveGameService.updatePlayer(this.player).pipe(take(1)).subscribe(pl => {
+            console.log(pl);
+            this.showQuizOrInfo = true;
+          });
+        } else {
+          this.player = p;
+          this.showQuizOrInfo = true;
+        }
+      }
+    });
+
+  }
+
+  goToNextCheckpoint() {
+    this.liveGameService.fetchPlayer(this.player.id).pipe(take(1)).subscribe(p => {
+      if (p) {
+        let canUpdate = false;
+        p.checkpointsState.forEach(c => {
+          if (c.checkIndex === this.actualCheckpoint.index && c.done !== true) {
+            canUpdate = true;
+          }
+        });
+
+        if (canUpdate) {
+          this.player.checkpointsState = this.player.checkpointsState.map(c => {
+            if (c.checkIndex === this.actualCheckpoint.index) {
+              if (this.game.quiz) {
+                c.correctAnswer = this.correctAnswer;
+                c.useHelp = this.useHelp;
+                c.endTimestap = this.endDate;
+                this.player.score += (this.correctAnswer) ? 1 : 0;
+              }
+              c.done = true;
+              c.endTimestap = new Date();
+              if (this.player.checkpointsDuration) {
+                this.player.checkpointsDuration += c.endTimestap.getTime() - new Date(c.startTimestap).getTime();
+              } else {
+                this.player.checkpointsDuration = c.endTimestap.getTime() - new Date(c.startTimestap).getTime();
+              }
+              this.player.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
+            }
+            return c;
+          });
+
+          this.liveGameService.updatePlayer(this.player).pipe(take(1)).subscribe(pl => {
+            console.log(pl);
+            this.showQuizOrInfo = false;
+            this.answer = "";
+            this.useHelp = false;
+            this.correctAnswer = null;
+            this.setActualCheckpoint();
+          });
+        } else {
+          this.player = p;
+          this.showQuizOrInfo = false;
+          this.answer = "";
+          this.useHelp = false;
+          this.correctAnswer = null;
+          this.setActualCheckpoint();
+        }
+      }
+    });
+  }
+
+  setAnswer(userAnswer: { answer: string, correct: boolean }) {
+    this.answer = userAnswer.answer;
+  }
+
+  setClass(a: { answer: string, correct: boolean }): ('good' | 'bad' | 'selected') {
+    if (this.correctAnswer !== null && this.answer === a.answer && this.correctAnswer) {
+      return 'good';
+    } else if (this.correctAnswer !== null && this.answer === a.answer && !this.correctAnswer) {
+      return 'bad';
+    } else if (this.correctAnswer !== null && a.correct) {
+      return 'good';
+    } else if (this.correctAnswer === null && this.answer === a.answer) {
+      return 'selected';
+    }
+  }
+
+  checkAnswer() {
+    this.correctAnswer = false;
+    this.actualCheckpoint.quiz.answers.forEach(answer => {
+      if (answer.answer.trim() === this.answer.trim() && answer.correct) {
+        this.correctAnswer = true;
+      }
+    });
+    this.endDate = new Date();
+  }
+
+  showHelp() {
+    this.useHelp = true;
+  }
+
   showLeaderboard() {
     this.modalController.create({
       component: LeaderboardComponent,
-      componentProps: { liveGameId: this.liveGame.id }
+      componentProps: {liveGameId: this.liveGame.id}
     }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
         console.log(modalData.data);
@@ -158,7 +319,7 @@ export class GamePage implements OnInit, OnDestroy {
   showCheckpoints() {
     this.modalController.create({
       component: CheckpointsComponent,
-      componentProps: { liveGameId: this.liveGame.id, playerId: this.player.id }
+      componentProps: {liveGameId: this.liveGame.id, playerId: this.player.id}
     }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
         console.log(modalData.data);
@@ -168,19 +329,6 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //TODO: nem feltétlen kell itt törölni
-    // if (this.liveGame.liveGameSettings.gameMode === GameMode.solo) {
-    //   this.players.forEach(player => {
-    //     this.liveGameService.deletePlayer(player.id).subscribe(d => {
-    //       console.log(d);
-    //     });
-    //   })
-    // }
-    // if (this.liveGame) {
-    //   this.liveGameService.deleteLiveGame(this.liveGame.id).subscribe(d => {
-    //     console.log(d);
-    //   });
-    // }
     if (this.playersSub) {
       this.playersSub.unsubscribe();
     }
