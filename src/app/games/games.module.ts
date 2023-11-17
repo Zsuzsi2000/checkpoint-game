@@ -7,6 +7,7 @@ import { GamesPage } from './games.page';
 import {Ng2SearchPipeModule} from "ng2-search-filter";
 import {GameDetailsPage} from "./game-details/game-details.page";
 import {SharedModule} from "../shared/shared.module";
+import {QRCodeModule} from "angularx-qrcode";
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {SharedModule} from "../shared/shared.module";
     GamesPageRoutingModule,
     Ng2SearchPipeModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    QRCodeModule
   ],
   declarations: [
     GamesPage,

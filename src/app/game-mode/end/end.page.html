@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="ion-text-center">
     <ion-title>Game over</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -15,33 +15,46 @@
     </ion-row>
     <ng-template #loaded>
       <ion-row class="ion-justify-content-center">
-        <ion-col class="ion-justify-content-center ion-align-items-center ion-text-center flex-set">
+        <ion-col size="6" class="ion-justify-content-center ion-align-items-center ion-text-center flex-set">
           <ion-card class="ion-justify-content-center ion-align-items-center ion-text-center">
             <ion-card-content>
               <ion-item class="ion-text-center ion-no-margin ion-no-padding">
-                <ion-label>{{ player.teamName }}</ion-label>
-                <ion-badge slot="end">{{ player.score + ' pont' }}</ion-badge>
+                <ion-label class="ion-no-margin ion-no-padding">{{ player.teamName }}</ion-label>
+                <ion-badge *ngIf="game.quiz" class="ion-no-margin custom-margin">{{ player.score + ' pont' }}</ion-badge>
               </ion-item>
               <ion-item class="ion-text-center ion-no-margin ion-no-padding">
-                <ion-label>{{ 'Duration: '}}<br/>{{ player.duration | date:'HH:mm:ss' }}</ion-label>
+                <ion-label  class="ion-no-margin ion-no-padding">{{ 'Duration: '}}<br/>{{ transform(player.duration) }}</ion-label>
               </ion-item>
-              <ion-item class="ion-text-center ion-no-margin ion-no-padding">
-                <ion-label>{{ 'Response time: '}}<br/>{{ player.checkpointsDuration | date:'HH:mm:ss' }}</ion-label>
+              <ion-item *ngIf="game.quiz" class="ion-text-center ion-no-margin ion-no-padding">
+                <ion-label  class="ion-no-margin ion-no-padding">{{ 'Response time: '}}<br/>{{ transform(player.checkpointsDuration) }}</ion-label>
               </ion-item>
             </ion-card-content>
           </ion-card>
         </ion-col>
+        <ion-col size="6" class="ion-justify-content-center ion-align-items-center ion-text-center flex-set">
+          <ion-item class="ion-text-center" lines="none">
+            <ion-label>Would you like to<br/> leave a rating?</ion-label>
+          </ion-item>
+          <ion-button color="primary" fill="solid" class="button-border" (click)="addRating()">
+            Add Rating
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          </ion-button>
+          <ion-button color="secondary" fill="solid" shape="round" (click)="backToMenu()">
+            Back to<br/>games
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          </ion-button>
+        </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <ion-segment value="Score" (ionChange)="sort($event)">
-            <ion-segment-button value="Score">
+          <ion-segment [value]="game.quiz ? 'Score' : 'BigDuration'" (ionChange)="sort($event)">
+            <ion-segment-button *ngIf="game.quiz" value="Score">
               <ion-label>Score</ion-label>
             </ion-segment-button>
             <ion-segment-button value="BigDuration">
               <ion-label>Full<br/>Duration</ion-label>
             </ion-segment-button>
-            <ion-segment-button value="CheckpointsDuration">
+            <ion-segment-button *ngIf="game.quiz" value="CheckpointsDuration">
               <ion-label>Response<br/>Time</ion-label>
             </ion-segment-button>
           </ion-segment>
@@ -50,32 +63,15 @@
       <ion-row>
         <ion-col>
           <ion-list class="ion-padding">
-            <ion-item *ngFor="let player of players; let i = index">
-              <ion-label>{{ (i + 1) + '. ' + player.teamName }}</ion-label>
-              <ion-label *ngIf="sortType === 'Score'" slot="end">{{ player.duration | date:'HH:mm:ss' }}</ion-label>
-              <ion-label *ngIf="sortType === 'BigDuration'" slot="end">{{ player.checkpointsDuration | date:'HH:mm:ss' }}</ion-label>
-              <ion-badge *ngIf="sortType === 'CheckpointsDuration'" slot="end">{{ player.score + ' pont' }}</ion-badge>
+            <ion-item *ngFor="let otherPlayer of players; let i = index">
+              <ion-label>{{ (i + 1) + '. ' + otherPlayer.teamName }}</ion-label>
+              <ion-label *ngIf="sortType === 'BigDuration'" slot="end">{{ transform(otherPlayer.duration) }}</ion-label>
+              <ion-label *ngIf="sortType === 'CheckpointsDuration' && game.quiz"
+                         slot="end">{{ transform(otherPlayer.checkpointsDuration) }}</ion-label>
+              <ion-badge *ngIf="sortType === 'Score' && game.quiz" slot="end" class="custom-margin">{{  getHelp(otherPlayer) + ' help' }}</ion-badge>
+              <ion-badge *ngIf="sortType === 'Score' && game.quiz" slot="end" class="custom-margin">{{ otherPlayer.score + ' pont' }}</ion-badge>
             </ion-item>
           </ion-list>
-        </ion-col>
-      </ion-row>
-      <ion-row class="ion-justify-content-center ion-margin" *ngIf="userName">
-        <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
-          <ion-item class="ion-text-center">
-            <ion-label>Would you like to leave a rating?</ion-label>
-          </ion-item>
-          <ion-button color="primary" fill="solid" class="button-border" (click)="addRating()">
-            Add Rating
-            <ion-icon slot="end" name="arrow-forward"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row class="ion-justify-content-center ion-margin">
-        <ion-col class="ion-justify-content-center ion-align-items-center ion-text-center flex-set">
-          <ion-button color="secondary" fill="solid" shape="round" (click)="backToMenu()">
-            Back to games
-            <ion-icon slot="end" name="arrow-forward"></ion-icon>
-          </ion-button>
         </ion-col>
       </ion-row>
     </ng-template>

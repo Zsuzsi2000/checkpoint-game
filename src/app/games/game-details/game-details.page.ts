@@ -27,6 +27,8 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   creator: User;
   ownGame = false;
   LocationType = LocationType;
+  generateQRCode = false;
+  qrCounter = 0;
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
@@ -142,20 +144,35 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   getPdf() {
     if (this.game.locationIdentification === LocationIdentification.qr) {
-      const promises = this.game.checkpoints.map(check => this.convertBlobToBase64(check));
-
-      Promise.all(promises)
-        .then(base64DataUrls => {
-          console.log(base64DataUrls);
-          this.generatePDFFromQRCodes(base64DataUrls);
-        })
-        .catch(error => {
-          console.error('Error converting blobs to base64:', error);
-          this.generatePDFFromAccessCodes();
-        });
+      this.generateQRCode = true;
+      // const promises = this.game.checkpoints.map(check => this.convertBlobToBase64(check));
+      //
+      // Promise.all(promises)
+      //   .then(base64DataUrls => {
+      //     console.log(base64DataUrls);
+      //     this.generatePDFFromQRCodes(base64DataUrls);
+      //   })
+      //   .catch(error => {
+      //     console.error('Error converting blobs to base64:', error);
+      //     this.generatePDFFromAccessCodes();
+      //   });
     } else {
       this.generatePDFFromAccessCodes();
     }
+  }
+
+  getPdfAfterQrCodes() {
+    const promises = this.game.checkpoints.map(check => this.convertBlobToBase64(check));
+
+    Promise.all(promises)
+      .then(base64DataUrls => {
+        console.log(base64DataUrls);
+        this.generatePDFFromQRCodes(base64DataUrls);
+      })
+      .catch(error => {
+        console.error('Error converting blobs to base64:', error);
+        this.generatePDFFromAccessCodes();
+      });
   }
 
   generatePDFFromQRCodes( checks: {checkpoint: Checkpoint, url: string}[]) {
@@ -164,7 +181,7 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     pdf.text(this.game.name, 2, 2);
     checks.forEach((check, index) => {
       if ( index > 0 && index % 4 === 0) { pdf.addPage() }
-      pdf.text(check.checkpoint.index + '. ' + check.checkpoint.name, (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 4 : 15);
+      pdf.text((1 + check.checkpoint.index) + '. ' + check.checkpoint.name, (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 4 : 15);
       pdf.addImage(check.url, 'PNG', (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 6 : 17, 7, 7);
     });
 
@@ -178,7 +195,7 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     pdf.text(this.game.name, 2, 2);
     this.game.checkpoints.forEach((check, index) => {
       if ( index > 0 && index % 20 === 0) { pdf.addPage() }
-      pdf.text(check.index + '. ' + check.name + ': ' + check.locationAccessCode, 2, 3 + index);
+      pdf.text((1 + check.index) + '. ' + check.name + ': ' + check.locationAccessCode, 2, 3 + index);
     });
 
     pdf.save(this.game.name.replace(/\s/g, "") + '.pdf');
@@ -200,6 +217,36 @@ export class GameDetailsPage implements OnInit, OnDestroy {
         })
         .catch(error => reject(`Error converting blob to base64 for ${check.name}: ${error}`));
     });
+  }
+
+  saveUrl(index: number, event){
+    console.log(index, event);
+    this.game.checkpoints = this.game.checkpoints.map(check => {
+      if (check.index === index) {
+        this.qrCounter += 1;
+        check.LocationQrCodeUrl = event.changingThisBreaksApplicationSecurity;
+      }
+      return check;
+    });
+    if (this.qrCounter === this.game.checkpoints.length) {
+      this.getPdfAfterQrCodes();
+    }
+  }
+
+  transform(duration: number): string {
+    const hours = Math.floor(duration / (60 * 60 * 1000));
+    const minutes = Math.floor((duration % (60 * 60 * 1000)) / (60 * 1000));
+    const seconds = Math.floor((duration % (60 * 1000)) / 1000);
+
+    const formattedHours = this.padZero(hours);
+    const formattedMinutes = this.padZero(minutes);
+    const formattedSeconds = this.padZero(seconds);
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  private padZero(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
   }
 
 }

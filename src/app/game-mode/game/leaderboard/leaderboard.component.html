@@ -14,7 +14,7 @@
       </ion-col>
     </ion-row>
     <ng-template #loaded>
-      <ion-row>
+      <ion-row *ngIf="quiz">
         <ion-col>
           <ion-segment value="Done" (ionChange)="sort($event)">
             <ion-segment-button value="Done">
@@ -31,7 +31,7 @@
           <ion-list class="ion-padding">
             <ion-item *ngFor="let player of players; let i = index">
               <ion-label>{{ (i +  1) + '. ' + player.player.teamName }}</ion-label>
-              <ion-badge slot="end">{{ player.score + ' pont' }}</ion-badge>
+              <ion-badge *ngIf="quiz" slot="end">{{ player.score + ' pont' }}</ion-badge>
               <ion-label slot="end" class="ion-no-margin ion-no-padding">{{ player.doneNumber }}</ion-label>
               <ion-icon name="flag" slot="end" class="ion-no-margin ion-no-padding"></ion-icon>
             </ion-item>

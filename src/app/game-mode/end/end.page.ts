@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {LiveGameService} from "../live-game.service";
 import {AlertController, NavController} from "@ionic/angular";
@@ -7,6 +7,7 @@ import {take} from "rxjs/operators";
 import {GamesService} from "../../games/games.service";
 import {Game} from "../../models/game.model";
 import {AuthService} from "../../auth/auth.service";
+import {forkJoin, of} from "rxjs";
 
 @Component({
   selector: 'app-end',
@@ -23,6 +24,7 @@ export class EndPage implements OnInit {
   player: Player;
   userName: string;
   sortType = "Score";
+  helps = 0;
 
   constructor(private activatedRoute: ActivatedRoute,
               private liveGameService: LiveGameService,
@@ -30,7 +32,8 @@ export class EndPage implements OnInit {
               private router: Router,
               private gameService: GamesService,
               private alertController: AlertController,
-              private authService: AuthService) { }
+              private authService: AuthService) {
+  }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => {
@@ -48,24 +51,27 @@ export class EndPage implements OnInit {
             this.players.push(player);
             if (player.id === this.playerId) {
               this.player = player;
+              this.player.checkpointsState.forEach(check => {
+                if (check.useHelp) this.helps += 1;
+              });
+              this.updateGame();
             }
           }
         });
-        this.isLoading = false;
       });
       this.liveGameService.fetchLiveGame(this.liveGameId).pipe(take(1)).subscribe(liveGame => {
         if (liveGame) {
           this.gameService.fetchGame(liveGame.gameId).pipe(take(1)).subscribe(game => {
             if (game) {
               this.game = game;
+              this.sortType = this.game.quiz ?  "Score" : "BigDuration";
+
+              console.log(game);
               this.authService.user.pipe(take(1)).subscribe(user => {
                 if (user) {
                   this.userName = user.username;
-                  this.gameService.updateGame(this.game.id, this.game.name, this.game.locationType, this.game.locationIdentification,
-                    this.game.country, this.game.pointOfDeparture, this.game.category, this.game.quiz, this.game.description,
-                    this.game.imgUrl, this.game.distance, this.game.duration, this.game.itIsPublic, this.game.mapUrl,
-                    this.game.checkpoints, this.game.numberOfAttempts + 1, this.game.creationDate, this.game.ratings).pipe(take(1)).subscribe(c => console.log(c));
                 }
+                this.updateGame();
               })
             }
           })
@@ -74,15 +80,64 @@ export class EndPage implements OnInit {
     });
   }
 
+  updateGame() {
+    forkJoin([of(this.player), of(this.game)]).subscribe(([player, game]) => {
+      this.isLoading = false;
+      console.log('Performing additional action with player and game:', player, game);
+      if (game && player) {
+        console.log('Performing additional action with player and game:', player, game);
+
+        if (this.game.bests) {
+          if (this.game.bests.score < this.player.score && this.game.quiz) {
+            this.game.bests.score = this.player.score;
+            this.congratulations('score');
+          }
+          if (this.game.bests.duration > this.player.duration) {
+            this.game.bests.duration = this.player.duration;
+            this.congratulations('duration');
+          }
+          if (this.game.bests.checkpointDuration > this.player.checkpointsDuration && this.game.quiz) {
+            this.game.bests.checkpointDuration = this.player.checkpointsDuration;
+            this.congratulations('checkpoints duration');
+          }
+        } else {
+          this.game.bests = {
+            score: this.player.score ? this.player.score : null,
+            duration: this.player.duration ? this.player.duration : null,
+            checkpointDuration: this.player.checkpointsDuration ? this.player.checkpointsDuration : null,
+          };
+        }
+
+        this.gameService.updateGame(this.game.id, this.game.name, this.game.locationType, this.game.locationIdentification,
+          this.game.country, this.game.pointOfDeparture, this.game.category, this.game.quiz, this.game.description,
+          this.game.imgUrl, this.game.distance, this.game.duration, this.game.itIsPublic, this.game.mapUrl,
+          this.game.checkpoints, this.game.numberOfAttempts + 1, this.game.creationDate, this.game.ratings, this.game.bests).pipe(take(1)).subscribe(c => console.log(c));
+      }
+    });
+  }
+
+  congratulations(type: string) {
+    let message = "You set a new " + type + " record!";
+    console.log(message);
+
+    this.alertController.create({
+      header: "Congratulations!",
+      message: message,
+      buttons: ["Thanks"]
+    }).then(
+      alertEl => alertEl.present()
+    );
+  }
+
   sort(event) {
     console.log(event.detail.value);
     this.sortType = event.detail.value;
     if (event.detail.value === "Score") {
-      this.players = this.players.sort((a, b) =>  a.score < b.score ? -1 : (a.score > b.score ? 1 : 0));
+      this.players = this.players.sort((a, b) => a.score < b.score ? -1 : (a.score > b.score ? 1 : 0));
     } else if (event.detail.value === "BigDuration") {
-      this.players = this.players.sort((a, b) =>  a.duration < b.duration ? -1 : (a.duration > b.duration ? 1 : 0));
+      this.players = this.players.sort((a, b) => a.duration < b.duration ? -1 : (a.duration > b.duration ? 1 : 0));
     } else {
-      this.players = this.players.sort((a, b) =>  a.checkpointsDuration < b.checkpointsDuration ? -1 : (a.checkpointsDuration > b.checkpointsDuration ? 1 : 0));
+      this.players = this.players.sort((a, b) => a.checkpointsDuration < b.checkpointsDuration ? -1 : (a.checkpointsDuration > b.checkpointsDuration ? 1 : 0));
     }
   }
 
@@ -118,9 +173,9 @@ export class EndPage implements OnInit {
           handler: (event) => {
             console.log(event.rating);
             if (this.game.ratings) {
-              this.game.ratings.push({ username: this.userName, text: event.rating });
+              this.game.ratings.push({username: this.userName, text: event.rating});
             } else {
-              this.game.ratings = [{ username: this.userName, text: event.rating }];
+              this.game.ratings = [{username: this.userName, text: event.rating}];
             }
 
             this.gameService.updateGame(this.game.id, this.game.name, this.game.locationType, this.game.locationIdentification,
@@ -135,16 +190,36 @@ export class EndPage implements OnInit {
     );
   }
 
-  ngOnDestroy(): void {
-      this.players.forEach(player => {
-        this.liveGameService.deletePlayer(player.id).subscribe(d => {
-          console.log(d);
-        });
-      });
+  transform(duration: number): string {
+    const hours = Math.floor(duration / (60 * 60 * 1000));
+    const minutes = Math.floor((duration % (60 * 60 * 1000)) / (60 * 1000));
+    const seconds = Math.floor((duration % (60 * 1000)) / 1000);
 
-      this.liveGameService.deleteLiveGame(this.liveGameId).subscribe(d => {
+    const formattedHours = this.padZero(hours);
+    const formattedMinutes = this.padZero(minutes);
+    const formattedSeconds = this.padZero(seconds);
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  private padZero(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+
+  getHelp(player: Player) {
+    return player.checkpointsState.filter(check => check.useHelp).length;
+  }
+
+  ngOnDestroy(): void {
+    this.players.forEach(player => {
+      this.liveGameService.deletePlayer(player.id).subscribe(d => {
         console.log(d);
       });
+    });
+
+    this.liveGameService.deleteLiveGame(this.liveGameId).subscribe(d => {
+      console.log(d);
+    });
   }
 
 }

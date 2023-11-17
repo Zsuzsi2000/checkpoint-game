@@ -182,10 +182,5 @@
       && gameForm.get('locationIdentification').value === null) || !checkpointsReady">
       Save the game
     </ion-button>
-    <ion-item [hidden]=true *ngIf="gameForm.get('locationType').value === LocationType.description && gameForm.get('locationIdentification').value === LocationIdentification.qr && checkpointsReady">
-      <ng-container *ngFor="let checkpoint of checkpoints">
-        <qrcode [qrdata]="checkpoint.checkpoint.locationAccessCode" [width]="256" (qrCodeURL)="saveUrl(checkpoint.checkpoint.index, $event)"></qrcode>
-      </ng-container>
-    </ion-item>
   </form>
 </ion-content>

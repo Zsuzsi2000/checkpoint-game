@@ -23,4 +23,10 @@ ion-card {
 
 .flex-set {
   display: flex;
+  flex-direction: column;
+}
+
+.custom-margin {
+  margin-right: 2px;
+  margin-left: 2px;
 }

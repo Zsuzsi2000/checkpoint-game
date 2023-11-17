@@ -1,11 +1,14 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{ isLoading ? 'Loading...' : actualCheckpoint.name }}</ion-title>
+    <ion-buttons slot="start" *ngIf="qrScanner">
+      <ion-button (click)="back()">Back</ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!qrScanner">{{ isLoading ? 'Loading...' : actualCheckpoint.name }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid class="ion-no-padding" *ngIf="!isLoading">
+  <ion-grid class="ion-no-padding" *ngIf="!isLoading && !qrScanner">
     <ion-row *ngIf="isLoading; else loaded" class="ion-justify-content-center">
       <ion-col class="ion-text-center ion-justify-content-center ion-align-items-center">
         <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
@@ -83,7 +86,7 @@
           <ion-row class="ion-justify-content-center ion-margin" *ngIf="correctAnswer !== null">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-button color="secondary" fill="solid" class="button-border" (click)="goToNextCheckpoint()">
-                Go to next checkpoint
+                {{ last ? 'Go to final leaderboard' : 'Go to next checkpoint' }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
             </ion-col>
@@ -105,15 +108,13 @@
           <ion-row class="ion-justify-content-center ion-margin">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-button color="secondary" fill="solid" class="button-border" (click)="goToNextCheckpoint()">
-                Go to next checkpoint
+                {{ last ? 'Go to final leaderboard' : 'Go to next checkpoint' }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
             </ion-col>
           </ion-row>
         </ng-template>
       </ng-container>
-
-
 
       <ng-template #showLocation>
         <ion-row *ngIf="actualCheckpoint.description" class="ion-justify-content-center">
@@ -142,9 +143,11 @@
         </ion-row>
         <ion-row class="ion-justify-content-center ion-margin">
           <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
-            <ion-button color="secondary" fill="solid" class="button-border" (click)="identifyLocation()">
+            <ion-button color="secondary" fill="solid" class="button-border" (click)="identifyLocation()" [ngSwitch]="game.locationIdentification">
               {{ game.quiz ? 'Get a question' : 'Get a new info' }}
-              <ion-icon slot="end" name="arrow-forward"></ion-icon>
+              <ion-icon *ngSwitchCase="LocationIdentification.qr" name="qr-code-outline"></ion-icon>
+              <ion-icon *ngSwitchCase="LocationIdentification.locator" name="location-outline"></ion-icon>
+              <ion-icon *ngSwitchDefault slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
           </ion-col>
         </ion-row>
@@ -163,4 +166,5 @@
       </ng-template>
     </ng-template>
   </ion-grid>
+  <zxing-scanner *ngIf="qrScanner" #scanner [formats]="['QR_CODE']" (scanSuccess)="checkQrCode($event)"></zxing-scanner>
 </ion-content>

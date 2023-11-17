@@ -73,15 +73,58 @@
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-padding">
+    <ion-row class="ion-no-padding" *ngIf="game.bests">
       <ion-col class="ion-no-padding">
-        <p>{{ game.description }}</p>
+        <ion-card>
+          <ion-card-header>
+            <ion-label>Bests</ion-label>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none" *ngIf="game.bests.score && game.quiz">
+              <ion-label>{{ 'Score: ' + game.bests.score }}</ion-label>
+            </ion-item>
+            <ion-item lines="none" *ngIf="game.bests.duration">
+              <ion-label>{{ 'Duration: ' + transform(game.bests.duration) }}</ion-label>
+            </ion-item>
+            <ion-item lines="none" *ngIf="game.bests.checkpointDuration && game.quiz">
+              <ion-label>{{ 'Checkpoints duration: ' + transform(game.bests.checkpointDuration) }}</ion-label>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-padding">
+    <ion-row class="ion-no-padding" *ngIf="game.description">
       <ion-col class="ion-no-padding">
-        <p>Rating</p>
-        <p>{{ game.ratings.length }}</p>
+        <ion-card>
+          <ion-card-header>
+            <ion-label>Description</ion-label>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none">
+              <ion-label>{{ game.description }}</ion-label>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-no-padding" *ngIf="game.ratings && game.ratings.length > 0">
+      <ion-col class="ion-no-padding">
+        <ion-card>
+          <ion-card-header>
+            <ion-item lines="none">
+              <ion-label>Ratings</ion-label>
+              <ion-badge slot="end">{{ game.ratings.length }}</ion-badge>
+            </ion-item>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none" *ngFor="let rating of game.ratings">
+              <ion-avatar slot="start">
+                <img alt="Profile picture" src="https://ionicframework.com/docs/img/demos/avatar.svg"/>
+              </ion-avatar>
+              <ion-label>{{ rating.username + ': ' + rating.text }}</ion-label>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
     <ion-row class="ion-padding">
@@ -103,4 +146,9 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-item [hidden]=true *ngIf="generateQRCode">
+    <ng-container *ngFor="let checkpoint of game.checkpoints">
+      <qrcode [qrdata]="checkpoint.locationAccessCode" [width]="256" (qrCodeURL)="saveUrl(checkpoint.index, $event)"></qrcode>
+    </ng-container>
+  </ion-item>
 </ion-content>

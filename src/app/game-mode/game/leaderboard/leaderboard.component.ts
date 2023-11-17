@@ -13,6 +13,7 @@ import {take} from "rxjs/operators";
 export class LeaderboardComponent implements OnInit {
 
   @Input() liveGameId: string;
+  @Input() quiz: boolean;
   liveGame: LiveGame;
   players: { player: Player, score: number, doneNumber: number }[] = [];
   isLoading: boolean;

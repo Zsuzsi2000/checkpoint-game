@@ -22,6 +22,7 @@ export class Game {
   public itIsPublic: boolean;
   public checkpoints: Checkpoint[];
   public ratings: { username: string, text: string }[];
+  public bests: { score: number, duration: number, checkpointDuration: number };
   public userId: string;
   public mapUrl: string;
 
@@ -45,7 +46,8 @@ export class Game {
     checkpoints: Checkpoint[],
     numberOfAttempts: number = 0,
     creationDate: Date = new Date(),
-    ratings: { username: string, text: string }[] = []
+    ratings: { username: string, text: string }[] = [],
+    bests: { score: number, duration: number, checkpointDuration: number } = null
   ) {
     this.id = id;
     this.name = name;
@@ -67,6 +69,7 @@ export class Game {
     this.itIsPublic = itIsPublic;
     this.userId = userId;
     this.mapUrl = mapUrl;
+    this.bests = bests;
   }
 
 }

@@ -7,13 +7,16 @@ import { GamePage } from './game.page';
 import {LeaderboardComponent} from "./leaderboard/leaderboard.component";
 import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
 import {QrCodeScannerComponent} from "./qr-code-scanner/qr-code-scanner.component";
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GamePageRoutingModule
+    GamePageRoutingModule,
+    ZXingScannerModule
   ],
   declarations: [
     GamePage,

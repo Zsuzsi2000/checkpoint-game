@@ -18,7 +18,6 @@ import {QRCodeModule} from "angularx-qrcode";
     Ng2SearchPipeModule,
     ReactiveFormsModule,
     SharedModule,
-    QRCodeModule
   ],
   declarations: [
     CreateGamePage,

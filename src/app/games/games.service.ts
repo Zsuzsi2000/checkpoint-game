@@ -28,6 +28,7 @@ interface GameData {
   itIsPublic: boolean;
   checkpoints: Checkpoint[];
   ratings: { username: string, text: string }[];
+  bests: { score: number, duration: number, checkpointDuration: number };
   userId: string;
   mapUrl: string;
 }
@@ -78,7 +79,8 @@ export class GamesService {
                 data[key].checkpoints,
                 data[key].numberOfAttempts,
                 data[key].creationDate,
-                (data[key].ratings) ? data[key].ratings : []
+                (data[key].ratings) ? data[key].ratings : [],
+                (data[key].bests) ? data[key].bests : null,
               ))
             }
           }
@@ -113,7 +115,8 @@ export class GamesService {
           gameData.checkpoints,
           gameData.numberOfAttempts,
           gameData.creationDate,
-          (gameData.ratings) ? gameData.ratings : []
+          (gameData.ratings) ? gameData.ratings : [],
+          (gameData.bests) ? gameData.bests : null,
         );
       })
     );
@@ -206,15 +209,18 @@ export class GamesService {
              checkpoints: Checkpoint[],
              numberOfAttempts: number,
              creationDate: Date,
-             ratings: { username: string, text: string }[]) {
+             ratings: { username: string, text: string }[],
+             bests: { score: number, duration: number, checkpointDuration: number } = null) {
 
     let updatedGames: Game[];
     return this.games.pipe(
       take(1),
       switchMap(games => {
-        if (!games || games.length < 0) {
+        if (!games || games.length < 1) {
+          console.log(games);
           return this.fetchGames();
         } else {
+          console.log(games);
           return of(games); //switchmap has to return observable
         }
       }),
@@ -222,8 +228,10 @@ export class GamesService {
         const updatedGameIndex = games.findIndex(g => g.id === id);
         updatedGames = [...games];
         const old = updatedGames[updatedGameIndex];
+        console.log(old);
         updatedGames[updatedGameIndex] = new Game(old.id, name, updatedGames[updatedGameIndex].creatorName, locationType, locationIdentification, country,
-          pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId, mapUrl, checkpoints, numberOfAttempts, creationDate, ratings);
+          pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId, mapUrl, checkpoints, numberOfAttempts, creationDate, ratings,
+          bests ? bests : old.bests);
         return this.http.put(
           `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json`,
           {...updatedGames[updatedGameIndex], id: null}

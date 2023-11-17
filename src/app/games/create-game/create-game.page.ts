@@ -249,14 +249,4 @@ export class CreateGamePage implements OnInit {
     }
     return imageFile;
   }
-
-  saveUrl(index: number, event){
-    console.log(index, event);
-    this.checkpoints = this.checkpoints.map(check => {
-      if (check.checkpoint.index === index) {
-        check.checkpoint.LocationQrCodeUrl = event.changingThisBreaksApplicationSecurity;
-      }
-      return check;
-    });
-  }
 }
