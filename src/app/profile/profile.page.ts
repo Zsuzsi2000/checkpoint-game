@@ -59,7 +59,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       this.gamesAreLoading = true;
 
       if (!paramMap.has('userId')) {
-        this.authService.user.subscribe(currentUser => {
+        this.userSub = this.authService.user.subscribe(currentUser => {
           if (currentUser) {
             this.ownProfile = true;
             this.loadedUserId = currentUser.id;
@@ -85,9 +85,17 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.userService.getUserById(this.loadedUserId).subscribe(
           user => {
             this.loadedUser = user;
-            this.userIsLoading = false;
-            this.fetchLoadedUserData();
-
+            this.authService.user.pipe(take(1)).subscribe(currentUser => {
+              if (currentUser) {
+                this.loggedUser = currentUser;
+                this.ownProfile = currentUser.id === this.loadedUser.id;
+                this.userIsLoading = false;
+                this.fetchLoadedUserData();
+              } else {
+                this.userIsLoading = false;
+                this.fetchLoadedUserData();
+              }
+            });
           },
           error => {
             console.log("getUserError", error);
@@ -100,13 +108,9 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.loggedUser = currentUser;
       });
 
-      this.countries = ["1", "2", "3", "4", "5", "6", "7"];
-      // TODO: Uncomment the code below to fetch countries
-      // this.countryService.getAllCountries().subscribe(res => {
-      //   for (var key in res) {
-      //     this.countries.push(res[key].name);
-      //   }
-      // });
+      this.countryService.fetchCountries().subscribe(countries => {
+        if (countries) this.countries = countries;
+      });
     });
   }
 

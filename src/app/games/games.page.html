@@ -80,7 +80,7 @@
       <ion-col size-xs="12" size-md="6"
                class="ion-align-items-center"
                *ngFor="let game of actualGames | filter:filter">
-        <app-game-card [game]="game" [profile]="false" [ownProfile]="!!user"
+        <app-game-card [game]="game" [profile]="false" [ownProfile]="user && game.userId === user.id"
                        [loggedUser]="user"></app-game-card>
       </ion-col>
     </ion-row>

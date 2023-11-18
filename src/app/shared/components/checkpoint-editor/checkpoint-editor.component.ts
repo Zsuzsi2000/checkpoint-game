@@ -150,14 +150,14 @@ export class CheckpointEditorComponent implements OnInit {
   }
 
   quizIsReady() {
-    let correctExist = false;
+    let correctExist = 0;
     if (this.checkpointForm.get('quiz').value && this.checkpointForm.get('quiz').value.answers
       && this.checkpointForm.get('quiz').value.question && this.checkpointForm.get('quiz').value.answers.length > 0) {
       this.checkpointForm.get('quiz').value.answers.forEach(answer => {
-        if (answer.correct) { correctExist = true; }
+        if (answer.correct) { correctExist += 1 }
       });
     }
-    return correctExist;
+    return correctExist === 1;
   }
 
   isNotValid() {

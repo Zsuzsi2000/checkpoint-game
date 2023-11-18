@@ -1,14 +1,16 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button *ngIf="ownProfile"></ion-menu-button>
+      <ion-back-button *ngIf="!ownProfile" defaultHref="/games"></ion-back-button>
+
     </ion-buttons>
     <ion-title>Profile</ion-title>
     <ion-buttons slot="end">
       <ion-button *ngIf="ownProfile" (click)="startDeleteTheProfile()">
         <ion-icon name="trash"></ion-icon>
       </ion-button>
-      <ion-button>
+      <ion-button *ngIf="ownProfile">
         <ion-icon name="settings-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -157,7 +159,7 @@
       </ng-template>
     </ion-grid>
   </ng-template>
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="listGames && loadedOwnGames && loadedOwnGames.length > 0">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="ownProfile && listGames && loadedOwnGames && loadedOwnGames.length > 0">
     <ion-fab-button color="secondary">
       <ion-icon name="add" [routerLink]="['/', 'games', 'create-game']"></ion-icon>
     </ion-fab-button>

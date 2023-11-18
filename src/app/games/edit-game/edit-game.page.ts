@@ -47,7 +47,6 @@ export class EditGamePage implements OnInit {
   }
 
   ngOnInit() {
-    this.countries = ["1", "2", "3", "4", "5", "6", "7"];
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('gameId')) {
         this.navCtrl.pop();
@@ -92,7 +91,10 @@ export class EditGamePage implements OnInit {
       if (categories) {
         this.categories = categories;
       }
-    })
+    });
+    this.countryService.fetchCountries().subscribe(countries => {
+      if (countries) this.countries = countries;
+    });
   }
 
   ionViewWillEnter() {

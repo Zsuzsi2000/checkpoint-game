@@ -55,12 +55,10 @@ export class SignupComponent implements OnInit {
       passwordAgain: new FormControl(null, {updateOn: "blur",
         validators: [Validators.required, Validators.minLength(6)]}),
     }, { validator: passwordMatchValidator });
-    this.countries = ["1", "2", "3", "4", "5", "6", "7"];
-    // this.countryService.getAllCountries().subscribe(res => {
-    //   for (var key in res) {
-    //     this.countries.push(res[key].name);
-    //   }
-    // });
+
+    this.countryService.fetchCountries().subscribe(countries => {
+      if (countries) this.countries = countries;
+    })
   }
 
   signUp(email: string, password: string, username: string, country: string) {

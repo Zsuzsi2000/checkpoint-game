@@ -12,7 +12,6 @@ import {ImageService} from "../../services/image.service";
 import {Checkpoint} from "../../models/checkpoint.model";
 import {forkJoin, of} from "rxjs";
 import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
-import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-create-game',
@@ -40,7 +39,6 @@ export class CreateGamePage implements OnInit {
               private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    this.countries = ["1", "2", "3", "4", "5", "6", "7"];
     this.gameForm = new FormGroup({
       name: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       category: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
@@ -60,6 +58,9 @@ export class CreateGamePage implements OnInit {
       if (categories) {
         this.categories = categories;
       }
+    });
+    this.countryService.fetchCountries().subscribe(countries => {
+      if (countries) this.countries = countries;
     })
   }
 

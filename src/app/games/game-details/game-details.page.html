@@ -39,6 +39,9 @@
               <img alt="Profile picture" [src]="creator.picture"/>
             </ion-avatar>
             <ion-label>{{ creator.username }}</ion-label>
+            <ion-button color="primary" [routerLink]="['/', 'profile', creator.id]">
+              <ion-icon name="arrow-forward"></ion-icon>
+            </ion-button>
             <ion-icon name="people" slot="end"></ion-icon>
             <ion-badge slot="end" color="secondary" class="ion-no-margin">{{ game.numberOfAttempts }}</ion-badge>
           </ion-item>

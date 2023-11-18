@@ -18,12 +18,12 @@ export class AppComponent implements OnInit, OnDestroy {
   private authSub: Subscription;
   private previousAuthState = false;
   public appPages = [
-    { title: 'Játékok', url: '/games', icon: 'game-controller' },
+    { title: 'Játékok', url: '/games', icon: 'dice' },
     { title: 'Események', url: '/events', icon: 'calendar' },
     { title: 'Profil', url: '/profile', icon: 'person' },
     { title: 'Kapcsolatok', url: '/connections', icon: 'people' },
-    { title: 'Authentikáció', url: '/auth', icon: 'archive' },
-    { title: 'Játékmód', url: '/game-mode', icon: 'archive' },
+    { title: 'Authentikáció', url: '/auth', icon: 'log-in' },
+    { title: 'Játékmód', url: '/game-mode', icon: 'game-controller' },
   ];
 
   constructor(private authService: AuthService,
@@ -44,7 +44,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.previousAuthState = isAuth;
     });
 
-    //TODO: megérteni 279.lecke
     App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
   }
 

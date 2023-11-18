@@ -88,13 +88,10 @@ export class GamesPage implements OnInit, OnDestroy {
         this.categories = categories;
       }
     });
-    this.countries = ["1", "2", "3", "4", "5", "6", "7", "Anywhere"];
-    // this.countryService.getAllCountries().subscribe(res => {
-    // this.countries.push("Anywhere");
-    //   for (var key in res) {
-    //     this.countries.push(res[key].name);
-    //   }
-    // });
+
+    this.countryService.fetchCountries().subscribe(countries => {
+      if (countries) this.countries = countries;
+    });
   }
 
   ionViewWillEnter() {

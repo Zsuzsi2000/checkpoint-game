@@ -240,7 +240,7 @@ export class GamePage implements OnInit, OnDestroy {
 
     const distance = R * c; // Distance in kilometers
     console.log(myLat, myLng, this.actualCheckpoint.locationAddress, distance);
-    if (distance < 1) {
+    if (distance < 0.1) {
       this.findCheckpoint();
     } else {
       this.showALert('Unfortunately you are not in the right place');

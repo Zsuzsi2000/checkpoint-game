@@ -46,7 +46,7 @@ export class GameCardComponent implements OnInit {
           text: "Delete",
           handler: () => {
             this.gamesService.deleteGame(id).subscribe(res => {
-              this.gamesService.fetchOwnGames(this.loadedUser.id).subscribe(games => {
+              this.gamesService.fetchOwnGames(this.loggedUser.id).subscribe(games => {
                 this.updateGamesList.emit(games);
                 // this.loadedOwnGames = games;
               });
