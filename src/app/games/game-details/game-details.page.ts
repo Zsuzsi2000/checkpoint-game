@@ -145,17 +145,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   getPdf() {
     if (this.game.locationIdentification === LocationIdentification.qr) {
       this.generateQRCode = true;
-      // const promises = this.game.checkpoints.map(check => this.convertBlobToBase64(check));
-      //
-      // Promise.all(promises)
-      //   .then(base64DataUrls => {
-      //     console.log(base64DataUrls);
-      //     this.generatePDFFromQRCodes(base64DataUrls);
-      //   })
-      //   .catch(error => {
-      //     console.error('Error converting blobs to base64:', error);
-      //     this.generatePDFFromAccessCodes();
-      //   });
     } else {
       this.generatePDFFromAccessCodes();
     }

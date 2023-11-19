@@ -38,7 +38,7 @@ export class LeaderboardComponent implements OnInit {
             }
           });
           console.log(this.players);
-          this.players = this.players.sort((a, b) =>  a.doneNumber < b.doneNumber ? -1 : (a.doneNumber > b.doneNumber ? 1 : 0));
+          this.players = this.players.sort((a, b) =>  a.doneNumber < b.doneNumber ? 1 : (a.doneNumber > b.doneNumber ? -1 : 0));
           this.isLoading = false;
         })
       }, error => {
@@ -52,9 +52,9 @@ export class LeaderboardComponent implements OnInit {
   sort(event) {
     console.log(event.detail.value);
     if (event.detail.value === "Done") {
-      this.players = this.players.sort((a, b) =>  a.doneNumber < b.doneNumber ? -1 : (a.doneNumber > b.doneNumber ? 1 : 0));
+      this.players = this.players.sort((a, b) =>  a.doneNumber < b.doneNumber ? 1 : (a.doneNumber > b.doneNumber ? -1 : 0));
     } else {
-      this.players = this.players.sort((a, b) =>  a.score < b.score ? -1 : (a.score > b.score ? 1 : 0));
+      this.players = this.players.sort((a, b) =>  a.score < b.score ? 1 : (a.score > b.score ? -1 : 0));
     }
   }
 

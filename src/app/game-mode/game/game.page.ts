@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {AlertController, ModalController, NavController} from "@ionic/angular";
+import {AlertController, LoadingController, ModalController, NavController} from "@ionic/angular";
 import {LiveGameService} from "../live-game.service";
 import {Player} from "../../models/Player";
 import {LiveGame} from "../../models/liveGame";
@@ -25,7 +25,7 @@ import {Geolocation} from "@capacitor/geolocation";
   templateUrl: './game.page.html',
   styleUrls: ['./game.page.scss'],
 })
-export class GamePage implements OnInit, OnDestroy {
+export class GamePage implements OnInit {
 
   @ViewChild('scanner') scanner: ZXingScannerComponent;
 
@@ -54,7 +54,8 @@ export class GamePage implements OnInit, OnDestroy {
               private authService: AuthService,
               private alertController: AlertController,
               private modalController: ModalController,
-              private router: Router) {
+              private router: Router,
+              private loadingController: LoadingController) {
   }
 
   ngOnInit() {
@@ -67,7 +68,7 @@ export class GamePage implements OnInit, OnDestroy {
       return;
     }
 
-    this.liveGameService.fetchLiveGame(paramMap.get('liveGame')).subscribe(
+    this.liveGameService.fetchLiveGame(paramMap.get('liveGame')).pipe(take(1)).subscribe(
       liveGame => {
         this.liveGame = liveGame;
         this.handlePlayersAndUser();
@@ -97,7 +98,7 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   handleGameFetch(): void {
-    this.gamesService.fetchGame(this.liveGame.gameId).subscribe(game => {
+    this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
       if (game) {
         this.game = game;
         this.setActualCheckpointFirst();
@@ -211,20 +212,22 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   checkLocation() {
-    if (!Capacitor.isPluginAvailable('Geolocation')) {
-      this.showALert('Unable to determine your location.');
-      return;
-    }
-    this.isLoading = true;
-    Geolocation.getCurrentPosition()
-      .then(geoPosition => {
-        this.checkDistance(geoPosition.coords.latitude, geoPosition.coords.longitude);
-        this.isLoading = false;
-      })
-      .catch(err => {
-        this.isLoading = false;
+    this.loadingController.create({ keyboardClose: true, message: 'Check location...',  }).then(loadingEl => {
+      loadingEl.present();
+      if (!Capacitor.isPluginAvailable('Geolocation')) {
         this.showALert('Unable to determine your location.');
-      });
+        return;
+      }
+      Geolocation.getCurrentPosition()
+        .then(geoPosition => {
+          this.checkDistance(geoPosition.coords.latitude, geoPosition.coords.longitude);
+          loadingEl.dismiss();
+        })
+        .catch(err => {
+          loadingEl.dismiss();
+          this.showALert('Unable to determine your location.');
+        });
+    });
   }
 
   checkDistance(myLat: number, myLng: number) {
@@ -240,7 +243,7 @@ export class GamePage implements OnInit, OnDestroy {
 
     const distance = R * c; // Distance in kilometers
     console.log(myLat, myLng, this.actualCheckpoint.locationAddress, distance);
-    if (distance < 0.1) {
+    if (distance < 0.05) {
       this.findCheckpoint();
     } else {
       this.showALert('Unfortunately you are not in the right place');
@@ -393,10 +396,8 @@ export class GamePage implements OnInit, OnDestroy {
     this.qrScanner = false;
   }
 
-  ngOnDestroy(): void {
-    if (this.playersSub) {
-      this.playersSub.unsubscribe();
-    }
+  ionViewDidLeave() {
+    if (this.playersSub) this.playersSub.unsubscribe();
   }
 
 }

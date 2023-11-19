@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar [ngClass]="gameMode ? 'game-mode' : 'join'">
     <ion-buttons slot="start">
       <ion-button (click)="onCancel()">Cancel</ion-button>
     </ion-buttons>
-    <ion-title>Edit checkpoints</ion-title>
+    <ion-title>Teams</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="submit()">Done</ion-button>
     </ion-buttons>
@@ -35,13 +35,26 @@
             <ion-label>Teams</ion-label>
           </ion-item>
             <ion-buttons class="brownie ion-justify-content-center">
-              <ng-container *ngFor="let team of event.joined">
-                <ion-button (click)="setTeam(team.teamName)" color="secondary" size="small" shape="round"
-                            [disabled]="team.teamMembers.length === event.liveGameSettings.maxTeamMember">
-                  <ion-label>{{ team.teamName }}</ion-label>
-                  <ion-icon *ngIf="team.teamMembers.length === event.liveGameSettings.maxTeamMember" slot="end" name="checkmark"></ion-icon>
-                </ion-button>
+              <ng-container *ngIf="event; else liveGamePlayers">
+                <ng-container *ngFor="let team of event.joined">
+                  <ion-button (click)="setTeam(team.teamName)" color="secondary" size="small" shape="round" class="good-looking-team-item"
+                              [disabled]="team.teamMembers.length === event.liveGameSettings.maxTeamMember">
+                    <ion-label>{{ team.teamName }}</ion-label>
+                    <ion-icon *ngIf="team.teamMembers.length === event.liveGameSettings.maxTeamMember" class="icoon" slot="end" name="checkmark"></ion-icon>
+                    <ion-icon *ngIf="team.teamMembers.length !== event.liveGameSettings.maxTeamMember" class="icoon" slot="end" name="ellipsis-horizontal"></ion-icon>
+                  </ion-button>
+                </ng-container>
               </ng-container>
+              <ng-template #liveGamePlayers>
+                <ng-container *ngFor="let player of players">
+                  <ion-button (click)="setTeam(player.teamName)" color="secondary" size="small" shape="round"
+                              [disabled]="player.teamMembers.length === liveGame.liveGameSettings.maxTeamMember">
+                    <ion-label>{{ player.teamName }}</ion-label>
+                    <ion-icon *ngIf="player.teamMembers.length === liveGame.liveGameSettings.maxTeamMember" class="icoon" slot="end" name="checkmark"></ion-icon>
+                    <ion-icon *ngIf="player.teamMembers.length !== liveGame.liveGameSettings.maxTeamMember" class="icoon" slot="end" name="ellipsis-horizontal"></ion-icon>
+                  </ion-button>
+                </ng-container>
+              </ng-template>
             </ion-buttons>
           <ion-item *ngIf="chosenTeam">
             <ion-label>{{ "Chosen team: " + chosenTeam }}</ion-label>

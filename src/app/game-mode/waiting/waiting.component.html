@@ -1,0 +1,72 @@
+<ion-grid class="ion-no-padding ion-no-margin">
+  <ion-row class="ion-justify-content-center">
+    <ion-col class="ion-align-items-center ion-justify-content-center">
+      <ion-card color="primary" class="ion-text-center">
+        <ion-card-content class="ion-justify-content-center ion-align-items-center flex-set">
+          <ion-badge color="secondary fit-content">ACCESS CODE</ion-badge>
+          <ion-item lines="none" class="ion-text-center">
+            <ion-label class="ion-no-margin accesscode-style">{{ liveGame.accessCode }}</ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="event && event.joined" class="ion-justify-content-center">
+    <ion-col class="ion-align-items-center ion-justify-content-center">
+      <ion-card color="primary" class="ion-text-center">
+        <ion-card-content class="ion-justify-content-center ion-align-items-center ion-text-center">
+          <ion-label class="ion-no-margin wait-style">{{ 'Waiting for ' + (event.players.length - alreadyJoined) + ' people' }}</ion-label>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-no-margin ion-no-padding" *ngIf="creator">
+    <ion-col class="ion-no-margin ion-no-padding">
+      <ion-button color="secondary" class="ion-no-margin" expand="full" (click)="startTheGame()">
+        <ion-label>Start the game</ion-label>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-justify-content-center">
+    <ion-col class="ion-align-items-center ion-justify-content-center">
+      <ion-card class="ion-text-center">
+        <ion-card-header class="ion-text-center">
+          <ion-label>Teams</ion-label>
+        </ion-card-header>
+        <ion-card-content class="ion-justify-content-center ion-align-items-center flex-row">
+          <ng-container *ngIf="event; else noEvent">
+            <ion-item *ngFor="let player of players" class="fit-content" lines="none">
+              <ion-badge color="secondary" class="good-looking-team-item">{{ player.teamName }}</ion-badge>
+              <ion-icon *ngIf="player.teamMembers.length === liveGame.liveGameSettings.maxTeamMember" class="icoon" name="checkmark"></ion-icon>
+              <ion-icon *ngIf="player.teamMembers.length !== liveGame.liveGameSettings.maxTeamMember" class="icoon" name="ellipsis-horizontal"></ion-icon>
+            </ion-item>
+          </ng-container>
+          <ng-template #noEvent>
+            <ion-item *ngFor="let player of players" class="fit-content" lines="none">
+              <ion-badge color="secondary" class="good-looking-team-item">{{ player.teamName }}</ion-badge>
+              <ion-icon *ngIf="teamIsReady(player)" class="icoon"
+                        name="checkmark"></ion-icon>
+              <ion-icon *ngIf="!teamIsReady(player)" class="icoon"
+                        name="ellipsis-horizontal"></ion-icon>
+            </ion-item>
+          </ng-template>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-justify-content-center">
+    <ion-col class="ion-align-items-center ion-justify-content-center">
+      <ion-list>
+        <ion-list-header class="ion-text-center">
+          <ion-label>Players</ion-label>
+        </ion-list-header>
+        <ng-container *ngFor="let player of players">
+          <ion-item *ngFor="let member of player.teamMembers">
+            <ion-label>{{ member.name }}</ion-label>
+            <ion-badge color="secondary">{{ player.teamName }}</ion-badge>
+          </ion-item>
+        </ng-container>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+</ion-grid>

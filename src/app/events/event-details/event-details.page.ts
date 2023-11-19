@@ -143,6 +143,15 @@ export class EventDetailsPage implements OnInit {
     this.router.navigate(['/', 'events', 'event-editor', id]);
   }
 
+  startEvent() {
+    this.router.navigate(['/', 'game-mode'], { queryParams: { eventId: this.event.id }});
+  }
+
+  canStartEvent() {
+    console.log((new Date(this.event.date)).getTime() < (new Date()).getTime(), new Date(this.event.date).getTime(),  (new Date()).getTime())
+    return (new Date(this.event.date)).getTime() < (new Date()).getTime();
+  }
+
 
 
   joinEvent() {
@@ -154,7 +163,7 @@ export class EventDetailsPage implements OnInit {
       case GameMode.teamVsTeam: {
         this.modalCtrl.create({
           component: JoinOrCreateTeamComponent,
-          componentProps: { event: this.event, userId: this.user.id }
+          componentProps: { event: this.event, user: this.user }
         }).then(modalEl => {
           modalEl.onDidDismiss().then(modalData => {
             console.log(modalData.data);

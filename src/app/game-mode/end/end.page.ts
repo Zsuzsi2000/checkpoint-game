@@ -3,11 +3,11 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {LiveGameService} from "../live-game.service";
 import {AlertController, NavController} from "@ionic/angular";
 import {Player} from "../../models/Player";
-import {take} from "rxjs/operators";
+import {switchMap, take} from "rxjs/operators";
 import {GamesService} from "../../games/games.service";
 import {Game} from "../../models/game.model";
 import {AuthService} from "../../auth/auth.service";
-import {forkJoin, of} from "rxjs";
+import {forkJoin, interval, of, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-end',
@@ -21,10 +21,12 @@ export class EndPage implements OnInit {
   isLoading = true;
   game: Game;
   players: Player[] = [];
+  playersSub: Subscription;
   player: Player;
   userName: string;
   sortType = "Score";
   helps = 0;
+  first = false;
 
   constructor(private activatedRoute: ActivatedRoute,
               private liveGameService: LiveGameService,
@@ -46,19 +48,16 @@ export class EndPage implements OnInit {
         this.playerId = this.activatedRoute.snapshot.queryParamMap.get('playerId');
       }
       this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
-        players.forEach((player: Player) => {
-          if (player.liveGameId === this.liveGameId) {
-            this.players.push(player);
-            if (player.id === this.playerId) {
-              this.player = player;
-              this.player.checkpointsState.forEach(check => {
-                if (check.useHelp) this.helps += 1;
-              });
-              this.updateGame();
-            }
-          }
+        this.players = (players as Player[]).filter(p => p.liveGameId === this.liveGameId);
+        this.player = (players as Player[]).find(p => p.id === this.playerId);
+        this.player.checkpointsState.forEach(check => {
+          if (check.useHelp) this.helps += 1;
         });
+        if (!this.first) {
+          this.updateGame();
+        }
       });
+
       this.liveGameService.fetchLiveGame(this.liveGameId).pipe(take(1)).subscribe(liveGame => {
         if (liveGame) {
           this.gameService.fetchGame(liveGame.gameId).pipe(take(1)).subscribe(game => {
@@ -71,12 +70,29 @@ export class EndPage implements OnInit {
                 if (user) {
                   this.userName = user.username;
                 }
-                this.updateGame();
+                if (!this.first) {
+                  this.updateGame();
+                }
               })
             }
           })
         }
       });
+
+      this.playersSub = interval(5000).pipe(
+        switchMap(() => {
+          return this.liveGameService.fetchPlayers();
+        })
+      ).subscribe(players => {
+        this.players = (players as Player[]).filter(p => p.liveGameId === this.liveGameId);
+        if (this.sortType === "Score") {
+          this.players = this.players.sort((a, b) => a.score < b.score ? 1 : (a.score > b.score ? -1 : 0));
+        } else if (this.sortType === "BigDuration") {
+          this.players = this.players.sort((a, b) => a.duration < b.duration ? -1 : (a.duration > b.duration ? 1 : 0));
+        } else {
+          this.players = this.players.sort((a, b) => a.checkpointsDuration < b.checkpointsDuration ? -1 : (a.checkpointsDuration > b.checkpointsDuration ? 1 : 0));
+        }
+      })
     });
   }
 
@@ -85,6 +101,7 @@ export class EndPage implements OnInit {
       this.isLoading = false;
       console.log('Performing additional action with player and game:', player, game);
       if (game && player) {
+        this.first = true;
         console.log('Performing additional action with player and game:', player, game);
 
         if (this.game.bests) {
@@ -133,7 +150,7 @@ export class EndPage implements OnInit {
     console.log(event.detail.value);
     this.sortType = event.detail.value;
     if (event.detail.value === "Score") {
-      this.players = this.players.sort((a, b) => a.score < b.score ? -1 : (a.score > b.score ? 1 : 0));
+      this.players = this.players.sort((a, b) => a.score < b.score ? 1 : (a.score > b.score ? -1 : 0));
     } else if (event.detail.value === "BigDuration") {
       this.players = this.players.sort((a, b) => a.duration < b.duration ? -1 : (a.duration > b.duration ? 1 : 0));
     } else {
@@ -210,16 +227,26 @@ export class EndPage implements OnInit {
     return player.checkpointsState.filter(check => check.useHelp).length;
   }
 
-  ngOnDestroy(): void {
-    this.players.forEach(player => {
-      this.liveGameService.deletePlayer(player.id).subscribe(d => {
-        console.log(d);
-      });
-    });
-
-    this.liveGameService.deleteLiveGame(this.liveGameId).subscribe(d => {
-      console.log(d);
-    });
+  checkDone(player: Player) {
+    let state = player.checkpointsState.find(p=> p.done === false);
+    return state === undefined;
   }
+
+  ngOnDestroy(): void {
+    // this.players.forEach(player => {
+    //   this.liveGameService.deletePlayer(player.id).subscribe(d => {
+    //     console.log(d);
+    //   });
+    // });
+    //
+    // this.liveGameService.deleteLiveGame(this.liveGameId).subscribe(d => {
+    //   console.log(d);
+    // });
+  }
+
+  ionViewDidLeave() {
+    if (this.playersSub) this.playersSub.unsubscribe();
+  }
+
 
 }

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { GameModePageRoutingModule } from './game-mode-routing.module';
 import { GameModePage } from './game-mode.page';
 import {CreateMultiComponent} from "./create-multi/create-multi.component";
+import {WaitingComponent} from "./waiting/waiting.component";
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {CreateMultiComponent} from "./create-multi/create-multi.component";
     ],
     declarations: [
         GameModePage,
-        CreateMultiComponent
+        CreateMultiComponent,
+        WaitingComponent
     ]
 })
 export class GameModePageModule {}

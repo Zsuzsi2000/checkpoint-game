@@ -1,0 +1,37 @@
+.good-looking-team-item {
+  padding: 10px;
+}
+
+.flex-set {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+}
+
+.accesscode-style {
+  color: white;
+  font-size: xx-large;
+}
+
+.wait-style {
+  color: white;
+  font-size: medium;
+}
+
+.fit-content {
+  width: fit-content;
+}
+
+.icoon {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  background: var(--color-game-mode);
+  color: white;
+  border-radius: 30px;
+  padding: 1px;
+  margin: 3px;
+}

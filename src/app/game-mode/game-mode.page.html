@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center" *ngIf="!creatingLiveGameSetting">
+  <ion-grid class="ion-no-padding ion-no-margin full-fill ion-align-items-center" *ngIf="!creatingLiveGameSetting && !waiting">
     <ion-row class="ion-align-items-center full-fill">
       <ion-col class="ion-align-items-center">
         <ion-grid class="ion-no-padding ion-no-margin ion-align-items-center ion-text-center full-fill">
@@ -77,4 +77,5 @@
     </ion-row>
   </ion-grid>
   <app-create-multi *ngIf="creatingLiveGameSetting" (sendLiveGameSetting)="setLiveGameSettings($event)"></app-create-multi>
+  <app-waiting *ngIf="waiting && liveGame" [liveGame]="liveGame" [creator]="creator" [event]="event"></app-waiting>
 </ion-content>

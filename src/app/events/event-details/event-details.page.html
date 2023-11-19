@@ -142,6 +142,13 @@
               Cancel join
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
+            <ion-button color="secondary" fill="solid" size="small" shape="round"
+                        *ngIf="user && event.creatorId === user.id"
+                        [disabled]="!canStartEvent()"
+                        (click)="startEvent()">
+              Start event
+              <ion-icon slot="end" name="arrow-forward"></ion-icon>
+            </ion-button>
           </ng-container>
       </ion-col>
     </ion-row>

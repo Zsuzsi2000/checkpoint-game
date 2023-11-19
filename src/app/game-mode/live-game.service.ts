@@ -60,7 +60,7 @@ export class LiveGameService {
                 data[key].eventId,
                 data[key].liveGameSettings,
                 data[key].accessCode,
-                data[key].startDate,
+                data[key].startDate ? data[key].startDate : null,
               ))
             }
           }
@@ -82,7 +82,7 @@ export class LiveGameService {
           liveGameData.eventId,
           liveGameData.liveGameSettings,
           liveGameData.accessCode,
-          liveGameData.startDate,
+          liveGameData.startDate ? liveGameData.startDate : null,
         );
       })
     );

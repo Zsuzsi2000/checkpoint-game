@@ -89,6 +89,14 @@
           Cancel join
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>
+        <ion-button class="custom-align-item margin-top" fill="solid" size="small" shape="round"
+                    [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
+                    *ngIf="ownProfile && event.creatorId === loadedUser.id"
+                    [disabled]="!canStartEvent()"
+                    (click)="startEvent()">
+          Start event
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        </ion-button>
       </ng-container>
     </ion-buttons>
   </ion-card-content>

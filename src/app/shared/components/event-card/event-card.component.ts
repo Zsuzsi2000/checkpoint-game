@@ -109,6 +109,15 @@ export class EventCardComponent implements OnInit {
     return (oke || canAddTeam || canAddMember)
   }
 
+  startEvent() {
+    this.router.navigate(['/', 'game-mode'], { queryParams: { eventId: this.event.id }});
+  }
+
+  canStartEvent() {
+    console.log((new Date(this.event.date)).getTime() < (new Date()).getTime(), new Date(this.event.date).getTime(),  (new Date()).getTime())
+    return (new Date(this.event.date)).getTime() < (new Date()).getTime();
+  }
+
   cancelEvent(event: Event) {
     event.players = event.players.filter(player => player !== this.loggedUser.id);
     console.log(event);
@@ -138,10 +147,11 @@ export class EventCardComponent implements OnInit {
   setJoinOrCancel(event: Event, join: boolean) {
     if (join) {
       if (event.players) {
-        console.log("push id")
+        console.log("push id");
         event.players.push(this.loggedUser.id);
+      } else {
+        event.players = [this.loggedUser.id];
       }
-      event.players = [this.loggedUser.id];
     }
     console.log(event);
     this.eventsService.updateEvent(event).pipe(

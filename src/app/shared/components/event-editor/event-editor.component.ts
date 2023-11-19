@@ -52,7 +52,7 @@ export class EventEditorComponent implements OnInit {
       this.eventForm = this.formBuilder.group({
         name: new FormControl(this.event.name, { updateOn: "change", validators: [Validators.required]}),
         date: new FormControl(this.event.date, { updateOn: "change", validators: [Validators.required]}),
-        isItPublic: new FormControl(this.event.isItPublic, { updateOn: "change", validators: [Validators.required]}),
+        isItPublic: new FormControl(this.event.isItPublic, { updateOn: "change"}),
         imgUrl: new FormControl(this.event.imgUrl, { updateOn: "change"}),
         description: new FormControl(this.event.description, { updateOn: "change"}),
         liveGameSettings: this.formBuilder.group({
@@ -67,7 +67,7 @@ export class EventEditorComponent implements OnInit {
       this.eventForm = new FormGroup({
         name: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
         date: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
-        isItPublic: new FormControl(null, { updateOn: "change", validators: [Validators.required]}),
+        isItPublic: new FormControl(null, { updateOn: "change"}),
         imgUrl: new FormControl(null, { updateOn: "change"}),
         description: new FormControl(null, { updateOn: "change"}),
         liveGameSettings: this.formBuilder.group({
@@ -76,6 +76,7 @@ export class EventEditorComponent implements OnInit {
           maxTeamMember: new FormControl(5, { updateOn: "change", validators: [Validators.min(1), Validators.max(20)]}),
         }),
       });
+      this.eventForm.patchValue({ isItPublic: true });
     }
   }
 

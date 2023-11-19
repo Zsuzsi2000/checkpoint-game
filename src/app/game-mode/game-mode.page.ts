@@ -6,14 +6,16 @@ import {EventsService} from "../events/events.service";
 import {GamesService} from "../games/games.service";
 import {GameMode} from "../enums/GameMode";
 import {AuthService} from "../auth/auth.service";
-import {of, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {User} from "../models/user.model";
 import {LiveGameSettings} from "../models/liveGameSettings";
 import {LiveGame} from "../models/liveGame";
 import {CheckpointState} from "../interfaces/CheckpointState";
 import {LiveGameService} from "./live-game.service";
 import {Player} from "../models/Player";
-import {AlertController, ModalController, NavController} from "@ionic/angular";
+import {AlertController, LoadingController, ModalController, NavController} from "@ionic/angular";
+import {JoinOrCreateTeamComponent} from "../shared/components/join-or-create-team/join-or-create-team.component";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-game-mode',
@@ -33,6 +35,8 @@ export class GameModePage implements OnInit, OnDestroy {
   liveGameSettings: LiveGameSettings = new LiveGameSettings();
   GameMode = GameMode;
   creatingLiveGameSetting = false;
+  waiting = false;
+  creator = false;
 
   constructor(private activatedRoute: ActivatedRoute,
               private gamesService: GamesService,
@@ -42,7 +46,8 @@ export class GameModePage implements OnInit, OnDestroy {
               private router: Router,
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
-              private navCtrl: NavController) { }
+              private navCtrl: NavController,
+              private loadingController: LoadingController) { }
 
   ngOnInit() {
   }
@@ -69,6 +74,7 @@ export class GameModePage implements OnInit, OnDestroy {
           this.gamesService.fetchGame(event.gameId).subscribe(game => {
             this.game = game;
             this.getGame = true;
+            this.creator = true;
             if (this.liveGameSettings.gameMode === GameMode.notSpecified) {
               this.creatingLiveGameSetting = true;
             } else {
@@ -76,16 +82,8 @@ export class GameModePage implements OnInit, OnDestroy {
                 if (id) {
                   this.liveGame.id = id;
                   console.log(this.liveGame);
-                  this.event.joined.forEach(team => {
-                    this.createPlayer(team.teamName, team.teamMembers).subscribe(id => {
-                      if (id) {
-                        this.player.id = id;
-                      }
-                    })
-                  });
+                  this.findJoinerAndCreatePlayer();
                 }
-
-
               })
             }
           });
@@ -94,22 +92,44 @@ export class GameModePage implements OnInit, OnDestroy {
     }
   }
 
+  findJoinerAndCreatePlayer() {
+    let teamName = "";
+    let teamMember: { id: string, name: string };
+    this.authService.userId.pipe(take(1)).subscribe(userId => {
+      if (userId) {
+        this.event.joined.forEach(team => {
+          let member = team.teamMembers.find(m => m.id === this.user.id);
+          if (member) {
+            teamName = team.teamName;
+            teamMember = member;
+          }
+        });
+        this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
+          if (players) {
+            let player = (players as Player[]).find(p => (p.liveGameId === this.liveGame.id && p.teamName === teamName));
+            if (player) {
+              player.teamMembers.push(teamMember);
+              this.updatePlayer(player);
+            } else {
+              this.createPlayer(teamName, [teamMember]);
+            }
+          }
+        })
+      }
+    })
+  }
+
   setSolo() {
     this.liveGameSettings = new LiveGameSettings(GameMode.solo, 1, 1);
     this.createLiveGame().subscribe(id => {
       if (id) {
         this.liveGame.id = id;
         console.log(this.liveGame);
-        let createPlayer = (this.user)
-          ? this.createPlayer(this.user.username,[{ id: this.user.id, name: this.user.username }])
-          : this.createPlayer("Guest",[{ id: null, name: "Guest" }]);
-        createPlayer.subscribe(id => {
-          if (id) {
-            this.player.id = id;
-            this.router.navigate(['/', 'game-mode', 'game', this.liveGame.id]);
-          }
-        })
-
+        if (this.user) {
+          this.createPlayer(this.user.username,[{ id: this.user.id, name: this.user.username }]);
+        } else {
+          this.createPlayer("Guest",[{ id: null, name: "Guest" }]);
+        }
       }
     });
   }
@@ -143,10 +163,11 @@ export class GameModePage implements OnInit, OnDestroy {
               }
               if (this.liveGame) {
                 console.log(this.liveGame);
-                // event => joined fix
-                // event => just players
-                // simple game
-                this.join();
+                if (this.liveGame.event) {
+                  this.joinEvent();
+                } else {
+                  this.joinGame();
+                }
               }
             })
           }
@@ -157,66 +178,92 @@ export class GameModePage implements OnInit, OnDestroy {
     );
   }
 
-  join() {
-    if (this.liveGame.event) {
-      this.eventsService.fetchEvent(this.liveGame.eventId).subscribe(event => {
-        if (event) {
-          this.event = event;
-          let signedUp = this.event.players.includes(this.user.id);
-          if (!signedUp) {
-            this.showALert("You haven't joined this event");
-          } else {
-            if (this.event.liveGameSettings.gameMode === GameMode.notSpecified) {
-              this.joinMulti();
-            } else {
-              this.router.navigate(['/', 'game-mode', 'game', this.liveGame.id]);
+  joinEvent() {
+    this.eventsService.fetchEvent(this.liveGame.eventId).subscribe(event => {
+      if (event) {
+        this.event = event;
+        let signedUp = this.event.players.includes(this.user.id);
+        if (!signedUp) {
+          this.showAlert("An error occured","You haven't joined this event");
+        } else {
+          this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
+            if (game) {
+              this.game = game;
+              if (this.event.liveGameSettings.gameMode === GameMode.notSpecified) {
+                this.joinMulti();
+              } else {
+                this.findJoinerAndCreatePlayer();
+              }
             }
-          }
+          });
         }
-      })
-    }
+      }
+    })
   }
 
-  joinGame() {}
+  joinGame() {
+    console.log("Join multi");
+    this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
+      if (game) {
+        this.game = game;
+        this.joinMulti();
+      }
+    });
+  }
 
   joinMulti() {
-    // switch (this.liveGame.liveGameSettings.gameMode) {
-    //   case GameMode.notSpecified: {
-    //     this.setJoinOrCancel(event, true);
-    //     break;
-    //   }
-    //   case GameMode.teamVsTeam: {
-    //     this.modalCtrl.create({
-    //       component: JoinOrCreateTeamComponent,
-    //       componentProps: { event: event, user: this.user }
-    //     }).then(modalEl => {
-    //       modalEl.onDidDismiss().then(modalData => {
-    //         console.log(modalData.data);
-    //         if (modalData.data) this.setJoinOrCancel(modalData.data, true);
-    //       });
-    //       modalEl.present();
-    //     });
-    //     break;
-    //   }
-    //   case GameMode.againstEachOther: {
-    //     if (event.joined) {
-    //       event.joined.push({ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] });
-    //     } else {
-    //       event.joined = [{ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
-    //     }
-    //     this.setJoinOrCancel(event, true);
-    //     break;
-    //   }
-    //   case GameMode.teamGame: {
-    //     if (event.joined && event.joined[0] && event.joined[0].teamMembers) {
-    //       event.joined[0].teamMembers.push({id: this.loggedUser.id, name: this.loggedUser.username});
-    //     } else {
-    //       event.joined = [{ teamName: "Team" , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
-    //     }
-    //     this.setJoinOrCancel(event, true);
-    //     break;
-    //   }
-    // }
+    //Todo: event esetén ellenőrizni hogy startDate van-e és benne van-e az event.players-ben
+    switch (this.liveGame.liveGameSettings.gameMode) {
+      case GameMode.notSpecified: {
+        break;
+      }
+      case GameMode.teamVsTeam: {
+        this.modalCtrl.create({
+          component: JoinOrCreateTeamComponent,
+          componentProps: {
+            liveGame: this.liveGame,
+            game: this.game,
+            user: this.user,
+            gameMode: true,
+          }
+        }).then(modalEl => {
+          modalEl.onDidDismiss().then(modalData => {
+            console.log(modalData.data);
+            this.waiting = true;
+          });
+          modalEl.present();
+        });
+        break;
+      }
+      case GameMode.againstEachOther: {
+        this.createPlayer(this.user.username, [{id: this.user.id, name: this.user.username}]);
+        // if (event.joined) {
+        //   event.joined.push({ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] });
+        // } else {
+        //   event.joined = [{ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
+        // }
+        break;
+      }
+      case GameMode.teamGame: {
+        this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
+          if (players) {
+            let player = (players as Player[]).find(p => p.liveGameId === this.liveGame.id);
+            if (player) {
+              player.teamMembers.push({id: this.user.id, name: this.user.username});
+              this.updatePlayer(player);
+            } else {
+              this.createPlayer("Team", [{id: this.user.id, name: this.user.username}]);
+            }
+          }
+        });
+        // if (event.joined && event.joined[0] && event.joined[0].teamMembers) {
+        //   event.joined[0].teamMembers.push({id: this.loggedUser.id, name: this.loggedUser.username});
+        // } else {
+        //   event.joined = [{ teamName: "Team" , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
+        // }
+        break;
+      }
+    }
   }
 
   canJoin(liveGame: LiveGame) {
@@ -236,40 +283,6 @@ export class GameModePage implements OnInit, OnDestroy {
     // return (oke || canAddTeam || canAddMember)
   }
 
-  setJoinOrCancel(join: boolean) {
-    // if (join) {
-    //   if (this.event.players) {
-    //     console.log("push id");
-    //     this.event.players.push(this.user.id);
-    //   }
-    //   this.event.players = [this.user.id];
-    // }
-    // console.log(this.event);
-    // this.eventsService.updateEvent(this.event).pipe(
-    //   take(1),
-    //   catchError(error => {
-    //     return of(null)
-    //   }),
-    //   switchMap(eventId => {
-    //     return this.userService.updateUser(
-    //       this.user.id,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       true,
-    //       this.event.id,
-    //       join)
-    //   })).subscribe(response => {
-    //   if (response) {
-    //     this.showAlert((join ? "Join" : "Cancel") + " was succesful",
-    //       join ? "You joined to " + this.event.name + " event" : "You have unsubscribed from " + this.event.name + " event");
-    //   } else {
-    //     this.showAlert("Something went wrong", (join ? "Join" : "Cancel") + " was unsuccesful.");
-    //   }
-    // });
-  }
 
   setLiveGameSettings(event) {
     console.log(event);
@@ -279,6 +292,8 @@ export class GameModePage implements OnInit, OnDestroy {
       if (id) {
         this.liveGame.id = id;
         console.log(this.liveGame);
+        this.creator = true;
+        this.joinMulti();
       }
     });
   }
@@ -292,13 +307,15 @@ export class GameModePage implements OnInit, OnDestroy {
       this.getEvent ? this.event.id : null,
       this.liveGameSettings,
       accessCode,
-      new Date()
+      this.liveGameSettings.gameMode === GameMode.solo ? new Date() : null
     );
     return this.liveGameService.createLiveGame(this.liveGame);
   }
 
   createPlayer(teamName: string, teamMembers: {id: string, name: string}[]) {
     let checkpointStates: CheckpointState[] = [];
+    let player: Player;
+
     for (let i = 0; i < this.game.checkpoints.length; i++) {
       let checkpointState: CheckpointState = {
         checkIndex: i,
@@ -312,18 +329,47 @@ export class GameModePage implements OnInit, OnDestroy {
       checkpointStates.push(checkpointState);
     }
     this.player = new Player(null, this.liveGame.id, teamName, teamMembers, checkpointStates);
-    return this.liveGameService.createPlayer(this.player);
+    this.loadingController.create({ keyboardClose: true, message: 'Create team...',  }).then(loadingEl => {
+      loadingEl.present();
+      this.liveGameService.createPlayer(this.player).pipe(take(1)).subscribe(createdPlayer => {
+        if (createdPlayer) {
+          console.log(createdPlayer);
+          // this.player = player;
+          loadingEl.dismiss();
+          this.waiting = true;
+        }
+      }, error => {
+        this.showAlert('Failed', 'Something went wrong');
+      });
+    });
   }
 
-  showALert(message: string ) {
+  updatePlayer(player: Player) {
+    this.loadingController.create({ keyboardClose: true, message: 'Update team...',  }).then(loadingEl => {
+      loadingEl.present();
+      this.liveGameService.updatePlayer(player).pipe(take(1)).subscribe(updatedPlayer => {
+        if (updatedPlayer) {
+          console.log(updatedPlayer);
+          this.player = player;
+          loadingEl.dismiss();
+          this.waiting = true;
+        }
+      }, error => {
+        this.showAlert('Failed', 'Something went wrong');
+      });
+
+    });
+  }
+
+  showAlert(header: string, message: string) {
     this.alertCtrl
       .create(
         {
-          header: 'An error occured',
+          header: header,
           message: message,
           buttons: [{
             text: 'Okay', handler: () => {
-              this.navCtrl.pop();
+
             }
           }]
         })

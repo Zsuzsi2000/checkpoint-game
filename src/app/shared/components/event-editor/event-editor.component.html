@@ -77,7 +77,7 @@
             Choose game mode
           </ion-label>
         </ion-item>
-        <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="event ? event.liveGameSettings.gameMode : GameMode.againstEachOther">
+        <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="event ? event.liveGameSettings.gameMode : GameMode.notSpecified">
           <ion-segment-button [value]="GameMode.againstEachOther">
             <ion-label>AGAINST<br>EACH<br>OTHER</ion-label>
           </ion-segment-button>
