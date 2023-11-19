@@ -56,6 +56,14 @@
             The max value is 20.
           </ion-label>
         </ion-item>
+        <ion-item
+          class="ion-align-items-center"
+          *ngIf="event && event.players && !checkEveryPlayersCanJoin()"
+          lines="none">
+          <ion-label color="danger">
+            {{'Make sure that all ' + event.players.length + ' applicants fit in the game.'}}
+          </ion-label>
+        </ion-item>
       </ion-list>
     </ion-col>
   </ion-row>
@@ -64,7 +72,7 @@
       <ion-button
       class="ion-text-center ion-justify-content-center ion-margin ion-padding"
       color="secondary"
-      [disabled]="maxTeamMember < 1 || maxTeamMember > 20 || maxTeam < 1 || maxTeam > 20"
+      [disabled]="maxTeamMember < 1 || maxTeamMember > 20 || maxTeam < 1 || maxTeam > 20 || !checkEveryPlayersCanJoin()"
       (click)="createLiveGameSettings()">
         <ion-label>Save settings</ion-label>
       </ion-button>

@@ -47,7 +47,7 @@
               </ng-container>
               <ng-template #liveGamePlayers>
                 <ng-container *ngFor="let player of players">
-                  <ion-button (click)="setTeam(player.teamName)" color="secondary" size="small" shape="round"
+                  <ion-button (click)="setTeam(player.teamName)" color="secondary" size="small" shape="round" class="good-looking-team-item"
                               [disabled]="player.teamMembers.length === liveGame.liveGameSettings.maxTeamMember">
                     <ion-label>{{ player.teamName }}</ion-label>
                     <ion-icon *ngIf="player.teamMembers.length === liveGame.liveGameSettings.maxTeamMember" class="icoon" slot="end" name="checkmark"></ion-icon>

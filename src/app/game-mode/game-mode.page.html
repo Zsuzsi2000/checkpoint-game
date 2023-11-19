@@ -67,8 +67,21 @@
                 class="modeSelectionButtons"
                 color="primary"
                 expand="full"
-                [disabled]="user === null">
-                START EVENT
+                [disabled]="user === null"
+                [routerLink]="['/','profile']">
+                CHOOSE EVENT TO START
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-no-padding ion-no-margin" *ngIf="getGame || getEvent">
+            <ion-col size-sm="8" offset-sm="2" size-md="6" offset-md="3">
+              <ion-button
+                class="modeSelectionButtons"
+                color="primary"
+                expand="full"
+                [routerLink]="['/','game-mode']"
+                (click)="back()">
+                BACK
               </ion-button>
             </ion-col>
           </ion-row>
@@ -76,6 +89,6 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <app-create-multi *ngIf="creatingLiveGameSetting" (sendLiveGameSetting)="setLiveGameSettings($event)"></app-create-multi>
+  <app-create-multi *ngIf="creatingLiveGameSetting" (sendLiveGameSetting)="setLiveGameSettings($event)" [event]="event"></app-create-multi>
   <app-waiting *ngIf="waiting && liveGame" [liveGame]="liveGame" [creator]="creator" [event]="event"></app-waiting>
 </ion-content>

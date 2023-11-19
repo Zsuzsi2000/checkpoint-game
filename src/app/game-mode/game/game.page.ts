@@ -4,20 +4,21 @@ import {AlertController, LoadingController, ModalController, NavController} from
 import {LiveGameService} from "../live-game.service";
 import {Player} from "../../models/Player";
 import {LiveGame} from "../../models/liveGame";
-import {forkJoin, of, Subscription} from "rxjs";
+import {forkJoin, interval, of, Subscription} from "rxjs";
 import {LeaderboardComponent} from "./leaderboard/leaderboard.component";
 import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
 import {GamesService} from "../../games/games.service";
 import {AuthService} from "../../auth/auth.service";
-import {take} from "rxjs/operators";
+import {switchMap, take} from "rxjs/operators";
 import {User} from "../../models/user.model";
 import {Game} from "../../models/game.model";
 import {Checkpoint} from "../../models/checkpoint.model";
 import {LocationType} from "../../enums/LocationType";
 import {LocationIdentification} from "../../enums/LocationIdentification";
-import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+import {ZXingScannerComponent} from '@zxing/ngx-scanner';
 import {Capacitor} from "@capacitor/core";
 import {Geolocation} from "@capacitor/geolocation";
+import {GameMode} from "../../enums/GameMode";
 
 
 @Component({
@@ -25,7 +26,7 @@ import {Geolocation} from "@capacitor/geolocation";
   templateUrl: './game.page.html',
   styleUrls: ['./game.page.scss'],
 })
-export class GamePage implements OnInit {
+export class GamePage implements OnInit, OnDestroy {
 
   @ViewChild('scanner') scanner: ZXingScannerComponent;
 
@@ -36,7 +37,7 @@ export class GamePage implements OnInit {
   player: Player;
   players: Player[] = [];
   actualCheckpoint: Checkpoint;
-  playersSub: Subscription;
+  playersSub: Subscription[] = [];
   LocationType = LocationType;
   LocationIdentification = LocationIdentification;
   showQuizOrInfo = false;
@@ -46,6 +47,7 @@ export class GamePage implements OnInit {
   endDate: Date;
   qrScanner = false;
   last = false;
+  first = false;
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
@@ -59,7 +61,7 @@ export class GamePage implements OnInit {
   }
 
   ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(paramMap => this.handleParamMap(paramMap));
+    this.playersSub.push(this.activatedRoute.paramMap.subscribe(paramMap => this.handleParamMap(paramMap)));
   }
 
   handleParamMap(paramMap: any): void {
@@ -68,33 +70,64 @@ export class GamePage implements OnInit {
       return;
     }
 
-    this.liveGameService.fetchLiveGame(paramMap.get('liveGame')).pipe(take(1)).subscribe(
+    this.playersSub.push(this.liveGameService.fetchLiveGame(paramMap.get('liveGame')).pipe(take(1)).subscribe(
       liveGame => {
         this.liveGame = liveGame;
         this.handlePlayersAndUser();
         this.handleGameFetch();
       },
-      error => this.showALert()
-    );
+      error => this.showALert( 'Game could not be fetched. Please try again later.', true)
+    ));
   }
 
   handlePlayersAndUser(): void {
-    this.playersSub = this.liveGameService.fetchPlayers().subscribe(players => {
+    console.log('handlePlayersAndUser');
+    this.playersSub.push(interval(2000).pipe(
+      switchMap(() => {
+        return this.liveGameService.fetchPlayers().pipe(take(1));
+      })).subscribe(players => {
       this.players = players.filter(player => player.liveGameId === this.liveGame.id);
       console.log(this.players);
       this.authService.user.pipe(take(1)).subscribe(user => {
         if (user) {
           this.user = user;
-          this.player = this.players.find(player =>
+          let serverPlayer = this.players.find(player =>
             player.teamMembers.some(member => member.id === (this.user.id))
           );
-          this.setActualCheckpointFirst();
+
+          let serverState = serverPlayer.checkpointsState.find(c => c.checkIndex === this.actualCheckpoint.index );
+          if (!this.first) {
+            this.first = true;
+            this.player = serverPlayer;
+            console.log('Players0');
+            this.setActualCheckpointFirst();
+          }
+          if (!serverState.done && serverState.find && !this.showQuizOrInfo) {
+            this.answer = "";
+            this.useHelp = false;
+            this.correctAnswer = null;
+            console.log('Players1');
+            this.player = serverPlayer;
+            this.setActualCheckpointFirst();
+          }
+          if (serverState.done) {
+            console.log('Players2');
+            this.showQuizOrInfo = false;
+            this.answer = "";
+            this.useHelp = false;
+            this.correctAnswer = null;
+            this.player = serverPlayer;
+            this.setActualCheckpointFirst();
+          }
+        } else if (user === null && this.liveGame.liveGameSettings.gameMode !== GameMode.solo) {
+          this.showALert( "You logged out, you can't continue the game", true)
         } else {
           this.player = this.players.find(player => player.teamName === "Guest");
+          console.log('Players');
           this.setActualCheckpointFirst();
         }
       });
-    });
+    }));
   }
 
   handleGameFetch(): void {
@@ -120,28 +153,15 @@ export class GamePage implements OnInit {
     const state = this.player.checkpointsState.find(s => s.done === false);
     if (state) {
       this.actualCheckpoint = this.game.checkpoints.find(check => check.index === state.checkIndex);
-      console.log( this.actualCheckpoint.index, this.game.checkpoints.length, this.last)
       this.last = this.actualCheckpoint.index + 1 >= this.game.checkpoints.length;
-      console.log( this.actualCheckpoint.index, this.game.checkpoints.length, this.last)
-
-      if (this.actualCheckpoint.index + 1 > this.game.checkpoints.length - 1) this.last = true;
+      console.log( this.actualCheckpoint.index, this.game.checkpoints.length, this.last);
       this.showQuizOrInfo = state.find;
     } else {
+      console.log("end");
+      this.unsubscribeFromAll();
       this.router.navigate(['/', 'game-mode', 'end', this.liveGame.id], {queryParams: {playerId: this.player.id}});
     }
     this.isLoading = false;
-  }
-
-  showALert(message: string = 'Game could not be fetched. Please try again later.') {
-    this.alertController
-      .create({
-        header: 'Unfortunately it did not work out',
-        message: message,
-        buttons: ['Okay']
-      })
-      .then(alertEl => {
-        alertEl.present();
-      });
   }
 
   identifyLocation() {
@@ -255,14 +275,15 @@ export class GamePage implements OnInit {
   }
 
   findCheckpoint() {
-    this.player.checkpointsState = this.player.checkpointsState.map(c => {
+    let updatedPlayer = {...this.player}
+    updatedPlayer.checkpointsState = updatedPlayer.checkpointsState.map(c => {
       if (c.checkIndex === this.actualCheckpoint.index) {
         c.find = true;
         if (this.game.quiz) c.startTimestap = new Date();
       }
       return c;
     });
-    this.player.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
+    updatedPlayer.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
     this.liveGameService.fetchPlayer(this.player.id).pipe(take(1)).subscribe(p => {
       if (p) {
         let canUpdate = false;
@@ -273,7 +294,7 @@ export class GamePage implements OnInit {
         });
 
         if (canUpdate) {
-          this.liveGameService.updatePlayer(this.player).pipe(take(1)).subscribe(pl => {
+          this.liveGameService.updatePlayer(updatedPlayer).pipe(take(1)).subscribe(pl => {
             console.log(pl);
             this.showQuizOrInfo = true;
           });
@@ -281,9 +302,7 @@ export class GamePage implements OnInit {
           this.player = p;
           this.showQuizOrInfo = true;
         }
-      } else {
       }
-
     });
   }
 
@@ -298,27 +317,28 @@ export class GamePage implements OnInit {
         });
 
         if (canUpdate) {
-          this.player.checkpointsState = this.player.checkpointsState.map(c => {
+          let updatedPlayer ={...this.player};
+          updatedPlayer.checkpointsState = updatedPlayer.checkpointsState.map(c => {
             if (c.checkIndex === this.actualCheckpoint.index) {
               if (this.game.quiz) {
                 c.correctAnswer = this.correctAnswer;
                 c.useHelp = this.useHelp;
                 c.endTimestap = this.endDate;
 
-                this.player.score += (this.correctAnswer) ? 1 : 0;
-                if (this.player.checkpointsDuration) {
-                  this.player.checkpointsDuration += c.endTimestap.getTime() - new Date(c.startTimestap).getTime();
+                updatedPlayer.score += (this.correctAnswer) ? 1 : 0;
+                if (updatedPlayer.checkpointsDuration) {
+                  updatedPlayer.checkpointsDuration += c.endTimestap.getTime() - new Date(c.startTimestap).getTime();
                 } else {
-                  this.player.checkpointsDuration = c.endTimestap.getTime() - new Date(c.startTimestap).getTime();
+                  updatedPlayer.checkpointsDuration = c.endTimestap.getTime() - new Date(c.startTimestap).getTime();
                 }
               }
               c.done = true;
             }
             return c;
           });
-          this.player.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
+          updatedPlayer.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
 
-          this.liveGameService.updatePlayer(this.player).pipe(take(1)).subscribe(pl => {
+          this.liveGameService.updatePlayer(updatedPlayer).pipe(take(1)).subscribe(pl => {
             console.log(pl);
             this.showQuizOrInfo = false;
             this.answer = "";
@@ -396,8 +416,40 @@ export class GamePage implements OnInit {
     this.qrScanner = false;
   }
 
+  showALert(message: string , back: boolean = false) {
+    this.alertController
+      .create({
+        header: 'Unfortunately it did not work out',
+        message: message,
+        buttons: [{
+          text: 'Okay', handler: () => {
+            console.log("handler");
+            if (back) this.router.navigate(['/','game-mode']);
+          }
+        }]
+      })
+      .then(alertEl => {
+        alertEl.present();
+      });
+  }
+
+  unsubscribeFromAll() {
+    if (this.playersSub) {
+      this.playersSub.forEach(sub => {
+        console.log('unsubsribe');
+        sub.unsubscribe();
+      });
+    }
+  }
+
   ionViewDidLeave() {
-    if (this.playersSub) this.playersSub.unsubscribe();
+    console.log('didleave');
+    this.unsubscribeFromAll();
+  }
+
+  ngOnDestroy(): void {
+    console.log('ondestroy');
+    this.unsubscribeFromAll();
   }
 
 }

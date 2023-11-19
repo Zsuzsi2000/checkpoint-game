@@ -39,9 +39,6 @@ ion-segment-button {
 }
 
 .icoon {
-  position: absolute;
-  right: -2px;
-  top: -2px;
   background: var(--color-game-mode);
   color: white;
   border-radius: 30px;
@@ -51,4 +48,5 @@ ion-segment-button {
 
 .good-looking-team-item {
   padding: 10px;
+  border-radius: 10px;
 }

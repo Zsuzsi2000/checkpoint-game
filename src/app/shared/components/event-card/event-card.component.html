@@ -69,7 +69,7 @@
         <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                     class="custom-align-item margin-top" fill="solid"
                     size="small" shape="round"
-                    [disabled]="!canJoin(event)"
+                    [disabled]="!canJoin(event) || canStartEvent()"
                     *ngIf="!event.players.includes(loggedUser.id)"
                     (click)="joinEvent(event)">
           Join event

@@ -189,10 +189,14 @@ export class GameModePage implements OnInit, OnDestroy {
           this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
             if (game) {
               this.game = game;
-              if (this.event.liveGameSettings.gameMode === GameMode.notSpecified) {
-                this.joinMulti();
+              if (this.liveGame.startDate) {
+                this.showAlert("The game has started","Unfortunately the game has already started");
               } else {
-                this.findJoinerAndCreatePlayer();
+                if (this.event.liveGameSettings.gameMode === GameMode.notSpecified) {
+                  this.joinMulti();
+                } else {
+                  this.findJoinerAndCreatePlayer();
+                }
               }
             }
           });
@@ -206,17 +210,26 @@ export class GameModePage implements OnInit, OnDestroy {
     this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
       if (game) {
         this.game = game;
-        this.joinMulti();
+        this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
+          if (players) {
+            let selectedPlayers = (players as Player[]).filter(p => p.liveGameId === this.liveGame.id);
+            if (this.liveGame.startDate) {
+              this.showAlert("The game has started","Unfortunately the game has already started");
+            } else {
+              if (this.canJoin(selectedPlayers)) {
+                this.joinMulti();
+              } else {
+                this.showAlert("No more place","The playces are sold out");
+              }
+            }
+          }
+        });
       }
     });
   }
 
   joinMulti() {
-    //Todo: event esetén ellenőrizni hogy startDate van-e és benne van-e az event.players-ben
     switch (this.liveGame.liveGameSettings.gameMode) {
-      case GameMode.notSpecified: {
-        break;
-      }
       case GameMode.teamVsTeam: {
         this.modalCtrl.create({
           component: JoinOrCreateTeamComponent,
@@ -237,11 +250,6 @@ export class GameModePage implements OnInit, OnDestroy {
       }
       case GameMode.againstEachOther: {
         this.createPlayer(this.user.username, [{id: this.user.id, name: this.user.username}]);
-        // if (event.joined) {
-        //   event.joined.push({ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] });
-        // } else {
-        //   event.joined = [{ teamName: this.loggedUser.username , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
-        // }
         break;
       }
       case GameMode.teamGame: {
@@ -256,33 +264,25 @@ export class GameModePage implements OnInit, OnDestroy {
             }
           }
         });
-        // if (event.joined && event.joined[0] && event.joined[0].teamMembers) {
-        //   event.joined[0].teamMembers.push({id: this.loggedUser.id, name: this.loggedUser.username});
-        // } else {
-        //   event.joined = [{ teamName: "Team" , teamMembers: [{id: this.loggedUser.id, name: this.loggedUser.username}] }];
-        // }
         break;
       }
     }
   }
 
-  canJoin(liveGame: LiveGame) {
-    // let oke = false;
-    // let canAddTeam = false;
-    // let canAddMember = false;
-    // if (liveGame.liveGameSettings.gameMode === GameMode.notSpecified && event.players) {
-    //   oke = event.players.length < (event.liveGameSettings.maxTeam * event.liveGameSettings.maxTeamMember);
-    // } else if (event.joined) {
-    //   canAddTeam = event.liveGameSettings.maxTeam > event.joined.length;
-    //   event.joined.forEach(team => {
-    //     if (event.liveGameSettings.maxTeamMember > (team.teamMembers ? team.teamMembers.length : 0)) canAddMember = true;
-    //   })
-    // } else if (event.players) {
-    //   oke = event.players.length < (event.liveGameSettings.maxTeam * event.liveGameSettings.maxTeamMember);
-    // } else { oke = true }
-    // return (oke || canAddTeam || canAddMember)
+  canJoin(players: Player[]) {
+    let oke = false;
+    let canAddTeam = false;
+    let canAddMember = false;
+    if (players && players.length > 0) {
+      canAddTeam = this.liveGame.liveGameSettings.maxTeam > players.length;
+      players.forEach(team => {
+        if (this.liveGame.liveGameSettings.maxTeamMember > (team.teamMembers ? team.teamMembers.length : 0)) canAddMember = true;
+      })
+    } else {
+      oke = true;
+    }
+    return (oke || canAddTeam || canAddMember);
   }
-
 
   setLiveGameSettings(event) {
     console.log(event);
@@ -314,7 +314,6 @@ export class GameModePage implements OnInit, OnDestroy {
 
   createPlayer(teamName: string, teamMembers: {id: string, name: string}[]) {
     let checkpointStates: CheckpointState[] = [];
-    let player: Player;
 
     for (let i = 0; i < this.game.checkpoints.length; i++) {
       let checkpointState: CheckpointState = {
@@ -369,7 +368,8 @@ export class GameModePage implements OnInit, OnDestroy {
           message: message,
           buttons: [{
             text: 'Okay', handler: () => {
-
+              console.log("game-mode");
+              this.router.navigate(['/','game-mode']);
             }
           }]
         })
@@ -378,6 +378,10 @@ export class GameModePage implements OnInit, OnDestroy {
       });
   }
 
+  back() {
+    this.getEvent = false;
+    this.getGame = false;
+  }
 
   ngOnDestroy(): void {
     if (this.userSub) this.userSub.unsubscribe();

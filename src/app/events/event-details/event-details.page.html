@@ -124,7 +124,7 @@
           </ion-button>
           <ng-container *ngIf="user && user.id">
             <ion-button color="secondary" fill="solid" size="small" shape="round"
-                        [disabled]="!canJoin()"
+                        [disabled]="!canJoin() || canStartEvent()"
                         *ngIf="!event.players.includes(user.id)"
                         (click)="joinEvent()">
               Join event

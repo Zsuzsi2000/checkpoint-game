@@ -148,7 +148,6 @@ export class EventDetailsPage implements OnInit {
   }
 
   canStartEvent() {
-    console.log((new Date(this.event.date)).getTime() < (new Date()).getTime(), new Date(this.event.date).getTime(),  (new Date()).getTime())
     return (new Date(this.event.date)).getTime() < (new Date()).getTime();
   }
 
@@ -214,10 +213,9 @@ export class EventDetailsPage implements OnInit {
     return (oke || canAddTeam || canAddMember)
   }
 
+
   cancelEvent() {
     this.event.players = this.event.players.filter(player => player !== this.user.id);
-    console.log(this.event);
-
     switch (this.event.liveGameSettings.gameMode) {
       case GameMode.teamVsTeam: {
         this.event.joined = this.event.joined.map(team => {
@@ -237,7 +235,6 @@ export class EventDetailsPage implements OnInit {
       }
     }
     this.setJoinOrCancel(false);
-    console.log(this.event);
   }
 
   setJoinOrCancel(join: boolean) {

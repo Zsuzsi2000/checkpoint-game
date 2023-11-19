@@ -47,14 +47,14 @@
       </ion-row>
       <ion-row>
         <ion-col>
-          <ion-segment [value]="game.quiz ? 'Score' : 'BigDuration'" (ionChange)="sort($event)">
-            <ion-segment-button *ngIf="game.quiz" value="Score">
+          <ion-segment [value]="(game && game.quiz) ? 'Score' : 'BigDuration'" (ionChange)="sort($event)">
+            <ion-segment-button *ngIf="game && game.quiz" value="Score">
               <ion-label>Score</ion-label>
             </ion-segment-button>
             <ion-segment-button value="BigDuration">
               <ion-label>Full<br/>Duration</ion-label>
             </ion-segment-button>
-            <ion-segment-button *ngIf="game.quiz" value="CheckpointsDuration">
+            <ion-segment-button *ngIf="game && game.quiz" value="CheckpointsDuration">
               <ion-label>Response<br/>Time</ion-label>
             </ion-segment-button>
           </ion-segment>
@@ -67,10 +67,10 @@
               <ion-label>{{ (i + 1) + '. ' + otherPlayer.teamName }}</ion-label>
               <ion-label *ngIf="sortType === 'BigDuration'" slot="end">{{ transform(otherPlayer.duration) }}</ion-label>
               <ion-icon *ngIf="!checkDone(otherPlayer)" slot="end" name="hourglass-outline"></ion-icon>
-              <ion-label *ngIf="sortType === 'CheckpointsDuration' && game.quiz && checkDone(otherPlayer)"
+              <ion-label *ngIf="sortType === 'CheckpointsDuration' && game && game.quiz && checkDone(otherPlayer)"
                          slot="end">{{ transform(otherPlayer.checkpointsDuration) }}</ion-label>
-              <ion-badge *ngIf="sortType === 'Score' && game.quiz && getHelp(otherPlayer) > 0 && checkDone(otherPlayer)" slot="end" class="custom-margin">{{  getHelp(otherPlayer) + ' help' }}</ion-badge>
-              <ion-badge *ngIf="sortType === 'Score' && game.quiz && checkDone(otherPlayer)" slot="end" class="custom-margin">{{ otherPlayer.score + ' pont' }}</ion-badge>
+              <ion-badge *ngIf="sortType === 'Score' && game && game.quiz && getHelp(otherPlayer) > 0 && checkDone(otherPlayer)" slot="end" class="custom-margin">{{  getHelp(otherPlayer) + ' help' }}</ion-badge>
+              <ion-badge *ngIf="sortType === 'Score' && game && game.quiz && checkDone(otherPlayer)" slot="end" class="custom-margin">{{ otherPlayer.score + ' pont' }}</ion-badge>
             </ion-item>
           </ion-list>
         </ion-col>

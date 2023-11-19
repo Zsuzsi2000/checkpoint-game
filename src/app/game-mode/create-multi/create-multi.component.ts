@@ -1,6 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {LiveGameSettings} from "../../models/liveGameSettings";
 import {GameMode} from "../../enums/GameMode";
+import {Event} from "../../models/event.model";
 
 @Component({
   selector: 'app-create-multi',
@@ -9,10 +10,11 @@ import {GameMode} from "../../enums/GameMode";
 })
 export class CreateMultiComponent implements OnInit {
 
+  @Input() event: Event;
   @Output() sendLiveGameSetting = new EventEmitter<LiveGameSettings>();
   liveGameSetting: LiveGameSettings = new LiveGameSettings(GameMode.againstEachOther);
   maxTeam = 5;
-  maxTeamMember = 5;
+  maxTeamMember = 1;
   GameMode = GameMode;
 
   constructor() {
@@ -21,9 +23,22 @@ export class CreateMultiComponent implements OnInit {
   ngOnInit() {
   }
 
+  checkEveryPlayersCanJoin() {
+    if (this.event && this.event.players) {
+      return this.event.players.length <= (this.maxTeam * this.maxTeamMember)
+    } else {
+      return true;
+    }
+  }
+
   setGameMode(event) {
     console.log(event);
     this.liveGameSetting.gameMode = +event.detail.value as GameMode;
+    if (this.liveGameSetting.gameMode === GameMode.againstEachOther) {
+      this.maxTeamMember = 1;
+    } else if (this.liveGameSetting.gameMode === GameMode.teamGame) {
+      this.maxTeam = 1;
+    }
   }
 
   createLiveGameSettings() {
