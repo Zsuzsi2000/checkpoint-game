@@ -26,6 +26,12 @@ export class PickAThingComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
 
+  filtering(event) {
+    this.filter = event.target.value;
+    console.log(this.filter, event.target.value )
+    this.countries = this.countries.filter(g => this.filter === "" ? g : g.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
+  }
+
   confirmChanges() {
     this.modalCtrl.dismiss(this.workingSelectedCountry)
   }

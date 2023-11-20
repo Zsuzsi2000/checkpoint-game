@@ -27,7 +27,7 @@ export class EventsPage implements OnInit {
   sortingMode = false;
   filteringMode = false;
   isLoading = false;
-  filter = '';
+  filter = "";
   filters: string[] = [];
   filtersObject: {
     countries: string[],
@@ -71,10 +71,11 @@ export class EventsPage implements OnInit {
       this.authService.user
     ]).subscribe(([events, user]) => {
       this.getGames(events).subscribe(data => {
-        this.loadedEvents = data;
+        this.loadedEvents = data.filter(event => !((new Date(event.event.date)).getTime() < (new Date()).getTime()) );
         if (user) {
           this.user = user;
-          this.loadedEvents = this.loadedEvents.filter(event => event.event.isItPublic || event.event.creatorId === user.id);
+          this.loadedEvents = this.loadedEvents
+            .filter(event => event.event.isItPublic || event.event.creatorId === user.id);
           this.actualEvents = this.loadedEvents;
           this.filtersObject.favourites = this.filters.includes("Favourites") ? this.user.favouriteGames : [];
           this.filtersObject.favourites = this.filters.includes("Saved") ? this.user.savedEvents : [];
@@ -260,6 +261,11 @@ export class EventsPage implements OnInit {
     }
   }
 
+  filtering(event) {
+    this.filter = event.target.value;
+    this.filterGames();
+  }
+
   filterGames() {
     this.actualEvents = this.loadedEvents
       .filter(g => (this.filtersObject.categories.length > 0) ? this.filtersObject.categories.includes(g.game.category) : g)
@@ -268,7 +274,8 @@ export class EventsPage implements OnInit {
       .filter(g => (this.filtersObject.types.length > 0) ? this.filtersObject.types.includes((g.game.quiz) ? "Quiz" : "Learning") : g)
       .filter(g => (this.filtersObject.favourites.length > 0) ? this.filtersObject.favourites.includes(g.game.id) : g)
       .filter(g => (this.filtersObject.saved.length > 0) ? this.filtersObject.saved.includes(g.event.id) : g)
-      .filter(g => (this.filtersObject.ownCountry) ? this.filtersObject.ownCountry === g.game.country : g);
+      .filter(g => (this.filtersObject.ownCountry) ? this.filtersObject.ownCountry === g.game.country : g)
+      .filter(g => this.filter === "" ? g : g.event.name.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
     this.updateFilters();
     this.sortEvents();
   }

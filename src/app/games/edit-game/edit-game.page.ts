@@ -47,7 +47,7 @@ export class EditGamePage implements OnInit {
   }
 
   ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(paramMap => {
+    this.activatedRoute.paramMap.pipe(take(1)).subscribe(paramMap => {
       if (!paramMap.has('gameId')) {
         this.navCtrl.pop();
       }

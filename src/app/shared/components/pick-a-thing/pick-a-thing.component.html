@@ -9,14 +9,16 @@
     </ion-buttons>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-searchbar [(ngModel)]="filter" ngDefaultControl animated="true" placeholder="Search"></ion-searchbar>
+    <ion-searchbar [debounce]="1000"
+                   (ionInput)="filtering($event)"
+                   placeholder="Search"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-list id="modal-list" [inset]="true">
     <ion-radio-group [value]="workingSelectedCountry" (ionChange)="checkboxChange($event)">
-      <ion-item *ngFor="let country of countries | filter: filter">
+      <ion-item *ngFor="let country of countries">
         <ion-label>{{ country }}</ion-label>
         <ion-radio [value]="country"></ion-radio>
       </ion-item>

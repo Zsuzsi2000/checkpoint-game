@@ -213,6 +213,11 @@ export class GamesPage implements OnInit, OnDestroy {
     }
   }
 
+  filtering(event) {
+    this.filter = event.target.value;
+    this.filterGames();
+  }
+
   filterGames() {
     this.actualGames = this.loadedGames
       .filter(g => (this.filtersObject.categories.length > 0) ? this.filtersObject.categories.includes(g.category) : g)
@@ -220,7 +225,9 @@ export class GamesPage implements OnInit, OnDestroy {
         ? (this.filtersObject.countries.includes(g.country) || (this.filtersObject.countries.includes("Anywhere") && g.locationType === LocationType.anywhere)) : g)
       .filter(g => (this.filtersObject.types.length > 0) ? this.filtersObject.types.includes((g.quiz) ? "Quiz" : "Learning") : g)
       .filter(g => (this.filtersObject.favourites.length > 0) ? this.filtersObject.favourites.includes(g.id) : g)
-      .filter(g => (this.filtersObject.ownCountry) ? this.filtersObject.ownCountry === g.country : g);
+      .filter(g => (this.filtersObject.ownCountry) ? this.filtersObject.ownCountry === g.country : g)
+      .filter(g => this.filter === "" ? g : g.name.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
+
     this.updateFilters();
     this.sortGames();
   }

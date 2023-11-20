@@ -1,5 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {
+  ActivatedRoute,
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router
+} from "@angular/router";
 import {LiveGameService} from "../live-game.service";
 import {AlertController, NavController} from "@ionic/angular";
 import {Player} from "../../models/Player";
@@ -35,11 +42,29 @@ export class EndPage implements OnInit {
               private gameService: GamesService,
               private alertController: AlertController,
               private authService: AuthService) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        console.log('Navigation started');
+      }
+
+      if (event instanceof NavigationEnd) {
+        console.log('Navigation ended');
+      }
+
+      if (event instanceof NavigationError) {
+        console.error('Navigation error:', event.error);
+      }
+
+      if (event instanceof NavigationCancel) {
+        console.warn('Navigation canceled');
+      }
+    });
   }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('liveGame')) {
+        console.log("pop");
         this.navCtrl.pop();
         return;
       }
@@ -81,7 +106,7 @@ export class EndPage implements OnInit {
 
       this.playersSub = interval(5000).pipe(
         switchMap(() => {
-          return this.liveGameService.fetchPlayers();
+          return this.liveGameService.fetchPlayers().pipe(take(1));
         })
       ).subscribe(players => {
         this.players = (players as Player[]).filter(p => p.liveGameId === this.liveGameId);
@@ -97,7 +122,7 @@ export class EndPage implements OnInit {
   }
 
   updateGame() {
-    forkJoin([of(this.player), of(this.game)]).subscribe(([player, game]) => {
+    forkJoin([of(this.player), of(this.game)]).pipe(take(1)).subscribe(([player, game]) => {
       this.isLoading = false;
       console.log('Performing additional action with player and game:', player, game);
       if (game && player) {

@@ -85,7 +85,7 @@
           </ion-row>
           <ion-row class="ion-justify-content-center ion-margin" *ngIf="correctAnswer !== null">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
-              <ion-button color="secondary" fill="solid" class="button-border" (click)="goToNextCheckpoint()">
+              <ion-button color="secondary" fill="solid" class="button-border" (click)="last ? finish() : goToNextCheckpoint()">
                 {{ last ? 'Go to final leaderboard' : 'Go to next checkpoint' }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
@@ -107,7 +107,7 @@
           </ion-row>
           <ion-row class="ion-justify-content-center ion-margin">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
-              <ion-button color="secondary" fill="solid" class="button-border" (click)="goToNextCheckpoint()">
+              <ion-button color="secondary" fill="solid" class="button-border" (click)="last ? finish() : goToNextCheckpoint()">
                 {{ last ? 'Go to final leaderboard' : 'Go to next checkpoint' }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>

@@ -29,6 +29,11 @@ export class PickThingsComponent implements OnInit {
     this.modalCtrl.dismiss(this.workingPickedThings)
   }
 
+  filtering(event) {
+    this.filter = event.target.value;
+    this.things.filter(g => this.filter === "" ? g : g.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
+  }
+
   checkboxChange(event) {
     console.log("checkboxChange", event);
     if (event.detail.checked) {

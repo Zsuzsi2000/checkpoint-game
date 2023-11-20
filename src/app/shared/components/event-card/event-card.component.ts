@@ -114,7 +114,6 @@ export class EventCardComponent implements OnInit {
   }
 
   canStartEvent() {
-    console.log((new Date(this.event.date)).getTime() < (new Date()).getTime(), new Date(this.event.date).getTime(),  (new Date()).getTime())
     return (new Date(this.event.date)).getTime() < (new Date()).getTime();
   }
 

@@ -11,14 +11,13 @@
       <ion-button (click)="toggleSorting()">
         <ion-icon name="swap-vertical"></ion-icon>
       </ion-button>
-      <ion-button>
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-searchbar [(ngModel)]="filter" ngDefaultControl animated="true" placeholder="Search"></ion-searchbar>
+  <ion-searchbar [debounce]="1000"
+                 (ionInput)="filtering($event)"
+                 placeholder="Search"></ion-searchbar>
   <ion-grid size="10" *ngIf="actualGames && sortingMode">
     <ion-row class="ion-align-items-center">
       <ion-col size="12">
@@ -79,7 +78,7 @@
     <ion-row class="ion-align-items-center">
       <ion-col size-xs="12" size-md="6"
                class="ion-align-items-center"
-               *ngFor="let game of actualGames | filter:filter">
+               *ngFor="let game of actualGames">
         <app-game-card [game]="game" [profile]="false" [ownProfile]="user && game.userId === user.id"
                        [loggedUser]="user"></app-game-card>
       </ion-col>
