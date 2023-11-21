@@ -144,7 +144,6 @@ export class ProfilePage implements OnInit, OnDestroy {
     });
 
     this.eventsService.fetchOwnEvents(this.loadedUserId).subscribe(events => {
-      console.log("events", events);
       this.loadedOwnEvents = events;
       this.eventsAreLoading = false;
       this.fetchJoinedEvents();
@@ -169,7 +168,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       });
 
       forkJoin(observables).subscribe(events => {
-        console.log(events);
         if (events) {
           events.forEach(event => {
             if (event instanceof Event && this.loadedOwnEvents.find(e => e.id === event.id) === undefined) {
@@ -223,9 +221,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   updateUsername(username: string) {
-    this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe(response => {
-      console.log("response", response);
-    })
+    this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe()
   }
 
   updatePicture(picture: string | File) {
@@ -238,7 +234,6 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.imageService.uploadImage(imageFile).pipe(switchMap(image => {
           return this.userService.updateUser(this.loggedUser.id, null, null, null, image.imageUrl, null, null).pipe(take(1));
         })).subscribe(res => {
-          console.log("res", res);
           loadingEl.dismiss();
         }, error => {
           console.log("error", error);
@@ -332,11 +327,11 @@ export class ProfilePage implements OnInit, OnDestroy {
     })
   }
 
-  onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
+  onFilterUpdate(event) {
     this.listGames = (event.detail.value === 'games');
   }
 
-  onImagePick(imageData: string | File) {
+  onImagePick(imageData: string | File | Blob) {
     let imageFile;
     if (typeof imageData === 'string') {
       try {

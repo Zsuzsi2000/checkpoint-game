@@ -116,11 +116,9 @@ export class EventsPage implements OnInit {
     events.forEach(event => {
       observables.push(this.gamesService.fetchGame(event.gameId).pipe(
         catchError((error) => {
-          console.log(error);
           return of({ event: event, game: null });
         }),
         switchMap(game => {
-          console.log(game);
           return of({ event: event, game: game });
         })
       ))
@@ -129,7 +127,6 @@ export class EventsPage implements OnInit {
     return (observables.length > 0)
       ? (forkJoin(observables).pipe(
         map((data: { event: Event, game: Game }[]) => {
-          console.log(data);
           return data;
         })
       ))
@@ -207,7 +204,6 @@ export class EventsPage implements OnInit {
       }}).then(modalEl => {
       modalEl.onDidDismiss().then(modal => {
         if (modal.data) {
-          console.log("selected", modal.data);
           switch (mode) {
             case FilteringMode.byCategories: {
               this.filtersObject.categories = modal.data;
@@ -289,7 +285,6 @@ export class EventsPage implements OnInit {
       (this.filtersObject.saved.length > 0) ? ["Saved"] : [],
       (this.filtersObject.ownCountry !== null) ? ["Own country"] : []);
 
-    console.log(this.filters, this.filtersObject);
   }
 
   showAlert(header: string, message: string) {

@@ -99,18 +99,15 @@ export class EditGamePage implements OnInit {
 
   ionViewWillEnter() {
     if (this.activatedRoute.snapshot.queryParamMap.has('checkpoints')) {
-      console.log(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
       this.checkpoints = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
       this.checkpointsChanged = true;
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('mapUrl')) {
-      console.log(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
       this.mapUrl = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('mapUrl'));
     }
   }
 
   updateGame() {
-    console.log("game", this.gameForm);
     let category = (this.gameForm.value.category === 'otherCategory')
       ? this.gameForm.value.newCategory
       : this.gameForm.value.category;
@@ -126,7 +123,6 @@ export class EditGamePage implements OnInit {
       let imageUrl;
       this.uploadImages().pipe(
         catchError(error => {
-          console.log('Error from uploadImages:', error);
           checkpoints = this.checkpoints.map(data => {
             if (data.checkpoint.locationAddress && data.checkpoint.locationAddress.staticMapImageUrl) {
               data.checkpoint.imgUrl = data.checkpoint.locationAddress.staticMapImageUrl;
@@ -136,8 +132,6 @@ export class EditGamePage implements OnInit {
           return of(null);
         }),
         switchMap(check => {
-          console.log('check', check);
-
           if (check) {
             checkpoints = check;
           }
@@ -148,12 +142,9 @@ export class EditGamePage implements OnInit {
 
         })).pipe(
         catchError(error => {
-          console.log('Error from uploadImage image:', error);
           return of(null);
         }),
         switchMap(uploadResponse => {
-          console.log('EuploadResponse', uploadResponse);
-
           imageUrl = (uploadResponse)
             ? (uploadResponse.imageUrl) ? uploadResponse.imageUrl : uploadResponse
             : (this.gameForm.value.pointOfDeparture) ? (this.gameForm.value.pointOfDeparture as Location).staticMapImageUrl : null;
@@ -166,8 +157,6 @@ export class EditGamePage implements OnInit {
           return of(null);
         }),
         switchMap(uploadResponse => {
-          console.log('EuploadResponse', uploadResponse);
-
           checkpoints = checkpoints.sort((a, b) => a.index < b.index ? -1 : (a.index > b.index ? 1 : 0));
 
           let mapUrl;
@@ -213,7 +202,6 @@ export class EditGamePage implements OnInit {
         let imageFile = this.convertToBlob(data.imageFile);
         observables.push(this.imageService.uploadImage(imageFile).pipe(map(uploaded => {
           data.checkpoint.imgUrl = uploaded.imageUrl;
-          console.log("uploaded", uploaded);
           return data.checkpoint;
         })));
       } else if (data.checkpoint.imgUrl) {
@@ -229,7 +217,6 @@ export class EditGamePage implements OnInit {
     return (observables.length > 0)
       ? (forkJoin(observables).pipe(
         map(result => {
-          console.log(result);
           checkpoints = checkpoints.concat(result as Checkpoint[]);
           return checkpoints;
         })))
@@ -238,11 +225,9 @@ export class EditGamePage implements OnInit {
   }
 
   handleGameCreationSuccess(gameId, category, loadingEl) {
-    console.log("game", gameId);
     loadingEl.dismiss();
     if (this.categories.find(c => c.name === category) === undefined) {
       this.gamesService.createCategory(category).subscribe(categories => {
-        console.log("categories", categories);
         this.categories = categories;
       });
     }
@@ -297,7 +282,6 @@ export class EditGamePage implements OnInit {
     }).then(modalEl => {
       modalEl.onDidDismiss().then(modal => {
         if (modal.data) {
-          console.log("countrySelectionChanged", modal.data);
           this.selectedCountry = modal.data;
         }
       });
@@ -319,7 +303,6 @@ export class EditGamePage implements OnInit {
   }
 
   convertToBlob(imageData: string | File | Blob) {
-    console.log(imageData);
     let imageFile;
     if (typeof imageData === 'string') {
       try {
@@ -349,16 +332,6 @@ export class EditGamePage implements OnInit {
       .then(alertEl => {
         alertEl.present();
       });
-  }
-
-  saveUrl(index: number, event){
-    console.log(index, event);
-    this.checkpoints = this.checkpoints.map(check => {
-      if (check.checkpoint.index === index) {
-        check.checkpoint.LocationQrCodeUrl = event.changingThisBreaksApplicationSecurity;
-      }
-      return check;
-    });
   }
 
 }

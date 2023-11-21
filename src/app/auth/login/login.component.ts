@@ -109,7 +109,6 @@ export class LoginComponent implements OnInit {
         userData.idToken,
         expirationTime
       );
-      console.log("currentUser", currentUser);
       this.authService.setUserWhenLoggedIn(currentUser, userData.idToken, expirationTime);
     });
   }
@@ -146,7 +145,6 @@ export class LoginComponent implements OnInit {
           "Password change email has been sent");
       },
       errRes => {
-        console.log("error", errRes.error.error.message);
         this.showAlert(errRes.error.error.message);
       });
   }
@@ -164,9 +162,7 @@ export class LoginComponent implements OnInit {
   }
 
   verifyEmail(authRes: AuthResponseData) {
-    this.authService.verifyEmail(authRes.idToken).pipe(take(1)).subscribe(response => {
-      console.log(response);
-    });
+    this.authService.verifyEmail(authRes.idToken).pipe(take(1)).subscribe();
   }
 
   private showAlert(message: string, header: string = "Authentication failed") {
@@ -187,10 +183,7 @@ export class LoginComponent implements OnInit {
         buttons: [
           {
             text: "Cancel",
-            role: "cancel",
-            handler: () => {
-              console.log("Canceled, but not verified");
-            }
+            role: "cancel"
           },
           {
             text: "Verify",

@@ -94,7 +94,6 @@ export class EventsService {
     return this.authService.token.pipe(
       take(1),
       switchMap(token => {
-        console.log("newEvent", newEvent);
         return this.http.post<{ name: string }>(
           'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/events.json',
           {...newEvent, id: null}

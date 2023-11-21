@@ -10,7 +10,7 @@ export class ImagePickerModalComponent implements OnInit {
 
   @Input() loadedPicture: string;
   @Output() newImageSelected = new EventEmitter<string | File>();
-  picture: string | File;
+  picture: string | File | Blob;
 
   constructor(private modalCtrl: ModalController) { }
 
@@ -24,7 +24,7 @@ export class ImagePickerModalComponent implements OnInit {
     this.modalCtrl.dismiss(this.picture);
   }
 
-  setPicture(picture: string | File) {
+  setPicture(picture: string | File | Blob) {
     this.picture = picture;
   }
 

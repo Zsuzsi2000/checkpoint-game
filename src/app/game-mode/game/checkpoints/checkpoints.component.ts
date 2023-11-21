@@ -38,7 +38,6 @@ export class CheckpointsComponent implements OnInit {
             this.game = game;
             this.liveGameService.fetchPlayer(this.playerId).pipe(take(1)).subscribe(player => {
               if (player) {
-                console.log(player);
                 player.checkpointsState.forEach(state => {
                   let check = this.game.checkpoints.find(check => check.index === state.checkIndex);
                   this.actualCheckpoints.push({ done: state.done, indexx: state.checkIndex, name: check.name });

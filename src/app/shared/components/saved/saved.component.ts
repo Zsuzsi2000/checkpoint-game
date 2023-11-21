@@ -50,8 +50,6 @@ export class SavedComponent implements OnInit {
   }
 
   deleteFromSavedEvents() {
-    console.log("deleteFromSavedEvents");
-
     this.userService.updateUser(
       this.userId,
       null,

@@ -16,7 +16,7 @@ import {EditGamePageRoutingModule} from "./edit-game-routing.module";
     EditGamePageRoutingModule,
     Ng2SearchPipeModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
   ],
   declarations: [
     EditGamePage,

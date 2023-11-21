@@ -11,15 +11,21 @@
       ]
     }
   ],
-  "firestore" : {
-    "rules": "database.rules.json"
-  },
   "hosting": {
-    "public": "public",
+    "public": "www",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
     ]
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

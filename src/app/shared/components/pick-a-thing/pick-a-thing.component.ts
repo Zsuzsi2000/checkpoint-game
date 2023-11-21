@@ -28,7 +28,6 @@ export class PickAThingComponent implements OnInit {
 
   filtering(event) {
     this.filter = event.target.value;
-    console.log(this.filter, event.target.value )
     this.countries = this.countries.filter(g => this.filter === "" ? g : g.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
   }
 
@@ -37,7 +36,6 @@ export class PickAThingComponent implements OnInit {
   }
 
   checkboxChange(event) {
-    console.log("checkboxChange", event)
     this.workingSelectedCountry = event.detail.value;
   }
 

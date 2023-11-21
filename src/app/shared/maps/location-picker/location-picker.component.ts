@@ -30,14 +30,12 @@ export class LocationPickerComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("location", this.location, this.center);
   }
 
   onPickLocation() {
     let center = (this.location)
       ? { lat: this.location.lat, lng: this.location.lng }
       : (this.center ? { lat: this.center.lat, lng: this.center.lng } : { lat: 47, lng: 19});
-    console.log("center", center, this.location, this.center);
     this.actionSheetCtrl.create({ header: "Please choose", buttons: [
         { text: 'Auto-Locate', handler: () => { this.locateUser() } },
         { text: 'Pick On Map', handler: () => { this.openMap(center) } },
@@ -67,7 +65,6 @@ export class LocationPickerComponent implements OnInit {
   openMap(center: Coordinates = { lat: 47, lng: 19}) {
     this.modalCtrl.create({component: MapModalComponent, componentProps: { center: center }}).then(modal => {
       modal.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
         if (!modalData.data) {
           return;
         }
@@ -105,7 +102,6 @@ export class LocationPickerComponent implements OnInit {
   private getAddress(lat: number, lng: number) {
     return this.http.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${environment.googleMapsAPIKey}`)
       .pipe(map((geoData: any) => {
-        console.log(geoData);
         if (!geoData || !geoData.results || geoData.results.length === 0) {
           return null;
         }

@@ -57,15 +57,12 @@ export class GameModePage implements OnInit, OnDestroy {
       if (user) this.user = user;
     });
     if (this.activatedRoute.snapshot.queryParamMap.has('gameId')) {
-      console.log(this.activatedRoute.snapshot.queryParamMap.get('gameId'));
       this.gamesService.fetchGame(this.activatedRoute.snapshot.queryParamMap.get('gameId')).subscribe(game => {
-        console.log(game);
         this.game = game;
         this.getGame = true;
       });
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('eventId')) {
-      console.log(this.activatedRoute.snapshot.queryParamMap.get('eventId'));
       this.eventsService.fetchEvent(this.activatedRoute.snapshot.queryParamMap.get('eventId')).subscribe(event => {
         if (event) {
           this.event = event;
@@ -81,7 +78,6 @@ export class GameModePage implements OnInit, OnDestroy {
               this.createLiveGame().subscribe(id => {
                 if (id) {
                   this.liveGame.id = id;
-                  console.log(this.liveGame);
                   this.findJoinerAndCreatePlayer();
                 }
               })
@@ -124,7 +120,6 @@ export class GameModePage implements OnInit, OnDestroy {
     this.createLiveGame().subscribe(id => {
       if (id) {
         this.liveGame.id = id;
-        console.log(this.liveGame);
         if (this.user) {
           this.createPlayer(this.user.username,[{ id: this.user.id, name: this.user.username }]);
         } else {
@@ -154,7 +149,6 @@ export class GameModePage implements OnInit, OnDestroy {
         {
           text: "Go",
           handler: (event) => {
-            console.log(event.accessCode);
             this.liveGameService.fetchLiveGames().subscribe(liveGames => {
               if (liveGames) {
                 liveGames.forEach((liveGame: LiveGame) => {
@@ -162,7 +156,6 @@ export class GameModePage implements OnInit, OnDestroy {
                 })
               }
               if (this.liveGame) {
-                console.log(this.liveGame);
                 if (this.liveGame.event) {
                   this.joinEvent();
                 } else {
@@ -206,7 +199,6 @@ export class GameModePage implements OnInit, OnDestroy {
   }
 
   joinGame() {
-    console.log("Join multi");
     this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
       if (game) {
         this.game = game;
@@ -241,7 +233,6 @@ export class GameModePage implements OnInit, OnDestroy {
           }
         }).then(modalEl => {
           modalEl.onDidDismiss().then(modalData => {
-            console.log(modalData.data);
             this.waiting = true;
           });
           modalEl.present();
@@ -285,13 +276,11 @@ export class GameModePage implements OnInit, OnDestroy {
   }
 
   setLiveGameSettings(event) {
-    console.log(event);
     this.creatingLiveGameSetting = false;
     this.liveGameSettings = event;
     this.createLiveGame().subscribe(id => {
       if (id) {
         this.liveGame.id = id;
-        console.log(this.liveGame);
         this.creator = true;
         this.joinMulti();
       }
@@ -332,8 +321,6 @@ export class GameModePage implements OnInit, OnDestroy {
       loadingEl.present();
       this.liveGameService.createPlayer(this.player).pipe(take(1)).subscribe(createdPlayer => {
         if (createdPlayer) {
-          console.log(createdPlayer);
-          // this.player = player;
           loadingEl.dismiss();
           this.waiting = true;
         }
@@ -348,7 +335,6 @@ export class GameModePage implements OnInit, OnDestroy {
       loadingEl.present();
       this.liveGameService.updatePlayer(player).pipe(take(1)).subscribe(updatedPlayer => {
         if (updatedPlayer) {
-          console.log(updatedPlayer);
           this.player = player;
           loadingEl.dismiss();
           this.waiting = true;
@@ -368,7 +354,6 @@ export class GameModePage implements OnInit, OnDestroy {
           message: message,
           buttons: [{
             text: 'Okay', handler: () => {
-              console.log("game-mode");
               this.router.navigate(['/','game-mode']);
             }
           }]

@@ -37,8 +37,6 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
   init(googleMaps) {
     this.googleMaps = googleMaps;
     const mapEl = this.mapElementRef.nativeElement;
-
-    console.log(this.googleMaps, this.center);
     const map = new googleMaps.Map( mapEl, {
       center: this.center,
       zoom: 8

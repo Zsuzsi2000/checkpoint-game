@@ -2,12 +2,11 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from "./auth/auth.service";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {AppState} from "@capacitor/app";
 import {take} from "rxjs/operators";
 import {Capacitor} from "@capacitor/core";
 import {Platform} from "@ionic/angular";
 import {SplashScreen} from "@capacitor/splash-screen";
-import {App} from "@capacitor/app";
+import {App, AppState} from "@capacitor/app";
 
 @Component({
   selector: 'app-root',
@@ -18,12 +17,12 @@ export class AppComponent implements OnInit, OnDestroy {
   private authSub: Subscription;
   private previousAuthState = false;
   public appPages = [
-    { title: 'Játékok', url: '/games', icon: 'dice' },
-    { title: 'Események', url: '/events', icon: 'calendar' },
-    { title: 'Profil', url: '/profile', icon: 'person' },
-    { title: 'Kapcsolatok', url: '/connections', icon: 'people' },
-    { title: 'Authentikáció', url: '/auth', icon: 'log-in' },
-    { title: 'Játékmód', url: '/game-mode', icon: 'game-controller' },
+    { title: 'Games', url: '/games', icon: 'dice' },
+    { title: 'Events', url: '/events', icon: 'calendar' },
+    { title: 'Profile', url: '/profile', icon: 'person' },
+    { title: 'Connections', url: '/connections', icon: 'people' },
+    { title: 'Authentication', url: '/auth', icon: 'log-in' },
+    { title: 'Game mode', url: '/game-mode', icon: 'game-controller' },
   ];
 
   constructor(private authService: AuthService,

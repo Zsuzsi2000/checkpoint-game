@@ -95,7 +95,6 @@ export class LiveGameService {
     return this.authService.token.pipe(
       take(1),
       switchMap(token => {
-        console.log("newLiveGame", newLiveGame);
         return this.http.post<{ name: string }>(
           'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/livegames.json',
           {...newLiveGame, id: null}
@@ -208,7 +207,6 @@ export class LiveGameService {
     return this.authService.token.pipe(
       take(1),
       switchMap(token => {
-        console.log("newLiveGame", newPlayer);
         return this.http.post<{ name: string }>(
           'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/players.json',
           {...newPlayer, id: null}

@@ -164,7 +164,6 @@ export class GamesPage implements OnInit, OnDestroy {
       }}).then(modalEl => {
       modalEl.onDidDismiss().then(modal => {
         if (modal.data) {
-          console.log("selected", modal.data);
           switch (mode) {
             case FilteringMode.byCategories: {
               this.filtersObject.categories = modal.data;
@@ -239,8 +238,6 @@ export class GamesPage implements OnInit, OnDestroy {
       this.filtersObject.types,
       (this.filtersObject.favourites.length > 0) ? ["Favourites"] : [],
       (this.filtersObject.ownCountry !== null) ? ["Own country"] : []);
-
-    console.log(this.filters, this.filtersObject);
   }
 
   ngOnDestroy(): void {

@@ -6,7 +6,6 @@ import { GamePageRoutingModule } from './game-routing.module';
 import { GamePage } from './game.page';
 import {LeaderboardComponent} from "./leaderboard/leaderboard.component";
 import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
-import {QrCodeScannerComponent} from "./qr-code-scanner/qr-code-scanner.component";
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 
@@ -21,8 +20,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
   declarations: [
     GamePage,
     LeaderboardComponent,
-    CheckpointsComponent,
-    QrCodeScannerComponent
+    CheckpointsComponent
   ]
 })
 export class GamePageModule {}

@@ -32,7 +32,6 @@ export class CreateMultiComponent implements OnInit {
   }
 
   setGameMode(event) {
-    console.log(event);
     this.liveGameSetting.gameMode = +event.detail.value as GameMode;
     if (this.liveGameSetting.gameMode === GameMode.againstEachOther) {
       this.maxTeamMember = 1;
@@ -49,7 +48,6 @@ export class CreateMultiComponent implements OnInit {
     } else if (this.liveGameSetting.gameMode === GameMode.againstEachOther) {
       this.liveGameSetting.maxTeamMember = 1;
     }
-    console.log(this.liveGameSetting);
     this.sendLiveGameSetting.emit(this.liveGameSetting);
   }
 

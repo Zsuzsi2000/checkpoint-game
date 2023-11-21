@@ -166,5 +166,5 @@
       </ng-template>
     </ng-template>
   </ion-grid>
-  <zxing-scanner *ngIf="qrScanner" #scanner [formats]="['QR_CODE']" (scanSuccess)="checkQrCode($event)"></zxing-scanner>
+  <zxing-scanner *ngIf="qrScanner" #scanner [formats]="[BarcodeFormat.QR_CODE]" (scanSuccess)="checkQrCode($event)"></zxing-scanner>
 </ion-content>

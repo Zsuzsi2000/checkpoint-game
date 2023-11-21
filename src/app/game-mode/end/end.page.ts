@@ -42,29 +42,11 @@ export class EndPage implements OnInit {
               private gameService: GamesService,
               private alertController: AlertController,
               private authService: AuthService) {
-    router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        console.log('Navigation started');
-      }
-
-      if (event instanceof NavigationEnd) {
-        console.log('Navigation ended');
-      }
-
-      if (event instanceof NavigationError) {
-        console.error('Navigation error:', event.error);
-      }
-
-      if (event instanceof NavigationCancel) {
-        console.warn('Navigation canceled');
-      }
-    });
   }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('liveGame')) {
-        console.log("pop");
         this.navCtrl.pop();
         return;
       }
@@ -90,7 +72,6 @@ export class EndPage implements OnInit {
               this.game = game;
               this.sortType = this.game.quiz ?  "Score" : "BigDuration";
 
-              console.log(game);
               this.authService.user.pipe(take(1)).subscribe(user => {
                 if (user) {
                   this.userName = user.username;
@@ -124,10 +105,8 @@ export class EndPage implements OnInit {
   updateGame() {
     forkJoin([of(this.player), of(this.game)]).pipe(take(1)).subscribe(([player, game]) => {
       this.isLoading = false;
-      console.log('Performing additional action with player and game:', player, game);
       if (game && player) {
         this.first = true;
-        console.log('Performing additional action with player and game:', player, game);
 
         if (this.game.bests) {
           if (this.game.bests.score < this.player.score && this.game.quiz) {
@@ -153,14 +132,13 @@ export class EndPage implements OnInit {
         this.gameService.updateGame(this.game.id, this.game.name, this.game.locationType, this.game.locationIdentification,
           this.game.country, this.game.pointOfDeparture, this.game.category, this.game.quiz, this.game.description,
           this.game.imgUrl, this.game.distance, this.game.duration, this.game.itIsPublic, this.game.mapUrl,
-          this.game.checkpoints, this.game.numberOfAttempts + 1, this.game.creationDate, this.game.ratings, this.game.bests).pipe(take(1)).subscribe(c => console.log(c));
+          this.game.checkpoints, this.game.numberOfAttempts + 1, this.game.creationDate, this.game.ratings, this.game.bests).pipe(take(1)).subscribe();
       }
     });
   }
 
   congratulations(type: string) {
     let message = "You set a new " + type + " record!";
-    console.log(message);
 
     this.alertController.create({
       header: "Congratulations!",
@@ -172,7 +150,6 @@ export class EndPage implements OnInit {
   }
 
   sort(event) {
-    console.log(event.detail.value);
     this.sortType = event.detail.value;
     if (event.detail.value === "Score") {
       this.players = this.players.sort((a, b) => a.score < b.score ? 1 : (a.score > b.score ? -1 : 0));
@@ -185,13 +162,10 @@ export class EndPage implements OnInit {
 
   backToMenu() {
     this.players.forEach(player => {
-      this.liveGameService.deletePlayer(player.id).subscribe(d => {
-        console.log(d);
-      });
+      this.liveGameService.deletePlayer(player.id).subscribe();
     });
 
     this.liveGameService.deleteLiveGame(this.liveGameId).subscribe(d => {
-      console.log(d);
       this.router.navigate(['/', 'games']);
     });
 
@@ -213,7 +187,6 @@ export class EndPage implements OnInit {
         {
           text: "Go",
           handler: (event) => {
-            console.log(event.rating);
             if (this.game.ratings) {
               this.game.ratings.push({username: this.userName, text: event.rating});
             } else {
@@ -223,7 +196,7 @@ export class EndPage implements OnInit {
             this.gameService.updateGame(this.game.id, this.game.name, this.game.locationType, this.game.locationIdentification,
               this.game.country, this.game.pointOfDeparture, this.game.category, this.game.quiz, this.game.description,
               this.game.imgUrl, this.game.distance, this.game.duration, this.game.itIsPublic, this.game.mapUrl,
-              this.game.checkpoints, this.game.numberOfAttempts, this.game.creationDate, this.game.ratings).pipe(take(1)).subscribe(c => console.log(c));
+              this.game.checkpoints, this.game.numberOfAttempts, this.game.creationDate, this.game.ratings).pipe(take(1)).subscribe();
           }
         }
       ]

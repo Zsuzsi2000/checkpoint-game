@@ -37,7 +37,6 @@ export class AuthService implements OnDestroy {
 
   get user() {
     return this._user.asObservable().pipe(map(user => {
-      console.log("user", user);
       return (user) ? user : null;
     }));
   }
@@ -70,7 +69,6 @@ export class AuthService implements OnDestroy {
   }
 
   login(email: string, password: string) {
-    console.log("login", email, password);
     return this.http.post<AuthResponseData>(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${
         environment.firebaseAPIKey
@@ -144,7 +142,6 @@ export class AuthService implements OnDestroy {
     }
     this._user.next(null);
 
-    console.log("logout");
     this.router.navigate(['/', 'auth'])
     Preferences.remove({key: 'authData'});
   }
@@ -204,7 +201,6 @@ export class AuthService implements OnDestroy {
       currentUser.favouriteGames = user.favouriteGames;
       currentUser.eventsUserSignedUpFor = user.eventsUserSignedUpFor;
       currentUser.savedEvents = user.savedEvents;
-      console.log("setUserData", currentUser);
       this._user.next(currentUser);
     });
   }

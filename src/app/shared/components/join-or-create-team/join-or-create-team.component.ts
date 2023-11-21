@@ -49,18 +49,14 @@ export class JoinOrCreateTeamComponent implements OnInit {
     this.canJoinToATeam = false;
     this.canCreateATeam = false;
     this.join = false;
-    console.log(this.event);
     if (this.event.joined) {
-      console.log("letezik joined");
       this.chosenTeam = this.event.joined.length > 0 ? this.event.joined[0].teamName : "";
       if (this.event.joined.length < this.event.liveGameSettings.maxTeam) {
-        console.log("canCreate");
         this.canCreateATeam = true;
         this.join = false;
       }
       this.event.joined.forEach(team => {
         if (team.teamMembers.length < this.event.liveGameSettings.maxTeamMember) {
-          console.log("canJoin");
           this.canJoinToATeam = true;
           this.join = true;
         }
@@ -77,21 +73,17 @@ export class JoinOrCreateTeamComponent implements OnInit {
     this.canJoinToATeam = false;
     this.canCreateATeam = false;
     this.join = false;
-    console.log(this.liveGame);
     this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
       if (players) {
         this.players = players.filter((player: Player) => player.liveGameId === this.liveGame.id);
         if (this.players.length > 0) {
-          console.log("letzik player");
           this.chosenTeam = this.players[0].teamName;
           if (this.players.length < this.liveGame.liveGameSettings.maxTeam) {
-            console.log("canCreate");
             this.canCreateATeam = true;
             this.join = false;
           }
           this.players.forEach(team => {
             if (team.teamMembers.length < this.liveGame.liveGameSettings.maxTeamMember) {
-              console.log("canJoin");
               this.canJoinToATeam = true;
               this.join = true;
             }
@@ -111,10 +103,8 @@ export class JoinOrCreateTeamComponent implements OnInit {
   }
 
   setJoin(event) {
-    console.log(event, this.join);
     this.join = event.detail.value === "true";
     this.chosenTeam = "";
-    console.log(event, this.join);
   }
 
   setTeam(team: string) {
@@ -183,7 +173,6 @@ export class JoinOrCreateTeamComponent implements OnInit {
       loadingEl.present();
       this.liveGameService.updatePlayer(player).pipe(take(1)).subscribe(updatedPlayer => {
         if (updatedPlayer) {
-          console.log(updatedPlayer);
           this.player = player;
           loadingEl.dismiss();
           this.modalCtrl.dismiss(this.player);
@@ -216,7 +205,6 @@ export class JoinOrCreateTeamComponent implements OnInit {
       loadingEl.present();
       this.liveGameService.createPlayer(player).pipe(take(1)).subscribe(createdPlayer => {
         if (createdPlayer) {
-          console.log(createdPlayer);
           this.player = player;
           loadingEl.dismiss();
           this.modalCtrl.dismiss(this.player);

@@ -37,7 +37,6 @@ export class LeaderboardComponent implements OnInit {
               this.players.push({ player: player, score: player.score, doneNumber: doneNumber });
             }
           });
-          console.log(this.players);
           this.players = this.players.sort((a, b) =>  a.doneNumber < b.doneNumber ? 1 : (a.doneNumber > b.doneNumber ? -1 : 0));
           this.isLoading = false;
         })
@@ -50,7 +49,6 @@ export class LeaderboardComponent implements OnInit {
   }
 
   sort(event) {
-    console.log(event.detail.value);
     if (event.detail.value === "Done") {
       this.players = this.players.sort((a, b) =>  a.doneNumber < b.doneNumber ? 1 : (a.doneNumber > b.doneNumber ? -1 : 0));
     } else {

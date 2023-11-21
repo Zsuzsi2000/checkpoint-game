@@ -44,7 +44,7 @@ export class CreateGamePage implements OnInit {
       category: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       newCategory: new FormControl(null, {updateOn: "change"}),
       description: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
-      quiz: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
+      quiz: new FormControl(true, {updateOn: "change"}),
       locationType: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       locationIdentification: new FormControl(null, {updateOn: "change"}),
       pointOfDeparture: new FormControl(null, {updateOn: "change"}),
@@ -52,7 +52,7 @@ export class CreateGamePage implements OnInit {
       mapUrl: new FormControl(null, {updateOn: "change"}),
       distance: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       duration: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
-      itIsPublic: new FormControl(null, {updateOn: "change"}),
+      itIsPublic: new FormControl(true, {updateOn: "change"}),
     });
     this.gamesService.fetchCategories().pipe(take(1)).subscribe(categories => {
       if (categories) {
@@ -67,7 +67,6 @@ export class CreateGamePage implements OnInit {
   ionViewWillEnter() {
     if (this.activatedRoute.snapshot.queryParamMap.has('checkpoints')) {
       this.checkpoints = JSON.parse(this.activatedRoute.snapshot.queryParamMap.get('checkpoints'));
-      console.log(this.checkpoints);
       this.checkpointsReady = true;
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('mapUrl')) {
@@ -95,7 +94,6 @@ export class CreateGamePage implements OnInit {
       let imageUrl;
       this.uploadImages().pipe(
         catchError(error => {
-          console.log('Error from uploadImages:', error);
           checkpoints = this.checkpoints.map(data => {
             if (data.checkpoint.locationAddress && data.checkpoint.locationAddress.staticMapImageUrl) {
               data.checkpoint.imgUrl = data.checkpoint.locationAddress.staticMapImageUrl;
@@ -111,7 +109,6 @@ export class CreateGamePage implements OnInit {
           return (this.gameForm.get('imgUrl').value) ? this.imageService.uploadImage(this.gameForm.get('imgUrl').value) : of(null);
       })).pipe(
         catchError(error => {
-          console.log('Error from uploadImage image:', error);
           return of(null);
         }),
         switchMap(uploadResponse => {
@@ -123,7 +120,6 @@ export class CreateGamePage implements OnInit {
             ? this.imageService.uploadImage(this.gameForm.get('mapUrl').value) : of(null);
         })).pipe(
         catchError(error => {
-          console.log('Error from uploadImage map:', error);
           return of(null);
         }),
         switchMap(uploadResponse => {
@@ -151,6 +147,14 @@ export class CreateGamePage implements OnInit {
         this.handleGameCreationSuccess(gameId, category, loadingEl);
       });
     });
+  }
+
+  setPublic(event) {
+    this.gameForm.patchValue({ itIsPublic: event.detail.value === "true" });
+  }
+
+  setQuiz(event) {
+    this.gameForm.patchValue({ quiz: event.detail.value === "true" });
   }
 
   uploadImages() {

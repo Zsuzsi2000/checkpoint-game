@@ -22,7 +22,6 @@ export class CreateEventPage implements OnInit {
     if (this.activatedRoute.snapshot.queryParamMap.has('gameId')) {
       this.gameId = this.activatedRoute.snapshot.queryParamMap.get('gameId');
       this.gamesService.fetchGame(this.gameId).subscribe(res =>  {
-        console.log(res);
         if (res === null) this.showALert();
       })
     } else {

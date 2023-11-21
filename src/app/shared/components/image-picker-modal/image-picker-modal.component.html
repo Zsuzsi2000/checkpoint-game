@@ -12,5 +12,5 @@
 
 <ion-content class="ion-padding">
   <app-image-picker (imagePick)="setPicture($event)"
-                    [showPreview]="loadedPicture"></app-image-picker>
+                    [showPreview]="!!loadedPicture"></app-image-picker>
 </ion-content>

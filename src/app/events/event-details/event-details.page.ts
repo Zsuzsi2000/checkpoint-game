@@ -165,7 +165,6 @@ export class EventDetailsPage implements OnInit {
           componentProps: { event: this.event, user: this.user }
         }).then(modalEl => {
           modalEl.onDidDismiss().then(modalData => {
-            console.log(modalData.data);
             if (modalData.data) {
               this.event = modalData.data;
               this.setJoinOrCancel(true);
@@ -240,12 +239,10 @@ export class EventDetailsPage implements OnInit {
   setJoinOrCancel(join: boolean) {
     if (join) {
       if (this.event.players) {
-        console.log("push id");
         this.event.players.push(this.user.id);
       }
       this.event.players = [this.user.id];
     }
-    console.log(this.event);
     this.eventsService.updateEvent(this.event).pipe(
       take(1),
       catchError(error => {

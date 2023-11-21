@@ -64,7 +64,6 @@ export class EventCardComponent implements OnInit {
           componentProps: { event: event, user: this.loggedUser }
         }).then(modalEl => {
           modalEl.onDidDismiss().then(modalData => {
-            console.log(modalData.data);
             if (modalData.data) this.setJoinOrCancel(modalData.data, true);
           });
           modalEl.present();
@@ -119,7 +118,6 @@ export class EventCardComponent implements OnInit {
 
   cancelEvent(event: Event) {
     event.players = event.players.filter(player => player !== this.loggedUser.id);
-    console.log(event);
 
     switch (event.liveGameSettings.gameMode) {
       case GameMode.teamVsTeam: {
@@ -139,20 +137,17 @@ export class EventCardComponent implements OnInit {
         break;
       }
     }
-    console.log(event);
     this.setJoinOrCancel(event, false);
   }
 
   setJoinOrCancel(event: Event, join: boolean) {
     if (join) {
       if (event.players) {
-        console.log("push id");
         event.players.push(this.loggedUser.id);
       } else {
         event.players = [this.loggedUser.id];
       }
     }
-    console.log(event);
     this.eventsService.updateEvent(event).pipe(
       take(1),
       catchError(error => {

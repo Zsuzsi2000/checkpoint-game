@@ -81,7 +81,6 @@ export class SignupComponent implements OnInit {
                 return interval(5000).pipe(
                   switchMap((l) => {
                     const res = this.authService.getUserData(resData.idToken);
-                    console.log("in switchmap", l);
                     return res;
                   }),
                   takeWhile((resData: {kind: any, users: any}) => (!resData.users[0]?.emailVerified || doItAgain)) // Continue until email is verified
@@ -98,13 +97,11 @@ export class SignupComponent implements OnInit {
               loadingEl.dismiss();
               this.showAlert("Email verification was successful!", "Authentication succeeded");
               this.userService.createUser(authRes, username, country).subscribe(data => {
-                console.log("user", data);
                 this.switchToLogIn.emit();
               });
             }
           },
           errRes => {
-            console.error('Error during signup:', errRes);
             const code = errRes.error.error.message;
             let message = (code === 'EMAIL_EXISTS')
               ? 'This email address exists already!'
@@ -117,7 +114,6 @@ export class SignupComponent implements OnInit {
 
 
   onSubmit() {
-    console.log("user", this.profileForm.valid, this.profileForm.value);
     if (!this.profileForm.valid) {
       return;
     }
@@ -138,7 +134,6 @@ export class SignupComponent implements OnInit {
       }}).then(modalEl => {
       modalEl.onDidDismiss().then(modal => {
         if (modal.data) {
-          console.log("countrySelectionChanged", modal.data);
           this.selectedCountry = modal.data;
         }
       });

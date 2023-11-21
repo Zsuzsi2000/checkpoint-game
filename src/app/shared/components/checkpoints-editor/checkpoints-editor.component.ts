@@ -164,7 +164,7 @@ export class CheckpointsEditorComponent implements OnInit {
     })
   }
 
-  editCheckpoint(data: {checkpoint: Checkpoint, imageFile: File | Blob}) {
+  editCheckpoint(data: {checkpoint: Checkpoint, imageFile: File | Blob | string}) {
     this.modalCtrl.create({
       component: CheckpointEditorComponent,
       componentProps: { locationType: this.locationType, isQuiz: this.quiz, center: this.center, checkpoint: data.checkpoint, imageFile: data.imageFile }

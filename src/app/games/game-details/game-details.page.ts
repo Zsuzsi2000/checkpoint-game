@@ -155,7 +155,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
     Promise.all(promises)
       .then(base64DataUrls => {
-        console.log(base64DataUrls);
         this.generatePDFFromQRCodes(base64DataUrls);
       })
       .catch(error => {
@@ -175,7 +174,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     });
 
     pdf.save(this.game.name.replace(/\s/g, "") + '.pdf');
-    console.log(pdf);
   }
 
   generatePDFFromAccessCodes() {
@@ -188,7 +186,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     });
 
     pdf.save(this.game.name.replace(/\s/g, "") + '.pdf');
-    console.log(pdf);
   }
 
   convertBlobToBase64(check: Checkpoint): Promise<{checkpoint: Checkpoint, url: string}> {
@@ -199,7 +196,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
           const reader = new FileReader();
           reader.onloadend = () => {
             const base64DataUrl = reader.result as string;
-            console.log(base64DataUrl);
             resolve({ checkpoint: check, url: base64DataUrl });
           };
           reader.readAsDataURL(blob);
@@ -209,7 +205,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
   }
 
   saveUrl(index: number, event){
-    console.log(index, event);
     this.game.checkpoints = this.game.checkpoints.map(check => {
       if (check.index === index) {
         this.qrCounter += 1;

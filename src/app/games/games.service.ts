@@ -173,7 +173,6 @@ export class GamesService {
           mapUrl,
           checkpoints);
 
-        console.log("newGame", newGame);
         return this.http.post<{ name: string }>(
           'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games.json',
           {...newGame, id: null}
@@ -217,10 +216,8 @@ export class GamesService {
       take(1),
       switchMap(games => {
         if (!games || games.length < 1) {
-          console.log(games);
           return this.fetchGames();
         } else {
-          console.log(games);
           return of(games); //switchmap has to return observable
         }
       }),
@@ -228,7 +225,6 @@ export class GamesService {
         const updatedGameIndex = games.findIndex(g => g.id === id);
         updatedGames = [...games];
         const old = updatedGames[updatedGameIndex];
-        console.log(old);
         updatedGames[updatedGameIndex] = new Game(old.id, name, updatedGames[updatedGameIndex].creatorName, locationType, locationIdentification, country,
           pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId, mapUrl, checkpoints, numberOfAttempts, creationDate, ratings,
           bests ? bests : old.bests);

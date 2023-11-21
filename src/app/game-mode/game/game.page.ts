@@ -16,6 +16,7 @@ import {Checkpoint} from "../../models/checkpoint.model";
 import {LocationType} from "../../enums/LocationType";
 import {LocationIdentification} from "../../enums/LocationIdentification";
 import {ZXingScannerComponent} from '@zxing/ngx-scanner';
+import {BarcodeFormat} from '@zxing/library';
 import {Capacitor} from "@capacitor/core";
 import {Geolocation} from "@capacitor/geolocation";
 import {GameMode} from "../../enums/GameMode";
@@ -41,6 +42,7 @@ export class GamePage implements OnInit, OnDestroy {
   playersSub: Subscription[] = [];
   LocationType = LocationType;
   LocationIdentification = LocationIdentification;
+  BarcodeFormat = BarcodeFormat;
   showQuizOrInfo = false;
   answer = "";
   correctAnswer = null;
@@ -64,7 +66,6 @@ export class GamePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => {
-      console.log('paramMap');
       this.handleParamMap(paramMap)
     });
   }
@@ -76,7 +77,6 @@ export class GamePage implements OnInit, OnDestroy {
     }
 
     this.liveGameService.fetchLiveGame(paramMap.get('liveGame')).pipe(take(1)).subscribe(liveGame => {
-        console.log('fetchLiveGame');
         this.liveGame = liveGame;
         this.handlePlayersAndUser();
         this.handleGameFetch();
@@ -86,16 +86,12 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   handlePlayersAndUser(): void {
-    console.log('handlePlayersAndUser');
     this.playersSub.push(interval(2000).pipe(
       switchMap(() => {
         return this.liveGameService.fetchPlayers().pipe(take(1));
       })).subscribe(players => {
-      console.log('2000 players');
       this.players = players.filter(player => player.liveGameId === this.liveGame.id);
-      console.log(this.players);
       this.authService.user.pipe(take(1)).subscribe(user => {
-        console.log('auth');
         if (user) {
           this.user = user;
 
@@ -105,7 +101,6 @@ export class GamePage implements OnInit, OnDestroy {
             );
             this.playerId = this.player.id;
             this.first = true;
-            console.log('Players0');
             this.setActualCheckpointFirst();
           } else {
             let serverPlayer = this.players.find(player =>
@@ -114,7 +109,6 @@ export class GamePage implements OnInit, OnDestroy {
             let serverState = serverPlayer.checkpointsState.find(c => c.checkIndex === this.actualCheckpoint.index);
             const exist = this.player.checkpointsState.find(s => s.done === false);
             if (exist === undefined || exist === null) {
-              console.log('FINAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL');
               this.correctAnswer = serverState.correctAnswer;
               this.useHelp = serverState.correctAnswer;
               this.last = true;
@@ -124,13 +118,11 @@ export class GamePage implements OnInit, OnDestroy {
               this.answer = "";
               this.correctAnswer = null;
               this.useHelp = false;
-              console.log('Players1');
               this.player = serverPlayer;
               this.setActualCheckpointFirst();
             } else if (serverState.done && serverState.endTimestap !== this.endDate && !this.wait) {
               this.correctAnswer = null;
               this.useHelp = false;
-              console.log('Players2');
               this.player = serverPlayer;
               this.setActualCheckpointFirst();
             }
@@ -140,7 +132,6 @@ export class GamePage implements OnInit, OnDestroy {
           this.unsubscribeFromAll();
         } else {
           this.player = this.players.find(player => player.teamName === "Guest");
-          console.log('Players');
           this.setActualCheckpointFirst();
         }
       });
@@ -149,7 +140,6 @@ export class GamePage implements OnInit, OnDestroy {
 
   handleGameFetch(): void {
     this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
-      console.log('handleGameFetch');
       if (game) {
         this.game = game;
         this.setActualCheckpointFirst();
@@ -159,9 +149,7 @@ export class GamePage implements OnInit, OnDestroy {
 
   setActualCheckpointFirst() {
     forkJoin([of(this.player), of(this.game)]).pipe(take(1)).subscribe(([player, game]) => {
-      console.log('Performing additional action with player and game:', player, game);
       if (game && player) {
-        console.log('Performing additional action with player and game:', player, game);
         this.setActualCheckpoint();
       }
     });
@@ -172,12 +160,10 @@ export class GamePage implements OnInit, OnDestroy {
     if (state) {
       this.actualCheckpoint = this.game.checkpoints.find(check => check.index === state.checkIndex);
       this.last = this.actualCheckpoint.index + 1 >= this.game.checkpoints.length;
-      console.log(this.actualCheckpoint.index, this.game.checkpoints.length, this.last);
       this.showQuizOrInfo = state.find;
     } else {
       this.showQuizOrInfo = true;
       if (!this.game.quiz) {
-        console.log("finidsh");
         this.finish();
       }
     }
@@ -193,12 +179,6 @@ export class GamePage implements OnInit, OnDestroy {
       case LocationType.description: {
         if (this.game.locationIdentification === LocationIdentification.qr) {
           this.qrScanner = true;
-          // this.modalController.create({component: QrCodeScannerComponent}).then(modalEl => {
-          //   modalEl.onDidDismiss().then(modalData => {
-          //     console.log(modalData.data);
-          //   });
-          //   modalEl.present();
-          // });
         } else {
           this.checkAccessCode();
         }
@@ -227,7 +207,6 @@ export class GamePage implements OnInit, OnDestroy {
         {
           text: "Go",
           handler: (event) => {
-            console.log(event.accessCode);
             if (event.accessCode && this.actualCheckpoint.locationAccessCode === event.accessCode) {
               this.findCheckpoint();
             } else {
@@ -242,7 +221,6 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   checkQrCode(event) {
-    console.log('Scan successful!', event);
     this.qrScanner = false;
     if (event && this.actualCheckpoint.locationAccessCode === event) {
       this.findCheckpoint();
@@ -282,7 +260,6 @@ export class GamePage implements OnInit, OnDestroy {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const distance = R * c; // Distance in kilometers
-    console.log(myLat, myLng, this.actualCheckpoint.locationAddress, distance);
     if (distance < 0.05) {
       this.findCheckpoint();
     } else {
@@ -305,7 +282,6 @@ export class GamePage implements OnInit, OnDestroy {
     });
     updatedPlayer.duration = new Date().getTime() - new Date(this.liveGame.startDate).getTime();
     this.liveGameService.fetchPlayer(this.player.id).pipe(take(1)).subscribe(p => {
-      console.log("fetchPlayer");
       if (p) {
         let canUpdate = false;
         p.checkpointsState.forEach(c => {
@@ -316,8 +292,6 @@ export class GamePage implements OnInit, OnDestroy {
 
         if (canUpdate) {
           this.liveGameService.updatePlayer(updatedPlayer).pipe(take(1)).subscribe(pl => {
-            console.log("upadtePlayer");
-            console.log(pl);
             this.showQuizOrInfo = true;
           });
         } else {
@@ -330,7 +304,6 @@ export class GamePage implements OnInit, OnDestroy {
 
   updateWithAnswer() {
     this.liveGameService.fetchPlayer(this.player.id).pipe(take(1)).subscribe(p => {
-      console.log("fetchPlayer");
       if (p) {
         let canUpdate = false;
         p.checkpointsState.forEach(c => {
@@ -363,8 +336,6 @@ export class GamePage implements OnInit, OnDestroy {
           this.player = updatedPlayer;
 
           this.liveGameService.updatePlayer(updatedPlayer).pipe(take(1)).subscribe(pl => {
-            console.log("update");
-            console.log(pl);
             this.wait = true;
             if (!this.game.quiz) {
               this.showQuizOrInfo = false;
@@ -438,9 +409,6 @@ export class GamePage implements OnInit, OnDestroy {
       component: LeaderboardComponent,
       componentProps: {liveGameId: this.liveGame.id, quiz: this.game.quiz}
     }).then(modalEl => {
-      modalEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
-      });
       modalEl.present();
     });
   }
@@ -450,9 +418,6 @@ export class GamePage implements OnInit, OnDestroy {
       component: CheckpointsComponent,
       componentProps: {liveGameId: this.liveGame.id, playerId: this.player.id}
     }).then(modalEl => {
-      modalEl.onDidDismiss().then(modalData => {
-        console.log(modalData.data);
-      });
       modalEl.present();
     });
   }
@@ -468,7 +433,6 @@ export class GamePage implements OnInit, OnDestroy {
         message: message,
         buttons: [{
           text: 'Okay', handler: () => {
-            console.log("handler");
             if (back) this.router.navigate(['/', 'game-mode']);
           }
         }]
@@ -481,14 +445,12 @@ export class GamePage implements OnInit, OnDestroy {
   unsubscribeFromAll() {
     if (this.playersSub) {
       this.playersSub.forEach(sub => {
-        console.log('unsubsribe');
         sub.unsubscribe();
       });
     }
   }
 
   ngOnDestroy(): void {
-    console.log('ondestroy');
     this.unsubscribeFromAll();
   }
 

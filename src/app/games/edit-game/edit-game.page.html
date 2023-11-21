@@ -117,7 +117,7 @@
         </ion-label>
       </ion-item>
       <app-image-picker (imagePick)="onImagePick($event, 'image')"
-                        [showPreview]="game.imgUrl"
+                        [showPreview]="game && !!game.imgUrl"
                         [previewImage]="game.imgUrl"></app-image-picker>
       <ng-container *ngIf="game.locationType === LocationType.description">
         <ion-item>
@@ -126,7 +126,7 @@
           </ion-label>
         </ion-item>
         <app-image-picker (imagePick)="onImagePick($event, 'map')"
-                          [showPreview]="game.mapUrl"
+                          [showPreview]="game && !!game.mapUrl"
                           [previewImage]="game.mapUrl"></app-image-picker>
       </ng-container>
     </ion-list>
@@ -144,10 +144,5 @@
       [disabled]="!gameForm.valid">
       Save the game
     </ion-button>
-    <ion-item [hidden]=true *ngIf="game.locationType === LocationType.description && game.locationIdentification === LocationIdentification.qr && checkpointsChanged">
-      <ng-container *ngFor="let checkpoint of checkpoints">
-        <qrcode [qrdata]="checkpoint.checkpoint.locationAccessCode" [width]="256" (qrCodeURL)="saveUrl(checkpoint.checkpoint.index, $event)"></qrcode>
-      </ng-container>
-    </ion-item>
   </form>
 </ion-content>

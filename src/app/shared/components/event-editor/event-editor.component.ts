@@ -44,7 +44,6 @@ export class EventEditorComponent implements OnInit {
     this.authService.userId.pipe(take(1)).subscribe(userid => this.userId = userid);
     if (this.event) {
       this.actualGameMode = this.event.liveGameSettings.gameMode;
-      console.log(this.event);
       this.defaultDate = new Date(this.event.date).toISOString();
       if (this.event.joined && this.event.joined.length > 0) {
         this.canEditGameMode = false;
@@ -108,7 +107,6 @@ export class EventEditorComponent implements OnInit {
       if (this.imageFile) {
         this.imageService.uploadImage(this.imageFile).pipe(
           catchError(error => {
-            console.log('Error from uploadImages:', error);
             return of(null);
           }),
           switchMap(uploadResponse => {
@@ -117,13 +115,11 @@ export class EventEditorComponent implements OnInit {
             }
             return (this.event) ? this.eventsService.updateEvent(newEvent) : this.eventsService.createEvent(newEvent);
           })).subscribe(res => {
-          console.log(res);
           loadingEl.dismiss();
           this.done.emit(res);
         });
       } else {
         ((this.event) ? this.eventsService.updateEvent(newEvent) : this.eventsService.createEvent(newEvent)).subscribe(res => {
-          console.log(res);
           loadingEl.dismiss();
           this.done.emit(res);
         });
@@ -132,7 +128,7 @@ export class EventEditorComponent implements OnInit {
 
   }
 
-  onImagePick(imageData: string | File) {
+  onImagePick(imageData: string | File | Blob) {
     let imageFile;
     if (typeof imageData === 'string') {
       try {
@@ -148,20 +144,16 @@ export class EventEditorComponent implements OnInit {
   }
 
   setDate(event) {
-    console.log(event, new Date(event.detail.value));
     this.eventForm.patchValue({ date: new Date(event.detail.value) });
   }
 
   setPublic(event) {
-    console.log(event);
     this.eventForm.patchValue({ isItPublic: event.detail.value });
   }
 
   setGameMode(event) {
-    console.log(event);
     this.eventForm.get('liveGameSettings').patchValue({ gameMode: +event.detail.value as GameMode });
     this.actualGameMode = +event.detail.value as GameMode;
-    console.log(this.eventForm,this.actualGameMode )
   }
 
   setLiveGameSettings(): LiveGameSettings {
@@ -177,7 +169,6 @@ export class EventEditorComponent implements OnInit {
         liveGameSettings = new LiveGameSettings(GameMode.againstEachOther, maxTeam ? maxTeam : 20, 1);
       }
     }
-    console.log(liveGameSettings);
     return liveGameSettings;
   }
 

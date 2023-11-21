@@ -108,8 +108,6 @@ export class CheckpointEditorComponent implements OnInit {
       quiz,
       info
     );
-    console.log(checkpoint1);
-
     this.modalCtrl.dismiss({ checkpoint: checkpoint1, imageFile: this.checkpointForm.value.imgUrl});
   }
 
@@ -117,8 +115,8 @@ export class CheckpointEditorComponent implements OnInit {
     this.checkpointForm.patchValue({ locationAddress: location })
   }
 
-  addAnswer(newAnswer: string, isItGood: boolean) {
-    this.answers.push({ answer: newAnswer, correct: isItGood });
+  addAnswer(newAnswer: string | number, isItGood: boolean) {
+    this.answers.push({ answer: newAnswer.toString(), correct: isItGood });
     this.checkpointForm.get('quiz').patchValue({ answers: this.answers });
     this.newAnswer.value = "";
     this.isItGood.checked = false;
@@ -171,7 +169,7 @@ export class CheckpointEditorComponent implements OnInit {
     return !(this.checkpointForm.valid && quizExist && locationExist)
   }
 
-  onImagePick(imageData: string | File) {
+  onImagePick(imageData: string | File | Blob) {
     this.checkpointForm.patchValue({imgUrl: imageData})
   }
 

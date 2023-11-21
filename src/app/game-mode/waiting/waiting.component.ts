@@ -61,7 +61,6 @@ export class WaitingComponent implements OnInit {
         this.liveGame.startDate = new Date();
         this.liveGameService.updateLiveGame(this.liveGame).pipe(take(1)).subscribe(updatedLiveGame => {
           if (updatedLiveGame) {
-            console.log(updatedLiveGame);
             loadingEl.dismiss();
             this.router.navigate(['/', 'game-mode', 'game', this.liveGame.id]);
           }

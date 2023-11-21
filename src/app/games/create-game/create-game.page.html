@@ -45,21 +45,36 @@
           formControlName="newCategory"
         ></ion-input>
       </ion-item>
-      <ion-item>
-        <ion-select placeholder="Choose a game type *" formControlName="quiz">
-          <div slot="label">Quiz or learning? *</div>
-          <ion-select-option [value]="true">Quiz</ion-select-option>
-          <ion-select-option [value]="false">Learning</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item
-        *ngIf="(!gameForm.get('quiz').valid && gameForm.get('quiz').touched)"
-        lines="none"
-      >
-        <ion-label color="danger">
-          You have to choose between quiz and learning.
+      <ion-item class="ion-align-items-center" lines="none">
+        <ion-label class="ion-text-center">
+          Choose game type
         </ion-label>
       </ion-item>
+      <div class="ion-segment-container">
+        <ion-segment color="primary" (ionChange)="setQuiz($event)" value="true">
+          <ion-segment-button [value]="true">
+            <ion-label>QUIZ</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="false">
+            <ion-label>LEARNING</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+      <ion-item class="ion-align-items-center" lines="none">
+        <ion-label class="ion-text-center">
+          Do you want to share your event?
+        </ion-label>
+      </ion-item>
+      <div class="ion-segment-container">
+        <ion-segment color="primary" (ionChange)="setPublic($event)" value="true">
+          <ion-segment-button [value]="true">
+            <ion-label>PUBLIC</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="false">
+            <ion-label>PRIVATE</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
       <ion-item>
         <ion-select placeholder="Choose a locationType" formControlName="locationType">
           <div slot="label">Type *</div>
@@ -90,16 +105,12 @@
           <app-location-picker (pickLocation)="onLocationPicked($event)"></app-location-picker>
         </ng-template>
       </ng-container>
-      <ion-item  *ngIf="gameForm.get('locationType').value === LocationType.description">
+      <ion-item *ngIf="gameForm.get('locationType').value === LocationType.description">
         <ion-select placeholder="Choose from identifications" formControlName="locationIdentification">
           <div slot="label">Identifications</div>
           <ion-select-option [value]="LocationIdentification.id">Identification code</ion-select-option>
           <ion-select-option [value]="LocationIdentification.qr">QR code</ion-select-option>
         </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label>Available for everyone?</ion-label>
-        <ion-toggle formControlName="itIsPublic" labelPlacement="start" value="false" color="secondary"></ion-toggle>
       </ion-item>
       <ion-item>
         <ion-textarea label="Description *"
