@@ -95,7 +95,7 @@ export class EventsService {
       take(1),
       switchMap(token => {
         return this.http.post<{ name: string }>(
-          'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/events.json',
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/events.json?auth=${token}`,
           {...newEvent, id: null}
         );
       }),
@@ -113,8 +113,13 @@ export class EventsService {
 
   updateEvent(event: Event) {
     let updatedEvents: Event[];
-    return this.events.pipe(
+    let token;
+    return this.authService.token.pipe(
       take(1),
+      switchMap(t => {
+        token = t;
+        return this.events.pipe(take(1));
+      }),
       switchMap(events => {
         if (!events || events.length < 0) {
           return this.fetchEvents();
@@ -127,7 +132,7 @@ export class EventsService {
         updatedEvents = [...events];
         updatedEvents[updatedEventIndex] = event;
         return this.http.put(
-          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/events/${event.id}.json`,
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/events/${event.id}.json?auth=${token}`,
           {...updatedEvents[updatedEventIndex], id: null}
         );
       }),

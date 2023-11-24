@@ -23,7 +23,7 @@
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-justify-content-center">
+    <ion-row class="ion-justify-content-center" *ngIf="canEditGameMode">
       <ion-col class="ion-align-items-center" size-sm="6">
         <ion-datetime [value]="defaultDate"
                       [min]="today"
@@ -53,7 +53,7 @@
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-justify-content-center">
+    <ion-row class="ion-justify-content-center" *ngIf="canEditGameMode">
       <ion-col class="ion-text-center ion-padding" size-sm="6">
         <ion-item class="ion-align-items-center" lines="none">
           <ion-label class="ion-text-center">

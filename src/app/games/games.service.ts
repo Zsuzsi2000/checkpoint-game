@@ -174,7 +174,7 @@ export class GamesService {
           checkpoints);
 
         return this.http.post<{ name: string }>(
-          'https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games.json',
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games.json?auth=${token}`,
           {...newGame, id: null}
         );
       }),
@@ -212,8 +212,13 @@ export class GamesService {
              bests: { score: number, duration: number, checkpointDuration: number } = null) {
 
     let updatedGames: Game[];
-    return this.games.pipe(
+    let token;
+    return this.authService.token.pipe(
       take(1),
+      switchMap(t => {
+        token = t;
+        return this.games.pipe(take(1));
+      }),
       switchMap(games => {
         if (!games || games.length < 1) {
           return this.fetchGames();
@@ -229,7 +234,7 @@ export class GamesService {
           pointOfDeparture, category, quiz, description, imgUrl, distance, duration, itIsPublic, old.userId, mapUrl, checkpoints, numberOfAttempts, creationDate, ratings,
           bests ? bests : old.bests);
         return this.http.put(
-          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json`,
+          `https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/games/${id}.json?auth=${token}`,
           {...updatedGames[updatedGameIndex], id: null}
         );
       }),
@@ -327,19 +332,24 @@ export class GamesService {
   }
 
   createCategory(newCat: string) {
+    let token;
     let generatedId: string;
-    return this.http.post<{ name: string }>('https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/categories.json',
-      {name: newCat})
-      .pipe(
-        switchMap(resData => {
-          generatedId = resData.name;
-          return this.categories;
-        }),
-        take(1),
-        tap(categories => {
-          this._categories.next(categories.concat({id: generatedId, name: newCat}));
-        })
-      );
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(t => {
+        token = t;
+        return this.http.post<{ name: string }>(`https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/categories.json?auth=${token}`,
+          {name: newCat});
+      }),
+      switchMap(resData => {
+        generatedId = resData.name;
+        return this.categories;
+      }),
+      take(1),
+      tap(categories => {
+        this._categories.next(categories.concat({id: generatedId, name: newCat}));
+      })
+    );
   }
 
   deleteCategory(id: string) {

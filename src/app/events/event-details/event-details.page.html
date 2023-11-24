@@ -111,9 +111,18 @@
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-padding" *ngIf="event.description">
+    <ion-row class="ion-no-padding" *ngIf="event.description">
       <ion-col class="ion-no-padding">
-        <p>{{ event.description }}</p>
+        <ion-card>
+          <ion-card-header>
+            <ion-label>Description</ion-label>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none">
+              <ion-label>{{ event.description }}</ion-label>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
     <ion-row class="ion-padding">

@@ -34,14 +34,14 @@
           <ion-label>Teams</ion-label>
         </ion-card-header>
         <ion-card-content class="ion-justify-content-center ion-align-items-center flex-row">
-          <ng-container *ngIf="event; else noEvent">
+          <ng-container *ngIf="!event; else getEvent">
             <ion-item *ngFor="let player of players" class="fit-content" lines="none">
               <ion-badge color="secondary" class="good-looking-team-item">{{ player.teamName }}</ion-badge>
               <ion-icon *ngIf="player.teamMembers.length === liveGame.liveGameSettings.maxTeamMember" class="icoon" name="checkmark"></ion-icon>
               <ion-icon *ngIf="player.teamMembers.length !== liveGame.liveGameSettings.maxTeamMember" class="icoon" name="ellipsis-horizontal"></ion-icon>
             </ion-item>
           </ng-container>
-          <ng-template #noEvent>
+          <ng-template #getEvent>
             <ion-item *ngFor="let player of players" class="fit-content" lines="none">
               <ion-badge color="secondary" class="good-looking-team-item">{{ player.teamName }}</ion-badge>
               <ion-icon *ngIf="teamIsReady(player)" class="icoon"

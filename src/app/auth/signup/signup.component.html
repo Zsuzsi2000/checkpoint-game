@@ -1,7 +1,7 @@
 <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
   <ion-list class="ion-padding">
     <ion-item>
-      <ion-label position="floating">E-mail *</ion-label>
+      <ion-label position="floating">Email *</ion-label>
       <ion-input
         type="email"
         email
@@ -40,7 +40,7 @@
       <ion-input
         type="password"
         labelPlacement="floating"
-        placeholder="Type your password here"
+        placeholder="Enter a password"
         formControlName="password"
       ></ion-input>
     </ion-item>
@@ -57,7 +57,7 @@
       <ion-input
         type="password"
         labelPlacement="floating"
-        placeholder="Type your password here again"
+        placeholder="Enter the password again"
         formControlName="passwordAgain"
       ></ion-input>
     </ion-item>
@@ -72,6 +72,7 @@
     <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
       <ion-label>Country</ion-label>
       <div slot="end">{{ selectedCountry }}</div>
+      <ion-icon name="caret-down" slot="end"></ion-icon>
     </ion-item>
   </ion-list>
   <ion-button
@@ -80,6 +81,6 @@
     color="primary"
     expand="full"
     [disabled]="!profileForm.valid">
-    Signup
+    Sign up
   </ion-button>
 </form>
