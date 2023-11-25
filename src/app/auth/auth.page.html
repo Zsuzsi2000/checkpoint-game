@@ -24,7 +24,7 @@
                   color="primary"
                   expand="full"
                   (click)="updateStatus(AuthStatus.login)">
-                  Login
+                  {{ 'AUTH.LOGIN' | translate }}
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -35,7 +35,7 @@
                   color="primary"
                   expand="full"
                   (click)="logInAsAGuest()">
-                  Login as a guest
+                  {{ 'AUTH.LOGIN_AS_A_GUEST' | translate }}
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -46,7 +46,7 @@
                   color="primary"
                   expand="full"
                   (click)="updateStatus(AuthStatus.signup)">
-                  Sign up
+                  {{ 'AUTH.SIGN_UP' | translate }}
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -59,13 +59,13 @@
           <ion-row *ngSwitchCase="AuthStatus.login">
             <ion-col size-sm="6" offset-sm="3">
               <ion-item class="ion-text-center" lines="none">
-                <ion-label class="custom-margin-for-label">Don't have an account yet?</ion-label>
+                <ion-label class="custom-margin-for-label">{{ 'AUTH.NO_ACCOUNT' | translate }}</ion-label>
               </ion-item>
               <ion-button
                 class="ion-no-margin"
                 color="primary"
                 (click)="updateStatus(AuthStatus.signup)">
-                Switch to signup
+                {{ 'AUTH.SWITCH_TO_SIGN_UP' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -77,13 +77,13 @@
           <ion-row *ngSwitchCase="AuthStatus.signup">
             <ion-col size-sm="6" offset-sm="3">
               <ion-item class="ion-text-center" lines="none">
-                <ion-label class="custom-margin-for-label">Already have an account?</ion-label>
+                <ion-label class="custom-margin-for-label">{{ 'AUTH.HAVE_ACCOUNT' | translate }}</ion-label>
               </ion-item>
               <ion-button
                 class="ion-no-margin"
                 color="primary"
                 (click)="updateStatus(AuthStatus.login)">
-                Switch to login
+                {{ 'AUTH.SWITCH_TO_LOGIN' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -93,7 +93,7 @@
                 class="ion-no-margin"
                 color="primary"
                 (click)="updateStatus(AuthStatus.modeSelection)">
-                Back
+                {{ 'BACK' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -103,7 +103,7 @@
                 class="ion-no-margin"
                 color="primary"
                 (click)="updateStatus(AuthStatus.modeSelection)">
-                Back
+                {{ 'BACK' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -113,7 +113,7 @@
                 class="ion-no-margin"
                 color="primary"
                 (click)="logout()">
-                Log out
+                {{ 'AUTH.LOGOUT' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>

@@ -1,0 +1,27 @@
+{
+  "BACK": "Back",
+  "AUTH": {
+    "AUTH": "Authentication",
+    "LOGIN": "Login",
+    "LOGIN_AS_A_GUEST": "Login as a guest",
+    "SIGN_UP": "Sign up",
+    "LOGOUT": "Log out",
+    "NEW_PASSWORD": "Set new password",
+    "FORGOT_PASSWORD": "Forgot your password?",
+    "NO_ACCOUNT": "Don't have an account yet?",
+    "HAVE_ACCOUNT": "Already have an account?",
+    "SWITCH_TO_SIGN_UP": "Switch to sign up",
+    "SWITCH_TO_LOGIN": "Switch to login",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "PASSWORD_AGAIN": "Password again",
+    "COUNTRY": "Country",
+    "VALID_EMAIL": "Should be a valid email address.",
+    "VALID_PASSWORD": "Should at least be 6 characters long.",
+    "VALID_USERNAME": "Username is required.",
+    "VALID_PASSWORDS": "Passwords do not match."
+  },
+  "GAMES": {
+    "NAME": "Games"
+  }
+}

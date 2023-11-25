@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePageRoutingModule } from './profile-routing.module';
 import { ProfilePage } from './profile.page';
 import {SharedModule} from "../shared/shared.module";
+import {SettingsComponent} from "./settings/settings.component";
 
 @NgModule({
   imports: [
@@ -14,6 +15,6 @@ import {SharedModule} from "../shared/shared.module";
     ProfilePageRoutingModule,
     SharedModule
   ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage, SettingsComponent]
 })
 export class ProfilePageModule {}

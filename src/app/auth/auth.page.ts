@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {LoadingController, AlertController} from '@ionic/angular';
 import {AuthService} from './auth.service';
 import {Subscription} from "rxjs";
-
+import { TranslateService } from '@ngx-translate/core';
 
 enum AuthStatus {
   modeSelection,
@@ -26,7 +26,8 @@ export class AuthPage implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
   }
 

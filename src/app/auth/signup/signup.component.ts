@@ -9,6 +9,7 @@ import {switchMap, takeWhile} from "rxjs/operators";
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import {UserService} from "../../services/user.service";
 import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
+import {TranslateService} from "@ngx-translate/core";
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password').value;
@@ -40,7 +41,8 @@ export class SignupComponent implements OnInit {
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private fb: FormBuilder,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private translate: TranslateService
   ) {
   }
 

@@ -45,6 +45,21 @@
           formControlName="newCategory"
         ></ion-input>
       </ion-item>
+      <ion-item class="ion-align-items-center" lines="none">
+        <ion-label class="ion-text-center">
+          Do you want to share your game?
+        </ion-label>
+      </ion-item>
+      <div class="ion-segment-container">
+        <ion-segment color="primary" (ionChange)="setPublic($event)" value="true">
+          <ion-segment-button [value]="true">
+            <ion-label>PUBLIC</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="false">
+            <ion-label>PRIVATE</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
       <ng-container *ngIf="(game.locationType === LocationType.description) ||
       (game.locationType === LocationType.location)">
         <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
@@ -59,10 +74,6 @@
           <app-location-picker (pickLocation)="onLocationPicked($event)"></app-location-picker>
         </ng-template>
       </ng-container>
-      <ion-item>
-        <ion-label>Available for everyone?</ion-label>
-        <ion-toggle formControlName="itIsPublic" labelPlacement="start" [value]="game.itIsPublic" color="secondary"></ion-toggle>
-      </ion-item>
       <ion-item>
         <ion-textarea label="Description *"
                       labelPlacement="floating"

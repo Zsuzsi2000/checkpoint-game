@@ -1,0 +1,29 @@
+{
+  "BACK": "Vissza",
+  "AUTH": {
+    "AUTH": "Autentikáció",
+    "LOGIN": "Bejelentkezés",
+    "LOGIN_AS_A_GUEST": "Bejelentkezés vendégként",
+    "SIGN_UP": "Regisztráció",
+    "LOGOUT": "Kijelentkezés",
+    "TYPE_EMAIL": "Írd be az email címed",
+    "TYPE_PASSWORD": "Írd be a jelszavad",
+    "NEW_PASSWORD": "Új jelszó beállítása",
+    "FORGOT_PASSWORD": "Elfelejtetted a jelszavad?",
+    "NO_ACCOUNT": "Még nincs felhasználói fiókod?",
+    "HAVE_ACCOUNT": "Már van felhasználói fiókod?",
+    "SWITCH_TO_SIGN_UP": "Váltson a regisztrációhoz",
+    "SWITCH_TO_LOGIN": "Váltson a bejelentkezéshez",
+    "USERNAME": "Felhasználónév",
+    "PASSWORD": "Jelszó",
+    "PASSWORD_AGAIN": "Jelszó újra",
+    "COUNTRY": "Ország",
+    "VALID_EMAIL": "Érvényes email címet kell megadni.",
+    "VALID_PASSWORD": "Legalább 6 karakter hosszú legyen.",
+    "VALID_USERNAME": "A felhasználónév kötelező.",
+    "VALID_PASSWORDS": "A jelszavak nem egyeznek."
+  },
+  "GAMES": {
+    "GAMES": "Játékok"
+  }
+}

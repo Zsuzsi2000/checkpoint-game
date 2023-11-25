@@ -36,6 +36,14 @@
           <ion-select-option [value]="'otherCategory'">Other category</ion-select-option>
         </ion-select>
       </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('category').valid && gameForm.get('category').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          Category is required.
+        </ion-label>
+      </ion-item>
       <ion-item *ngIf="gameForm.get('category').value === 'otherCategory'">
         <ion-label position="floating">New category</ion-label>
         <ion-input
@@ -62,7 +70,7 @@
       </div>
       <ion-item class="ion-align-items-center" lines="none">
         <ion-label class="ion-text-center">
-          Do you want to share your event?
+          Do you want to share your game?
         </ion-label>
       </ion-item>
       <div class="ion-segment-container">
@@ -75,22 +83,24 @@
           </ion-segment-button>
         </ion-segment>
       </div>
-      <ion-item>
-        <ion-select placeholder="Choose a locationType" formControlName="locationType">
-          <div slot="label">Type *</div>
-          <ion-select-option [value]="LocationType.location">Location</ion-select-option>
-          <ion-select-option [value]="LocationType.description">Description</ion-select-option>
-          <ion-select-option [value]="LocationType.anywhere">Anywhere</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item
-        *ngIf="(!gameForm.get('locationType').valid && gameForm.get('locationType').touched)"
-        lines="none"
-      >
-        <ion-label color="danger">
-          You have to choose location type.
+      <ion-item class="ion-align-items-center" lines="none">
+        <ion-label class="ion-text-center">
+          Checkpoints location description
         </ion-label>
       </ion-item>
+      <div class="ion-segment-container">
+        <ion-segment color="primary" (ionChange)="setLocationType($event)" [value]="LocationType.location">
+          <ion-segment-button [value]=LocationType.location>
+            <ion-label>IN TOWN<br/>OUTDOORS</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]=LocationType.description>
+            <ion-label>IN A BUILDING<br/>SMALL AREA</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]=LocationType.anywhere>
+            <ion-label>ANYWHERE</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
       <ng-container *ngIf="(gameForm.get('locationType').value === LocationType.description) ||
       (gameForm.get('locationType').value === LocationType.location)">
         <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
@@ -113,8 +123,8 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-textarea label="Description *"
-                      labelPlacement="floating"
+        <ion-label position="floating">Description *</ion-label>
+        <ion-textarea labelPlacement="floating"
                       formControlName="description"
                       placeholder="Give a description of the game. Who would you recommend it to?"></ion-textarea>
       </ion-item>

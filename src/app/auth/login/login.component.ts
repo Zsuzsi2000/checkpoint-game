@@ -7,6 +7,7 @@ import {NgForm} from "@angular/forms";
 import {catchError, map, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {User} from "../../models/user.model";
 import {UserService} from "../../services/user.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private translate: TranslateService
   ) {
   }
 

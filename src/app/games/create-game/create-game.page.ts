@@ -45,7 +45,7 @@ export class CreateGamePage implements OnInit {
       newCategory: new FormControl(null, {updateOn: "change"}),
       description: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
       quiz: new FormControl(true, {updateOn: "change"}),
-      locationType: new FormControl(null, {updateOn: "change", validators: [Validators.required]}),
+      locationType: new FormControl(LocationType.location, {updateOn: "change"}),
       locationIdentification: new FormControl(null, {updateOn: "change"}),
       pointOfDeparture: new FormControl(null, {updateOn: "change"}),
       imgUrl: new FormControl(null, {updateOn: "change"}),
@@ -155,6 +155,11 @@ export class CreateGamePage implements OnInit {
 
   setQuiz(event) {
     this.gameForm.patchValue({ quiz: event.detail.value === "true" });
+  }
+
+  setLocationType(event) {
+    console.log(event, (+event.detail.value) as LocationType);
+    this.gameForm.patchValue({ locationType: ((+event.detail.value) as LocationType) });
   }
 
   uploadImages() {

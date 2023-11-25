@@ -37,6 +37,8 @@
     "@cordobo/qrcode": "^1.5.0",
     "@ionic/angular": "^6.1.9",
     "@ionic/pwa-elements": "^3.2.2",
+    "@ngx-translate/core": "^14.0.0",
+    "@ngx-translate/http-loader": "^7.0.0",
     "@zxing/browser": "^0.1.4",
     "@zxing/library": "^0.20.0",
     "@zxing/ngx-scanner": "^3.6.2",

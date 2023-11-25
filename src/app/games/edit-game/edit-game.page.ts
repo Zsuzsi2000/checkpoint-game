@@ -317,6 +317,10 @@ export class EditGamePage implements OnInit {
     return imageFile;
   }
 
+  setPublic(event) {
+    this.gameForm.patchValue({ itIsPublic: event.detail.value === "true" });
+  }
+
   showALert() {
     this.alertController
       .create(
