@@ -5,11 +5,8 @@ import {User} from "../../../models/user.model";
 import {LiveGame} from "../../../models/liveGame";
 import {PlayerModel} from "../../../models/player.model";
 import {LiveGameService} from "../../../game-mode/live-game.service";
-import {switchMap, take, takeWhile} from "rxjs/operators";
-import {AuthResponseData} from "../../../auth/auth.service";
-import {interval} from "rxjs";
+import { take} from "rxjs/operators";
 import {CheckpointState} from "../../../interfaces/CheckpointState";
-import {GamesService} from "../../../games/games.service";
 import {Game} from "../../../models/game.model";
 
 @Component({

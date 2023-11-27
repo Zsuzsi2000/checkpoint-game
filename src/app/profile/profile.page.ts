@@ -9,14 +9,12 @@ import {Game} from "../models/game.model";
 import {User} from "../models/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserData} from "../interfaces/UserData";
-import {SegmentChangeEventDetail} from '@ionic/core';
 import {CountryService} from "../services/country.service";
 import {ImageService} from "../services/image.service";
 import {ImagePickerModalComponent} from "../shared/components/image-picker-modal/image-picker-modal.component";
 import {PickAThingComponent} from "../shared/components/pick-a-thing/pick-a-thing.component";
 import {EventsService} from "../events/events.service";
 import {Event} from "../models/event.model";
-import {JoinOrCreateTeamComponent} from "../../../android/app/build/intermediates/assets/debug/public/app/shared/components/join-or-create-team/join-or-create-team.component";
 import {SettingsComponent} from "./settings/settings.component";
 
 @Component({

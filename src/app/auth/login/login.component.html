@@ -12,7 +12,7 @@
               required
               email
               labelPlacement="floating"
-              [placeholder]="translate.currentLang === 'hu' ? 'Írd be az email címed' : 'Type your email here'"
+              [placeholder]="currentLanguage === 'hu' ? 'Írd be az email címed' : 'Type your email here'"
               #emailCtrl="ngModel"
             ></ion-input>
           </ion-item>
@@ -31,7 +31,7 @@
               required
               minlength="6"
               labelPlacement="floating"
-              [placeholder]="translate.currentLang === 'hu' ? 'Írd be a jelszavad' : 'Type your password here'"
+              [placeholder]="currentLanguage === 'hu' ? 'Írd be a jelszavad' : 'Type your password here'"
               #passwordCtrl="ngModel"
             ></ion-input>
           </ion-item>

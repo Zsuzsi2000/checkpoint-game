@@ -17,6 +17,7 @@ import {TranslateService} from "@ngx-translate/core";
 export class LoginComponent implements OnInit {
 
   isLoading = false;
+  currentLanguage: string;
 
   constructor(
     private authService: AuthService,
@@ -26,6 +27,7 @@ export class LoginComponent implements OnInit {
     private alertCtrl: AlertController,
     private translate: TranslateService
   ) {
+    this.currentLanguage = this.translate.currentLang;
   }
 
   ngOnInit() {

@@ -6,7 +6,7 @@
         type="email"
         email
         labelPlacement="floating"
-        [placeholder]="translate.currentLang === 'hu' ? 'Add meg az email címed' : 'Enter your email here'"
+        [placeholder]="currentLanguage === 'hu' ? 'Add meg az email címed' : 'Enter your email here'"
         formControlName="email"
       ></ion-input>
     </ion-item>
@@ -21,7 +21,7 @@
       <ion-input
         type="text"
         labelPlacement="floating"
-        [placeholder]="translate.currentLang === 'hu' ? 'Adj meg egy felhasználónevet' : 'Enter a username'"
+        [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy felhasználónevet' : 'Enter a username'"
         formControlName="username"
       ></ion-input>
     </ion-item>
@@ -36,7 +36,7 @@
       <ion-input
         type="password"
         labelPlacement="floating"
-        [placeholder]="translate.currentLang === 'hu' ? 'Adj meg egy jelszót' : 'Enter a password'"
+        [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy jelszót' : 'Enter a password'"
         formControlName="password"
       ></ion-input>
     </ion-item>
@@ -51,7 +51,7 @@
       <ion-input
         type="password"
         labelPlacement="floating"
-        [placeholder]="translate.currentLang === 'hu' ? 'Add meg újra a jelszót' : 'Enter the password again'"
+        [placeholder]="currentLanguage === 'hu' ? 'Add meg újra a jelszót' : 'Enter the password again'"
         formControlName="passwordAgain"
       ></ion-input>
     </ion-item>

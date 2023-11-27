@@ -12,7 +12,7 @@
       <ion-col class="ion-align-items-center ion-justify-content-center" size-md="10">
         <ion-item>
           <ion-label>{{ 'PROFILE.SETTINGS.LANGUAGE' | translate }}</ion-label>
-          <ion-select [value]="translate.currentLang" (ionChange)="switchLanguage($event)">
+          <ion-select [value]="currentLanguage" (ionChange)="switchLanguage($event)">
             <ion-select-option [value]="'en'">{{ 'PROFILE.SETTINGS.ENGLISH' | translate }}</ion-select-option>
             <ion-select-option [value]="'hu'">{{ 'PROFILE.SETTINGS.HUNGARIAN' | translate }}</ion-select-option>
           </ion-select>

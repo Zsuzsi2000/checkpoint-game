@@ -15,13 +15,16 @@ import {pipe} from "rxjs";
 })
 export class SettingsComponent implements OnInit {
 
-  permissions: Permissions;
   @Input() user: User;
+  permissions: Permissions;
+  currentLanguage: string;
 
   constructor(private translate: TranslateService,
               private authService: AuthService,
               private userService: UserService,
-              private modalCtrl: ModalController) { }
+              private modalCtrl: ModalController) {
+    this.currentLanguage = this.translate.currentLang;
+  }
 
   ngOnInit() {
     this.permissions = this.user.permissions;
@@ -53,6 +56,7 @@ export class SettingsComponent implements OnInit {
   switchLanguage(event) {
     console.log(event);
     this.translate.use(event.detail.value);
+    this.currentLanguage = this.translate.currentLang;
   }
 
   changePermission(permission: string, event) {

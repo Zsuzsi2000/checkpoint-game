@@ -32,6 +32,7 @@ export class SignupComponent implements OnInit {
   countries = [];
   selectedCountry: string = "";
   fileName: string;
+  currentLanguage: string;
 
   constructor(
     private authService: AuthService,
@@ -44,6 +45,7 @@ export class SignupComponent implements OnInit {
     private modalCtrl: ModalController,
     private translate: TranslateService
   ) {
+    this.currentLanguage = this.translate.currentLang;
   }
 
   ngOnInit() {

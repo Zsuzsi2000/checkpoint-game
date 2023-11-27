@@ -20,6 +20,7 @@ import {EventCardComponent} from "./components/event-card/event-card.component";
 import {RouterModule} from "@angular/router";
 import {GameCardComponent} from "./components/game-card/game-card.component";
 import {QRCodeModule} from "angularx-qrcode";
+import {TranslateModule} from "@ngx-translate/core";
 
 
 
@@ -48,7 +49,8 @@ import {QRCodeModule} from "angularx-qrcode";
     Ng2SearchPipeModule,
     IonicModule,
     RouterModule,
-    QRCodeModule
+    QRCodeModule,
+    TranslateModule
   ],
   exports: [
     PickAThingComponent,

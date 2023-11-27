@@ -36,8 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
         SplashScreen.hide();
       }
     });
-    translate.setDefaultLang('hu');
-    translate.use('hu');
+    translate.setDefaultLang('en');
+    translate.use('en');
     let hu = translate.currentLang === 'hu';
     this.appPages = [
         { title: hu ? 'Játékok' : 'Games', url: '/games', icon: 'dice' },
