@@ -25,5 +25,21 @@
   },
   "GAMES": {
     "GAMES": "Játékok"
+  },
+  "PROFILE": {
+    "SETTINGS": {
+      "SETTINGS": "Beállítások",
+      "LANGUAGE": "Nyelv",
+      "ENGLISH": "Angol",
+      "HUNGARIAN": "Magyar",
+      "PERMISSIONS": "Értesítés engedélyek",
+      "MESSAGE": "Üzenet",
+      "FRIEND_REQUESTS": "Barát kérelmek",
+      "EVENT_REMINDER": "Esemény emlékeztető"
+    }
+  },
+  "CONNECTIONS": {
+    "FRIENDS": "Barátok",
+    "CHATS": "Csevegések"
   }
 }

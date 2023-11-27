@@ -5,6 +5,7 @@ import {UserData} from "../interfaces/UserData";
 import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, of} from "rxjs";
 import {User} from "../models/user.model";
+import {Permissions} from "../interfaces/UserData";
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,12 @@ export class UserService implements OnInit {
       picture: "",
       favouriteGames: [],
       eventsUserSignedUpFor: [],
-      savedEvents: []
+      savedEvents: [],
+      permissions: {
+        message: true,
+        eventReminder: true,
+        friendRequests: true
+      }
     };
 
     let generatedId: string;
@@ -70,6 +76,11 @@ export class UserService implements OnInit {
                 data[key].favouriteGames,
                 data[key].eventsUserSignedUpFor,
                 data[key].savedEvents,
+                data[key].permissions ? data[key].permissions : {
+                  message: true,
+                  friendRequests: true,
+                  eventReminder: true
+                },
                 null,
                 null
               );
@@ -92,6 +103,11 @@ export class UserService implements OnInit {
           userData.favouriteGames,
           userData.eventsUserSignedUpFor,
           userData.savedEvents,
+          userData.permissions ? userData.permissions : {
+            message: true,
+            friendRequests: true,
+            eventReminder: true
+          },
           null,
           null
         );
@@ -115,6 +131,11 @@ export class UserService implements OnInit {
                 favouriteGames: data[key].favouriteGames,
                 eventsUserSignedUpFor: data[key].eventsUserSignedUpFor,
                 savedEvents: data[key].savedEvents,
+                permissions: data[key].permissions ? data[key].permissions : {
+                  message: true,
+                  friendRequests: true,
+                  eventReminder: true
+                }
               };
               users.push(user);
             }
@@ -136,7 +157,8 @@ export class UserService implements OnInit {
              addFavourite: boolean = null,
              eventId: string = null,
              addEvent: boolean = null,
-             saveEvent: boolean = null) {
+             saveEvent: boolean = null,
+             p: Permissions = null) {
 
     let updatedUsers: UserData[];
     let updatedUserIndex: number;
@@ -172,6 +194,7 @@ export class UserService implements OnInit {
           savedEvents: (eventId && saveEvent !== null)
             ? ((saveEvent) ? old.savedEvents.concat(eventId) : old.savedEvents.filter(g => g != eventId))
             : old.savedEvents,
+          permissions: p ? p : old.permissions
         };
 
         return this.http.put(

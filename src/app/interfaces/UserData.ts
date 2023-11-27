@@ -1,3 +1,9 @@
+export interface Permissions {
+  message: boolean;
+  friendRequests: boolean;
+  eventReminder: boolean;
+}
+
 export interface UserData {
   id: string;
   email: string;
@@ -7,4 +13,5 @@ export interface UserData {
   favouriteGames: string[];
   eventsUserSignedUpFor: string[];
   savedEvents: string[];
+  permissions: Permissions;
 }

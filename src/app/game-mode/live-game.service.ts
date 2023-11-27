@@ -3,7 +3,7 @@ import {BehaviorSubject, of} from "rxjs";
 import {LiveGame} from "../models/liveGame";
 import {map, switchMap, take, tap} from "rxjs/operators";
 import {LiveGameSettings} from "../models/liveGameSettings";
-import {Player} from "../models/Player";
+import {PlayerModel} from "../models/player.model";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../auth/auth.service";
 import {CheckpointState} from "../interfaces/CheckpointState";
@@ -34,7 +34,7 @@ interface PlayerData {
 export class LiveGameService {
 
   private _liveGames = new BehaviorSubject<LiveGame[]>([]);
-  private _players = new BehaviorSubject<Player[]>([]);
+  private _players = new BehaviorSubject<PlayerModel[]>([]);
 
   get liveGames() {
     return this._liveGames.asObservable();
@@ -163,7 +163,7 @@ export class LiveGameService {
           const players = [];
           for (const key in data) {
             if (data.hasOwnProperty(key)) {
-              players.push(new Player(
+              players.push(new PlayerModel(
                 key,
                 data[key].liveGameId,
                 data[key].teamName,
@@ -186,7 +186,7 @@ export class LiveGameService {
   fetchPlayer(id: string) {
     return this.http.get<PlayerData>(`https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/players/${id}.json`).pipe(
       map(playerData => {
-        return new Player(
+        return new PlayerModel(
           id,
           playerData.liveGameId,
           playerData.teamName,
@@ -200,7 +200,7 @@ export class LiveGameService {
     );
   }
 
-  createPlayer(player: Player) {
+  createPlayer(player: PlayerModel) {
     let generatedId: string;
     let newPlayer = player;
 
@@ -224,8 +224,8 @@ export class LiveGameService {
     );
   }
 
-  updatePlayer(player: Player) {
-    let updatedPlayers: Player[];
+  updatePlayer(player: PlayerModel) {
+    let updatedPlayers: PlayerModel[];
     return this.players.pipe(
       take(1),
       switchMap(players => {

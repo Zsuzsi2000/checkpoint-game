@@ -9,7 +9,7 @@ import {
 } from "@angular/router";
 import {LiveGameService} from "../live-game.service";
 import {AlertController, NavController} from "@ionic/angular";
-import {Player} from "../../models/Player";
+import {PlayerModel} from "../../models/player.model";
 import {switchMap, take} from "rxjs/operators";
 import {GamesService} from "../../games/games.service";
 import {Game} from "../../models/game.model";
@@ -27,9 +27,9 @@ export class EndPage implements OnInit {
   playerId: string;
   isLoading = true;
   game: Game;
-  players: Player[] = [];
+  players: PlayerModel[] = [];
   playersSub: Subscription;
-  player: Player;
+  player: PlayerModel;
   userName: string;
   sortType = "Score";
   helps = 0;
@@ -55,8 +55,8 @@ export class EndPage implements OnInit {
         this.playerId = this.activatedRoute.snapshot.queryParamMap.get('playerId');
       }
       this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
-        this.players = (players as Player[]).filter(p => p.liveGameId === this.liveGameId);
-        this.player = (players as Player[]).find(p => p.id === this.playerId);
+        this.players = (players as PlayerModel[]).filter(p => p.liveGameId === this.liveGameId);
+        this.player = (players as PlayerModel[]).find(p => p.id === this.playerId);
         this.player.checkpointsState.forEach(check => {
           if (check.useHelp) this.helps += 1;
         });
@@ -90,7 +90,7 @@ export class EndPage implements OnInit {
           return this.liveGameService.fetchPlayers().pipe(take(1));
         })
       ).subscribe(players => {
-        this.players = (players as Player[]).filter(p => p.liveGameId === this.liveGameId);
+        this.players = (players as PlayerModel[]).filter(p => p.liveGameId === this.liveGameId);
         if (this.sortType === "Score") {
           this.players = this.players.sort((a, b) => a.score < b.score ? 1 : (a.score > b.score ? -1 : 0));
         } else if (this.sortType === "BigDuration") {
@@ -221,11 +221,11 @@ export class EndPage implements OnInit {
     return value < 10 ? `0${value}` : `${value}`;
   }
 
-  getHelp(player: Player) {
+  getHelp(player: PlayerModel) {
     return player.checkpointsState.filter(check => check.useHelp).length;
   }
 
-  checkDone(player: Player) {
+  checkDone(player: PlayerModel) {
     let state = player.checkpointsState.find(p=> p.done === false);
     return state === undefined;
   }

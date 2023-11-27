@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {LiveGame} from "../../models/liveGame";
-import {Player} from "../../models/Player";
+import {PlayerModel} from "../../models/player.model";
 import {Event} from "../../models/event.model";
 import {interval, Subscription} from "rxjs";
 import {switchMap, take} from "rxjs/operators";
@@ -18,7 +18,7 @@ export class WaitingComponent implements OnInit {
   @Input() liveGame: LiveGame;
   @Input() creator: boolean;
   @Input() event: Event;
-  players: Player[] = [];
+  players: PlayerModel[] = [];
   playersSub: Subscription;
   startSub: Subscription;
   alreadyJoined = 0;
@@ -34,7 +34,7 @@ export class WaitingComponent implements OnInit {
       })
     ).subscribe((players => {
       if (players) {
-        this.players = (players as Player[]).filter(player => player.liveGameId === this.liveGame.id);
+        this.players = (players as PlayerModel[]).filter(player => player.liveGameId === this.liveGame.id);
         this.alreadyJoined = 0;
         this.players.forEach(player => {
           player.teamMembers.forEach(member => {
@@ -72,7 +72,7 @@ export class WaitingComponent implements OnInit {
     }
   }
 
-  teamIsReady(player: Player) {
+  teamIsReady(player: PlayerModel) {
     let team = this.event.joined.find(p=> p.teamName === player.teamName);
     return team.teamMembers.length === player.teamMembers.length;
   }

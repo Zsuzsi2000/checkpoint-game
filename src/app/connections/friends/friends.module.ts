@@ -6,7 +6,7 @@ import { FriendsPageRoutingModule } from './friends-routing.module';
 import { FriendsPage } from './friends.page';
 import {SharedModule} from '../../shared/shared.module';
 import {NewPage} from './new/new.page';
-import {RequestsPage} from './requests/requests.page';
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   imports: [
@@ -14,8 +14,9 @@ import {RequestsPage} from './requests/requests.page';
     FormsModule,
     IonicModule,
     FriendsPageRoutingModule,
-    SharedModule
+    SharedModule,
+    TranslateModule
   ],
-  declarations: [FriendsPage, NewPage, RequestsPage]
+  declarations: [FriendsPage, NewPage]
 })
 export class FriendsPageModule {}

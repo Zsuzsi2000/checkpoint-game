@@ -1,0 +1,15 @@
+.custom-button {
+  --background: var(--color-connections);
+  --color: white;
+}
+
+ion-toolbar {
+  --background: var(--ion-color-tertiary);
+  --color: white;
+}
+
+ion-badge {
+  --background: white;
+  --color: var(--color-connections);
+  border: 1px solid #da3e52;
+}

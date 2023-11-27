@@ -16,6 +16,8 @@ import {ImagePickerModalComponent} from "../shared/components/image-picker-modal
 import {PickAThingComponent} from "../shared/components/pick-a-thing/pick-a-thing.component";
 import {EventsService} from "../events/events.service";
 import {Event} from "../models/event.model";
+import {JoinOrCreateTeamComponent} from "../../../android/app/build/intermediates/assets/debug/public/app/shared/components/join-or-create-team/join-or-create-team.component";
+import {SettingsComponent} from "./settings/settings.component";
 
 @Component({
   selector: 'app-profile',
@@ -72,6 +74,7 @@ export class ProfilePage implements OnInit, OnDestroy {
               favouriteGames: currentUser.favouriteGames,
               eventsUserSignedUpFor: currentUser.eventsUserSignedUpFor,
               savedEvents: currentUser.savedEvents,
+              permissions: currentUser.permissions
             };
             this.userIsLoading = false;
             this.fetchLoadedUserData();
@@ -344,6 +347,12 @@ export class ProfilePage implements OnInit, OnDestroy {
       imageFile = imageData
     }
     return imageFile;
+  }
+
+  showSettings() {
+    this.modalCtrl.create({component: SettingsComponent, componentProps: { user: this.loggedUser }}).then(modalEl => {
+      modalEl.present();
+    });
   }
 
   ngOnDestroy() {

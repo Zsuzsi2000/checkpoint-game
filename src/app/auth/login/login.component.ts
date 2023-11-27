@@ -108,6 +108,11 @@ export class LoginComponent implements OnInit {
         (user.favouriteGames) ? user.favouriteGames : [],
         (user.eventsUserSignedUpFor) ? user.eventsUserSignedUpFor : [],
         (user.savedEvents) ? user.savedEvents : [],
+        user.permissions ? user.permissions : {
+          message: true,
+          friendRequests: true,
+          eventReminder: true
+        },
         userData.idToken,
         expirationTime
       );

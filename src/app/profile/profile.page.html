@@ -10,7 +10,7 @@
       <ion-button *ngIf="ownProfile" (click)="startDeleteTheProfile()">
         <ion-icon name="trash"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="ownProfile">
+      <ion-button *ngIf="ownProfile" (click)="showSettings()">
         <ion-icon name="settings-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

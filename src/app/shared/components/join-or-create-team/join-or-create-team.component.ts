@@ -3,7 +3,7 @@ import {AlertController, LoadingController, ModalController, NavController} from
 import {Event} from "../../../models/event.model"
 import {User} from "../../../models/user.model";
 import {LiveGame} from "../../../models/liveGame";
-import {Player} from "../../../models/Player";
+import {PlayerModel} from "../../../models/player.model";
 import {LiveGameService} from "../../../game-mode/live-game.service";
 import {switchMap, take, takeWhile} from "rxjs/operators";
 import {AuthResponseData} from "../../../auth/auth.service";
@@ -24,8 +24,8 @@ export class JoinOrCreateTeamComponent implements OnInit {
   @Input() user: User;
   @Input() game: Game;
   @Input() gameMode: boolean = false;
-  players: Player[] = [];
-  player: Player;
+  players: PlayerModel[] = [];
+  player: PlayerModel;
   join: boolean;
   chosenTeam = "";
   canJoinToATeam: boolean;
@@ -75,7 +75,7 @@ export class JoinOrCreateTeamComponent implements OnInit {
     this.join = false;
     this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
       if (players) {
-        this.players = players.filter((player: Player) => player.liveGameId === this.liveGame.id);
+        this.players = players.filter((player: PlayerModel) => player.liveGameId === this.liveGame.id);
         if (this.players.length > 0) {
           this.chosenTeam = this.players[0].teamName;
           if (this.players.length < this.liveGame.liveGameSettings.maxTeam) {
@@ -168,7 +168,7 @@ export class JoinOrCreateTeamComponent implements OnInit {
     this.createPlayer(teamName, teamMembers);
   }
 
-  updatePlayer(player: Player) {
+  updatePlayer(player: PlayerModel) {
     this.loadingController.create({ keyboardClose: true, message: 'Update team...',  }).then(loadingEl => {
       loadingEl.present();
       this.liveGameService.updatePlayer(player).pipe(take(1)).subscribe(updatedPlayer => {
@@ -186,7 +186,7 @@ export class JoinOrCreateTeamComponent implements OnInit {
 
   createPlayer(teamName: string, teamMembers: {id: string, name: string}[]) {
     let checkpointStates: CheckpointState[] = [];
-    let player: Player;
+    let player: PlayerModel;
     for (let i = 0; i < this.game.checkpoints.length; i++) {
       let checkpointState: CheckpointState = {
         checkIndex: i,
@@ -199,7 +199,7 @@ export class JoinOrCreateTeamComponent implements OnInit {
       };
       checkpointStates.push(checkpointState);
     }
-    player = new Player(null, this.liveGame.id, teamName, teamMembers, checkpointStates);
+    player = new PlayerModel(null, this.liveGame.id, teamName, teamMembers, checkpointStates);
 
     this.loadingController.create({ keyboardClose: true, message: 'Create team...',  }).then(loadingEl => {
       loadingEl.present();

@@ -1,3 +1,5 @@
+import {Permissions} from "../interfaces/UserData";
+
 export class User {
   constructor(
     public id: string,
@@ -8,8 +10,9 @@ export class User {
     public favouriteGames: string[],
     public eventsUserSignedUpFor: string[],
     public savedEvents: string[],
+    public permissions: Permissions,
     private _token: string,
-    private tokenExpirationDate: Date
+    private tokenExpirationDate: Date,
   ) {}
 
   get token() {

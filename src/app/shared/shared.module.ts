@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ListOfUsersComponent} from './components/list-of-users/list-of-users.component';
 import {Ng2SearchPipeModule} from 'ng2-search-filter';
 import {PickAThingComponent} from "./components/pick-a-thing/pick-a-thing.component";
 import {LocationPickerComponent} from "./maps/location-picker/location-picker.component";
@@ -26,7 +25,6 @@ import {QRCodeModule} from "angularx-qrcode";
 
 @NgModule({
   declarations: [
-    ListOfUsersComponent,
     PickAThingComponent,
     LocationPickerComponent,
     MapModalComponent,
@@ -53,7 +51,6 @@ import {QRCodeModule} from "angularx-qrcode";
     QRCodeModule
   ],
   exports: [
-    ListOfUsersComponent,
     PickAThingComponent,
     Ng2SearchPipeModule,
     LocationPickerComponent,

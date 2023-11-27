@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {LiveGame} from "../../../models/liveGame";
-import {Player} from "../../../models/Player";
+import {PlayerModel} from "../../../models/player.model";
 import {AlertController, ModalController} from "@ionic/angular";
 import {LiveGameService} from "../../live-game.service";
 import {take} from "rxjs/operators";
@@ -19,7 +19,7 @@ export class CheckpointsComponent implements OnInit {
   @Input() playerId: string;
   liveGame: LiveGame;
   game: Game;
-  players: Player;
+  players: PlayerModel;
   actualCheckpoints: { done: boolean, indexx: number, name: string}[] = [];
   isLoading: boolean;
 

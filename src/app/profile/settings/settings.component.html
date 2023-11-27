@@ -1,3 +1,54 @@
-<p>
-  settings works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="back()">{{ 'BACK' | translate }}</ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'PROFILE.SETTINGS.SETTINGS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-no-padding ion-align-items-center ion-text-center">
+  <ion-grid class="ion-no-padding ion-no-margin ion-justify-content-center ion-align-items-center">
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col class="ion-align-items-center ion-justify-content-center" size-md="10">
+        <ion-item>
+          <ion-label>{{ 'PROFILE.SETTINGS.LANGUAGE' | translate }}</ion-label>
+          <ion-select [value]="translate.currentLang" (ionChange)="switchLanguage($event)">
+            <ion-select-option [value]="'en'">{{ 'PROFILE.SETTINGS.ENGLISH' | translate }}</ion-select-option>
+            <ion-select-option [value]="'hu'">{{ 'PROFILE.SETTINGS.HUNGARIAN' | translate }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col class="ion-align-items-center ion-justify-content-center" size-md="10">
+        <ion-accordion-group expand="inset">
+          <ion-accordion>
+            <ion-item slot="header">
+              <ion-label>{{ 'PROFILE.SETTINGS.PERMISSIONS' | translate }}</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              <ion-item>
+                <ion-label>{{ 'PROFILE.SETTINGS.MESSAGE' | translate }}</ion-label>
+                <ion-toggle (ionChange)="changePermission('message', $event)" color="secondary" [checked]="permissions.message"></ion-toggle>
+              </ion-item>
+              <ion-item>
+                <ion-label>{{ 'PROFILE.SETTINGS.FRIEND_REQUESTS' | translate }}</ion-label>
+                <ion-toggle (ionChange)="changePermission('friendRequests', $event)" color="secondary" [checked]="permissions.friendRequests"></ion-toggle>
+              </ion-item>
+              <ion-item>
+                <ion-label>{{ 'PROFILE.SETTINGS.EVENT_REMINDER' | translate }}</ion-label>
+                <ion-toggle (ionChange)="changePermission('eventReminder', $event)" color="secondary" [checked]="permissions.eventReminder"></ion-toggle>
+              </ion-item>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col class="ion-align-items-center ion-justify-content-center" size-md="10">
+        <ion-button class="white-back" (click)="logout()">{{ 'AUTH.LOGOUT' | translate }}</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+

@@ -12,7 +12,7 @@ import {LiveGameSettings} from "../models/liveGameSettings";
 import {LiveGame} from "../models/liveGame";
 import {CheckpointState} from "../interfaces/CheckpointState";
 import {LiveGameService} from "./live-game.service";
-import {Player} from "../models/Player";
+import {PlayerModel} from "../models/player.model";
 import {AlertController, LoadingController, ModalController, NavController} from "@ionic/angular";
 import {JoinOrCreateTeamComponent} from "../shared/components/join-or-create-team/join-or-create-team.component";
 import {take} from "rxjs/operators";
@@ -26,7 +26,7 @@ export class GameModePage implements OnInit, OnDestroy {
 
   game: Game;
   event: Event;
-  player: Player;
+  player: PlayerModel;
   user: User = null;
   getGame = false;
   getEvent = false;
@@ -102,7 +102,7 @@ export class GameModePage implements OnInit, OnDestroy {
         });
         this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
           if (players) {
-            let player = (players as Player[]).find(p => (p.liveGameId === this.liveGame.id && p.teamName === teamName));
+            let player = (players as PlayerModel[]).find(p => (p.liveGameId === this.liveGame.id && p.teamName === teamName));
             if (player) {
               player.teamMembers.push(teamMember);
               this.updatePlayer(player);
@@ -204,7 +204,7 @@ export class GameModePage implements OnInit, OnDestroy {
         this.game = game;
         this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
           if (players) {
-            let selectedPlayers = (players as Player[]).filter(p => p.liveGameId === this.liveGame.id);
+            let selectedPlayers = (players as PlayerModel[]).filter(p => p.liveGameId === this.liveGame.id);
             if (this.liveGame.startDate) {
               this.showAlert("The game has started","Unfortunately the game has already started");
             } else {
@@ -246,7 +246,7 @@ export class GameModePage implements OnInit, OnDestroy {
       case GameMode.teamGame: {
         this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
           if (players) {
-            let player = (players as Player[]).find(p => p.liveGameId === this.liveGame.id);
+            let player = (players as PlayerModel[]).find(p => p.liveGameId === this.liveGame.id);
             if (player) {
               player.teamMembers.push({id: this.user.id, name: this.user.username});
               this.updatePlayer(player);
@@ -260,7 +260,7 @@ export class GameModePage implements OnInit, OnDestroy {
     }
   }
 
-  canJoin(players: Player[]) {
+  canJoin(players: PlayerModel[]) {
     let oke = false;
     let canAddTeam = false;
     let canAddMember = false;
@@ -316,7 +316,7 @@ export class GameModePage implements OnInit, OnDestroy {
       };
       checkpointStates.push(checkpointState);
     }
-    this.player = new Player(null, this.liveGame.id, teamName, teamMembers, checkpointStates);
+    this.player = new PlayerModel(null, this.liveGame.id, teamName, teamMembers, checkpointStates);
     this.loadingController.create({ keyboardClose: true, message: 'Create team...',  }).then(loadingEl => {
       loadingEl.present();
       this.liveGameService.createPlayer(this.player).pipe(take(1)).subscribe(createdPlayer => {
@@ -330,7 +330,7 @@ export class GameModePage implements OnInit, OnDestroy {
     });
   }
 
-  updatePlayer(player: Player) {
+  updatePlayer(player: PlayerModel) {
     this.loadingController.create({ keyboardClose: true, message: 'Update team...',  }).then(loadingEl => {
       loadingEl.present();
       this.liveGameService.updatePlayer(player).pipe(take(1)).subscribe(updatedPlayer => {

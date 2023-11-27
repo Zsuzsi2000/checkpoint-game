@@ -1,4 +1,5 @@
 import {LiveGameSettings} from "./liveGameSettings";
+import {Joined} from "../interfaces/Joined";
 
 export class Event {
   constructor(
@@ -13,6 +14,6 @@ export class Event {
     public description: string = null,
     public liveGameSettings: LiveGameSettings = new LiveGameSettings(),
     public players: string[] = [],
-    public joined: { teamName: string, teamMembers: {id: string, name: string}[]}[] = [],
+    public joined: Joined[] = [],
   ) {}
 }

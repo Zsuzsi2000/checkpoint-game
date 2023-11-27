@@ -47,6 +47,7 @@ export class EventCardComponent implements OnInit {
           favouriteGames: this.loggedUser.favouriteGames,
           eventsUserSignedUpFor: this.loggedUser.eventsUserSignedUpFor,
           savedEvents: this.loggedUser.savedEvents,
+          permissions: this.loggedUser.permissions,
         };
       }
     }

@@ -142,7 +142,7 @@ export class AuthService implements OnDestroy {
     }
     this._user.next(null);
 
-    this.router.navigate(['/', 'auth'])
+    this.router.navigate(['/', 'auth']);
     Preferences.remove({key: 'authData'});
   }
 
@@ -171,7 +171,8 @@ export class AuthService implements OnDestroy {
           return null;
         }
         return new User(parsedData.user.id, parsedData.user.email, parsedData.user.username, parsedData.user.country,
-          parsedData.user.picture, parsedData.user.favouriteGames, parsedData.user.eventsUserSignedUpFor, parsedData.user.savedEvents, parsedData.token, expirationTime);
+          parsedData.user.picture, parsedData.user.favouriteGames, parsedData.user.eventsUserSignedUpFor, parsedData.user.savedEvents,
+          parsedData.user.permissions, parsedData.token, expirationTime);
       }),
       tap(user => {
         if (user) {

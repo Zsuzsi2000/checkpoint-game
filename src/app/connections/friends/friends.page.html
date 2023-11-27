@@ -3,18 +3,42 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Connections</ion-title>
+    <ion-title>{{ 'CONNECTIONS.FRIENDS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <app-list-of-users [currentTypeOfListingUsers]="currentTypeOfListingUsers" [list]="friends"></app-list-of-users>
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-searchbar [debounce]="1000"
+                 (ionInput)="filtering($event)"
+                 placeholder="Search"></ion-searchbar>
+  <ion-list *ngIf="friends">
+    <ion-list-header>
+      <ion-label>Friends</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let friend of friends">
+      <ion-avatar slot="start">
+        <img alt="Profile picture" [src]="friend.picture"/>
+      </ion-avatar>
+      <ion-label>{{ friend.username }}</ion-label>
+      <ion-buttons slot="end">
+        <ion-button size="small" (click)="deleteConnection(friend.id)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+        <ion-button size="small" (click)="goToChat(friend)">
+          <ion-icon name="chatbubble-ellipses"></ion-icon>
+        </ion-button>
+        <ion-button size="small" [routerLink]="['/', 'profile', friend.id]">
+          <ion-icon name="arrow-forward"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" color="tertiary">
     <ion-fab-button>
-      <ion-icon name="swap-horizontal" [routerLink]="['/','connections', 'tabs', 'friends', 'requests']"></ion-icon>
+      <ion-icon name="swap-horizontal" (click)="showOthers(false)"></ion-icon>
     </ion-fab-button>
     <ion-fab-button>
-      <ion-icon name="add" [routerLink]="['/','connections', 'tabs', 'friends', 'new']"></ion-icon>
+      <ion-icon name="add" (click)="showOthers(true)"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

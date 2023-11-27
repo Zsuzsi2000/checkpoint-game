@@ -1,6 +1,9 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>chat</ion-title>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/connections/tabs/chats"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ chat ? chat.name : 'Loading' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 

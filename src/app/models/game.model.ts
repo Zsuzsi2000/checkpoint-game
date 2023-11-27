@@ -2,6 +2,8 @@ import {Checkpoint} from "./checkpoint.model";
 import {Location} from "../interfaces/Location";
 import {LocationType} from "../enums/LocationType";
 import {LocationIdentification} from "../enums/LocationIdentification";
+import {Bests} from "../interfaces/Bests";
+import {Rating} from "../interfaces/Rating";
 
 export class Game {
   public id: string;
@@ -21,8 +23,8 @@ export class Game {
   public creationDate: Date;
   public itIsPublic: boolean;
   public checkpoints: Checkpoint[];
-  public ratings: { username: string, text: string }[];
-  public bests: { score: number, duration: number, checkpointDuration: number };
+  public ratings: Rating[];
+  public bests: Bests;
   public userId: string;
   public mapUrl: string;
 

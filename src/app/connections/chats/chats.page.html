@@ -3,13 +3,36 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Connections</ion-title>
+    <ion-title>{{ 'CONNECTIONS.CHATS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <app-list-of-users [currentTypeOfListingUsers]="currentTypeOfListingUsers" [list]="chats"></app-list-of-users>
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-searchbar [debounce]="1000"
+                 (ionInput)="filtering($event)"
+                 placeholder="Search"></ion-searchbar>
+  <ion-list *ngIf="chats">
+    <ion-list-header>
+      <ion-label>Chats</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let chat of filteredChats">
+      <ng-container [ngSwitch]="chat.type">
+        <ion-icon *ngSwitchCase="ChatType.personal" name="person-circle-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.group" name="people-circle-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.eventGroup" name="calendar-clear-outline"></ion-icon>
+      </ng-container>
+      <ion-label>{{ chat.name }}</ion-label>
+      <ion-buttons slot="end">
+        <ion-button size="small" (click)="deleteChat(chat)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+        <ion-button size="small" [routerLink]="['/', 'connections', 'tabs', 'chats', 'chat', chat.id]">
+          <ion-icon name="arrow-forward"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" color="tertiary">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

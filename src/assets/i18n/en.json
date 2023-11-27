@@ -23,5 +23,21 @@
   },
   "GAMES": {
     "NAME": "Games"
+  },
+  "PROFILE": {
+    "SETTINGS": {
+      "SETTINGS": "Settings",
+      "LANGUAGE": "Language",
+      "ENGLISH": "English",
+      "HUNGARIAN": "Hungarian",
+      "PERMISSIONS": "Notification permissions",
+      "MESSAGE": "Message",
+      "FRIEND_REQUESTS": "Friend requests",
+      "EVENT_REMINDER": "Event reminder"
+    }
+  },
+  "CONNECTIONS": {
+    "FRIENDS": "Friends",
+    "CHATS": "Chats"
   }
 }

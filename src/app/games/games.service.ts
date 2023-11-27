@@ -223,7 +223,7 @@ export class GamesService {
         if (!games || games.length < 1) {
           return this.fetchGames();
         } else {
-          return of(games); //switchmap has to return observable
+          return of(games);
         }
       }),
       switchMap(games => {

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { ChatsPageRoutingModule } from './chats-routing.module';
 import { ChatsPage } from './chats.page';
 import {SharedModule} from '../../shared/shared.module';
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import {SharedModule} from '../../shared/shared.module';
     FormsModule,
     IonicModule,
     ChatsPageRoutingModule,
-    SharedModule
+    SharedModule,
+    TranslateModule
   ],
     declarations: [ChatsPage]
 })

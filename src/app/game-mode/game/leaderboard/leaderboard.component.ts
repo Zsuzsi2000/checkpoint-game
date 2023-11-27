@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Player} from "../../../models/Player";
+import {PlayerModel} from "../../../models/player.model";
 import {AlertController, ModalController} from "@ionic/angular";
 import {LiveGameService} from "../../live-game.service";
 import {LiveGame} from "../../../models/liveGame";
@@ -15,7 +15,7 @@ export class LeaderboardComponent implements OnInit {
   @Input() liveGameId: string;
   @Input() quiz: boolean;
   liveGame: LiveGame;
-  players: { player: Player, score: number, doneNumber: number }[] = [];
+  players: { player: PlayerModel, score: number, doneNumber: number }[] = [];
   isLoading: boolean;
 
   constructor(private modalCtrl: ModalController,
