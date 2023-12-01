@@ -5,8 +5,11 @@ import {ChatType} from '../../enums/ChatType';
 import {TypeOfListingUsers} from '../../enums/TypeOfListingUsers';
 import {AuthService} from "../../auth/auth.service";
 import {take} from "rxjs/operators";
-import {AlertController} from "@ionic/angular";
+import {AlertController, ModalController} from "@ionic/angular";
 import {User} from "../../models/user.model";
+import {CreateChatPage} from "./create-chat/create-chat.page";
+import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-chats',
@@ -21,10 +24,16 @@ export class ChatsPage implements OnInit {
   ChatType = ChatType;
   filter = "";
   user: User;
+  currentLanguage = "";
 
   constructor(private connectionsService: ConnectionsService,
               private authService: AuthService,
-              private alertCtrl: AlertController) { }
+              private alertCtrl: AlertController,
+              private modalCtrl: ModalController,
+              private translate: TranslateService,
+              private router: Router) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
   }
@@ -50,11 +59,23 @@ export class ChatsPage implements OnInit {
     this.filteredChats = this.chats.filter(g => this.filter === "" ? g : g.name.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
   }
 
+  createChat() {
+    this.modalCtrl.create({ component: CreateChatPage, componentProps: { user: this.user } }).then(modalEl => {
+      modalEl.onDidDismiss().then(data => {
+        if (data.data) {
+          this.updateChats();
+          this.router.navigate(['/', 'connections', 'chat', data.data]);
+        }
+      });
+      modalEl.present();
+    })
+  }
+
   deleteChat(chat: Chat) {
     this.alertCtrl
       .create({
-        header: 'Are you sure you want to delete your account?',
-        message: 'The events and games you created will not be available.',
+        header: 'Delete chat',
+        message: 'Are you sure you want to delete this chat?',
         buttons: [
           {
             text: "Cancel",
@@ -86,7 +107,6 @@ export class ChatsPage implements OnInit {
         this.updateChats();
       })
     }
-
   }
 
 

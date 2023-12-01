@@ -1,5 +1,8 @@
 {
   "BACK": "Vissza",
+  "CANCEL": "Vissza",
+  "DONE": "Kész",
+  "LOADING": "Töltődik",
   "AUTH": {
     "AUTH": "Autentikáció",
     "LOGIN": "Bejelentkezés",
@@ -39,7 +42,20 @@
     }
   },
   "CONNECTIONS": {
+    "CONNECTIONS": "Kapcsolatok",
     "FRIENDS": "Barátok",
-    "CHATS": "Csevegések"
+    "USERS": "Felhasználók",
+    "CHATS": "Csevegések",
+    "CREATE_CHAT": "Csevegés létrehozása",
+    "ADDED_TO_CHAT": "Csevegéshez hozzáadva",
+    "ADD": "Hozzáad",
+    "NAME_OF_THE_CHAT": "A csoport neve",
+    "GROUP_IS_REQUIRED": "Csoport név kötelező",
+    "IN_PROGRESS": "Folyamatban",
+    "FIND_NEW_FRIENDS": "Új barátok keresése",
+    "FRIEND_REQUESTS": "Barát kérelmek",
+    "MARKED": "Bejelölt",
+    "CONFIRM": "Elfogad",
+    "REMOVE": "Eltávolít"
   }
 }

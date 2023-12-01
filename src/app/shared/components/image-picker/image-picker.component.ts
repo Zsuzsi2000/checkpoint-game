@@ -48,23 +48,9 @@ export class ImagePickerComponent implements OnInit {
       resultType: CameraResultType.DataUrl
     })
       .then(image => {
-        // console.warn(
-        //   `Original: ${image.dataUrl.substring(0, 50)}... (${image.dataUrl.length} characters)`
-        // );
-        // console.warn('Size in bytes was:', this.imageCompress.byteCount(image.dataUrl));
-
         this.imageCompress
           .compressFile(image.dataUrl, -1, 50, 30)
           .then((result: DataUrl) => {
-            // console.warn(
-            //   `Compressed: ${result.substring(0, 50)}... (${
-            //     result.length
-            //   } characters)`
-            // );
-            // console.warn(
-            //   'Size in bytes is now:',
-            //   this.imageCompress.byteCount(result)
-            // );
             this.selectedImage = result;
             this.imagePick.emit(result);
           });
@@ -88,26 +74,11 @@ export class ImagePickerComponent implements OnInit {
     const fr = new FileReader();
     fr.onload = () => {
       const dataUrl = fr.result.toString();
-      // console.warn(
-      //   `Original: ${dataUrl.substring(0, 50)}... (${dataUrl.length} characters)`
-      // );
-      // console.warn('Size in bytes was:', this.imageCompress.byteCount(dataUrl));
-
       this.imageCompress
         .compressFile(dataUrl, -1, 50, 30)
         .then((result: DataUrl) => {
-          // console.warn(
-          //   `Compressed: ${result.substring(0, 50)}... (${
-          //     result.length
-          //   } characters)`
-          // );
-          // console.warn(
-          //   'Size in bytes is now:',
-          //   this.imageCompress.byteCount(result)
-          // );
           this.selectedImage = result;
           this.imagePick.emit(result);
-
         });
     };
     fr.readAsDataURL(pickedFile);

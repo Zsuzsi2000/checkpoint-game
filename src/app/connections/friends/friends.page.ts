@@ -5,11 +5,12 @@ import {UserData} from "../../interfaces/UserData";
 import {AuthService} from "../../auth/auth.service";
 import {take} from "rxjs/operators";
 import {User} from "../../models/user.model";
-import {ModalController} from "@ionic/angular";
+import {AlertController, ModalController} from "@ionic/angular";
 import {NewPage} from "./new/new.page";
 import {ChatType} from "../../enums/ChatType";
 import {Chat} from "../../models/chat.model";
 import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-friends',
@@ -23,10 +24,16 @@ export class FriendsPage implements OnInit {
   filteredFriends: UserData[] = [];
   user: User;
   filter = "";
+  currentLanguage = "";
+
   constructor(private connectionsService: ConnectionsService,
               private authService: AuthService,
               private modalCtrl: ModalController,
-              private router: Router) { }
+              private alertCtrl: AlertController,
+              private router: Router,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
   }
@@ -61,6 +68,28 @@ export class FriendsPage implements OnInit {
   }
 
   deleteConnection(id: string) {
+    this.alertCtrl
+      .create({
+        header: 'Delete friend',
+        message: 'Are you sure you want to delete your friend?',
+        buttons: [
+          {
+            text: "Cancel",
+            role: "cancel",
+          },
+          {
+            text: "Delete",
+            role: "delete",
+            handler: () => {
+              this.delete(id);
+            }
+          }
+        ]
+      })
+      .then(alertEl => alertEl.present());
+  }
+
+  delete(id: string) {
     this.connectionsService.getConnections(this.user.id).pipe(take(1)).subscribe(connections => {
       let connect = connections.find(c => (c.userOneId === id || c.userTwoId === id));
       if (connect !== undefined) {
@@ -79,10 +108,10 @@ export class FriendsPage implements OnInit {
         if (chat === undefined) {
           let newChat = new Chat(null, friend.username, null, [this.user.id, friend.id],[], ChatType.personal);
           this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(id => {
-            this.router.navigate(['/', 'connections', 'tabs', 'chats', 'chat', id]);
+            this.router.navigate(['/', 'connections', 'chat', id]);
           })
         } else {
-          this.router.navigate(['/', 'connections', 'tabs', 'chats', 'chat', chat.id]);
+          this.router.navigate(['/', 'connections', 'chat', chat.id]);
         }
       }
     })

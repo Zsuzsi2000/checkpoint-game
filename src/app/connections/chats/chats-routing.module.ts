@@ -1,21 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
 import { ChatsPage } from './chats.page';
+
 
 const routes: Routes = [
   {
     path: '',
     component: ChatsPage
   },
-  {
-    path: 'create-chat',
-    loadChildren: () => import('./create-chat/create-chat.module').then( m => m.CreateChatPageModule)
-  },
-  {
-    path: 'chat/:chatId',
-    loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
-  }
+  // {
+  //   path: 'chat/:chatId',
+  //   component: ChatPage
+  // }
 ];
 
 @NgModule({

@@ -3,17 +3,17 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ 'CONNECTIONS.FRIENDS' | translate }}</ion-title>
+    <ion-title>{{ 'CONNECTIONS.CONNECTIONS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-searchbar [debounce]="1000"
                  (ionInput)="filtering($event)"
-                 placeholder="Search"></ion-searchbar>
+                 [placeholder]="currentLanguage === 'hu' ? 'Keresés' : 'Search'"></ion-searchbar>
   <ion-list *ngIf="friends">
     <ion-list-header>
-      <ion-label>Friends</ion-label>
+      <ion-label>{{ 'CONNECTIONS.FRIENDS' | translate }}</ion-label>
     </ion-list-header>
     <ion-item *ngFor="let friend of friends">
       <ion-avatar slot="start">
@@ -34,10 +34,10 @@
     </ion-item>
   </ion-list>
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" color="tertiary">
-    <ion-fab-button>
+    <ion-fab-button class="ion-margin">
       <ion-icon name="swap-horizontal" (click)="showOthers(false)"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button>
+    <ion-fab-button class="ion-margin">
       <ion-icon name="add" (click)="showOthers(true)"></ion-icon>
     </ion-fab-button>
   </ion-fab>

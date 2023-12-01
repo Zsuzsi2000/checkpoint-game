@@ -1,40 +1,40 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="back()">Cancel</ion-button>
+      <ion-button (click)="back()">{{ 'CANCEL' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title>{{ isNew ? 'Find new friends' : 'Friend requests'}}</ion-title>
+    <ion-title>{{ isNew ? ('CONNECTIONS.FIND_NEW_FRIENDS' | translate) : ('CONNECTIONS.FRIEND_REQUESTS' | translate)}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-searchbar [debounce]="1000"
                  (ionInput)="filtering($event)"
-                 placeholder="Search"></ion-searchbar>
+                 [placeholder]="currentLanguage === 'hu' ? 'Keresés' : 'Search'"></ion-searchbar>
   <ion-list *ngIf="filteredUsers">
     <ion-list-header>
-      <ion-label>{{ isNew ? 'Users' : 'In progress'}}</ion-label>
+      <ion-label>{{ isNew ? ('CONNECTIONS.USERS' | translate) : ('CONNECTIONS.IN_PROGRESS' | translate) }}</ion-label>
     </ion-list-header>
     <ion-item *ngFor="let user of filteredUsers">
       <ion-avatar slot="start">
         <img alt="Profile picture" [src]="user.user.picture"/>
       </ion-avatar>
       <ion-label>{{ user.user.username }}</ion-label>
-      <ion-badge *ngIf="user.marked === 'sender'" slot="end" class="ion-no-margin">Marked</ion-badge>
+      <ion-badge *ngIf="user.marked === 'sender'" slot="end" class="ion-no-margin">{{ 'CONNECTIONS.MARKED' | translate }}</ion-badge>
       <ion-buttons slot="end" [ngSwitch]="user.marked">
         <ng-container *ngSwitchCase="'receiver'">
           <ion-button class="custom-button" size="small" (click)="confirmRequest(user.user.id)">
-            <ion-label>Confirm</ion-label>
+            <ion-label>{{ 'CONNECTIONS.CONFIRM' | translate }}</ion-label>
           </ion-button>
           <ion-button class="custom-button" size="small" (click)="deleteRequest(user.user.id)">
-            <ion-label>Remove</ion-label>
+            <ion-label>{{ 'CONNECTIONS.REMOVE' | translate }}</ion-label>
           </ion-button>
         </ng-container>
         <ion-button *ngSwitchCase="'sender'" class="custom-button" size="small" (click)="deleteRequest(user.user.id)">
-          <ion-label>Cancel</ion-label>
+          <ion-label>{{ 'CANCEL' | translate }}</ion-label>
         </ion-button>
         <ion-button *ngSwitchCase="'none'" class="custom-button" size="small" (click)="createRequest(user.user.id)">
-          <ion-label>Add</ion-label>
+          <ion-label>{{ 'CONNECTIONS.ADD' | translate }}</ion-label>
         </ion-button>
         <ion-button [routerLink]="['/', 'profile', user.user.id]">
           <ion-icon name="arrow-forward"></ion-icon>

@@ -1,0 +1,58 @@
+{
+  "rules": {
+    "games": {
+      ".read": true,
+      ".write": "auth.uid !== null",
+      "$gameId": {
+        ".read": true,
+        ".write": "data.child('userId').val() === auth.uid"
+      },
+      ".indexOn": ["userId"]
+    },
+    "events": {
+      ".read": true,
+      ".write": "auth.uid !== null",
+      "$eventId": {
+        ".read": true,
+        ".write": "auth.uid !== null"
+      },
+      ".indexOn": ["creatorId"]
+    },
+    "users" : {
+      ".read": true,
+      ".write": true,
+      "$userId": {
+        ".read" : true,
+        ".write" : "$userId === auth.uid"
+      }
+    },
+    "categories" : {
+      ".read": true,
+      ".write": "auth.uid !== null"
+    },
+    "livegames" : {
+      ".read": true,
+      ".write": true
+    },
+    "players" : {
+      ".read": true,
+      ".write": true
+    },
+    "countries": {
+      ".read": true,
+      ".write": false
+    },
+    "chats" : {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
+    "requests" : {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
+    "connections" : {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    }
+  }
+}

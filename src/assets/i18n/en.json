@@ -1,5 +1,8 @@
 {
   "BACK": "Back",
+  "CANCEL": "Cancel",
+  "Done": "Done",
+  "LOADING": "Loading",
   "AUTH": {
     "AUTH": "Authentication",
     "LOGIN": "Login",
@@ -37,7 +40,20 @@
     }
   },
   "CONNECTIONS": {
+    "CONNECTIONS": "Connections",
     "FRIENDS": "Friends",
-    "CHATS": "Chats"
+    "USERS": "Users",
+    "CHATS": "Chats",
+    "CREATE_CHAT": "Chat creating",
+    "ADDED_TO_CHAT": "Added to chat",
+    "ADD": "Add",
+    "NAME_OF_THE_CHAT": "Name of the group",
+    "GROUP_IS_REQUIRED": "Group name is required",
+    "IN_PROGRESS": "In progress",
+    "FIND_NEW_FRIENDS": "Find new friends",
+    "FRIEND_REQUESTS": "Friend requests",
+    "MARKED": "Marked",
+    "CONFIRM": "Confirm",
+    "REMOVE": "Remove"
   }
 }

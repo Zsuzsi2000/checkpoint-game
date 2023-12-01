@@ -11,6 +11,7 @@ import {Connection} from "../../../models/connection.model";
 import {ModalController} from "@ionic/angular";
 import {UserService} from "../../../services/user.service";
 import {Event} from "../../../models/event.model";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-new',
@@ -28,11 +29,16 @@ export class NewPage implements OnInit {
   ownRequests: Request[] = [];
   requestsSub: Subscription;
   connectionsSub: Subscription;
+  currentLanguage = "";
+
 
   constructor(private connectionsService: ConnectionsService,
               private authService: AuthService,
               private userService: UserService,
-              private modalCtrl: ModalController) { }
+              private modalCtrl: ModalController,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
   }

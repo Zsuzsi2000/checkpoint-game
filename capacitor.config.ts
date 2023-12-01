@@ -15,7 +15,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.checkpointgame.app',
   appName: 'Checkpoint game',
-  webDir: 'src',
+  webDir: 'www',
   bundledWebRuntime: false,
   server: {
     androidScheme: 'https'

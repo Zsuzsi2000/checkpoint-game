@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/connections/tabs/chats"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ chat ? chat.name : 'LOADING' | translate }}</ion-title>
+    <ion-button slot="end" (click)="settings()">
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="chat && chat.message && chat.message.length > 0">
+    <ion-card *ngFor="let message of chat.message">
+      <ion-card-header>
+        <ion-card-header>
+          <ion-label>{{ message.user }}</ion-label>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-label>{{ message.text }}</ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card-header>
+    </ion-card>
+  </ng-container>
+  <ion-item lines="none" class="ion-margin type">
+    <ion-input
+      type="text"
+      labelPlacement="stacked"
+      [placeholder]="currentLanguage === 'hu' ? 'Írj ide ...' : 'Type here ...'"
+      #textMessage
+    ></ion-input>
+    <ion-button (click)="sendMessage(textMessage.value)">
+      <ion-icon name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-content>

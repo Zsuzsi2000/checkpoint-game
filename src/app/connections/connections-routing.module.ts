@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ConnectionsPage } from './connections.page';
+import {ChatPage} from "./chat/chat.page";
 
 const routes: Routes = [
   {
@@ -16,12 +17,20 @@ const routes: Routes = [
         path: 'chats',
         loadChildren: () => import('./chats/chats.module').then( m => m.ChatsPageModule)
       },
+      // {
+      //   path: 'chat/:chatId',
+      //   component: ChatPage
+      // },
       {
         path: '',
         redirectTo: '/connections/tabs/friends',
         pathMatch: 'full'
       }
     ]
+  },
+  {
+    path: 'chat/:chatId',
+    component: ChatPage
   },
   {
     path: '',

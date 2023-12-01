@@ -7,6 +7,7 @@ import {EditGamePage} from "./edit-game.page";
 import {SharedModule} from "../../shared/shared.module";
 import {EditCheckpointsPage} from "./edit-checkpoints/edit-checkpoints.page";
 import {EditGamePageRoutingModule} from "./edit-game-routing.module";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import {EditGamePageRoutingModule} from "./edit-game-routing.module";
     Ng2SearchPipeModule,
     ReactiveFormsModule,
     SharedModule,
+    TranslateModule
   ],
   declarations: [
     EditGamePage,

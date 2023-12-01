@@ -7,6 +7,7 @@ import { GamePage } from './game.page';
 import {LeaderboardComponent} from "./leaderboard/leaderboard.component";
 import {CheckpointsComponent} from "./checkpoints/checkpoints.component";
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import {TranslateModule} from "@ngx-translate/core";
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
     FormsModule,
     IonicModule,
     GamePageRoutingModule,
-    ZXingScannerModule
+    ZXingScannerModule,
+    TranslateModule
   ],
   declarations: [
     GamePage,

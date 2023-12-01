@@ -8,6 +8,7 @@ import {Ng2SearchPipeModule} from "ng2-search-filter";
 import {GameDetailsPage} from "./game-details/game-details.page";
 import {SharedModule} from "../shared/shared.module";
 import {QRCodeModule} from "angularx-qrcode";
+import {TranslateModule} from "@ngx-translate/core";
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import {QRCodeModule} from "angularx-qrcode";
     Ng2SearchPipeModule,
     ReactiveFormsModule,
     SharedModule,
-    QRCodeModule
+    QRCodeModule,
+    TranslateModule
   ],
   declarations: [
     GamesPage,

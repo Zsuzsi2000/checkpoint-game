@@ -3,17 +3,17 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ 'CONNECTIONS.CHATS' | translate }}</ion-title>
+    <ion-title>{{ 'CONNECTIONS.CONNECTIONS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-searchbar [debounce]="1000"
                  (ionInput)="filtering($event)"
-                 placeholder="Search"></ion-searchbar>
+                 [placeholder]="currentLanguage === 'hu' ? 'Keresés' : 'Search'"></ion-searchbar>
   <ion-list *ngIf="chats">
     <ion-list-header>
-      <ion-label>Chats</ion-label>
+      <ion-label>{{ 'CONNECTIONS.CHATS' | translate }}</ion-label>
     </ion-list-header>
     <ion-item *ngFor="let chat of filteredChats">
       <ng-container [ngSwitch]="chat.type">
@@ -26,14 +26,14 @@
         <ion-button size="small" (click)="deleteChat(chat)">
           <ion-icon name="trash"></ion-icon>
         </ion-button>
-        <ion-button size="small" [routerLink]="['/', 'connections', 'tabs', 'chats', 'chat', chat.id]">
+        <ion-button size="small" [routerLink]="['/', 'connections', 'chat', chat.id]">
           <ion-icon name="arrow-forward"></ion-icon>
         </ion-button>
       </ion-buttons>
     </ion-item>
   </ion-list>
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" color="tertiary">
-    <ion-fab-button>
+    <ion-fab-button (click)="createChat()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

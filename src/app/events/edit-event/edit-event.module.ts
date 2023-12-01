@@ -8,6 +8,7 @@ import { EditEventPageRoutingModule } from './edit-event-routing.module';
 
 import { EditEventPage } from './edit-event.page';
 import {SharedModule} from "../../shared/shared.module";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import {SharedModule} from "../../shared/shared.module";
     FormsModule,
     IonicModule,
     EditEventPageRoutingModule,
-    SharedModule
+    SharedModule,
+    TranslateModule
   ],
   declarations: [EditEventPage]
 })

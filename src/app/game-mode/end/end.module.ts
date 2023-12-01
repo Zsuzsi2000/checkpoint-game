@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { EndPageRoutingModule } from './end-routing.module';
 
 import { EndPage } from './end.page';
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    EndPageRoutingModule
+    EndPageRoutingModule,
+    TranslateModule
   ],
   declarations: [EndPage]
 })
