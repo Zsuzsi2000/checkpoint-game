@@ -2,10 +2,23 @@ ion-toolbar {
   color: #2b2b2b;
 }
 
+.edit-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .type {
-  position: absolute;;
-  bottom: 0;
   border: 1px solid #252525;
   border-radius: 20px;
-  width: 100%;
+  ion-input {
+    width: calc(100% - 40px); /* Adjust the width of the input field */
+    margin-right: 10px;
+  }
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: auto;
 }

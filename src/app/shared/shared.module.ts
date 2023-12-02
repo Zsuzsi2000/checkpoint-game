@@ -17,6 +17,7 @@ import {EventEditorComponent} from "./components/event-editor/event-editor.compo
 import {SavedComponent} from "./components/saved/saved.component";
 import {JoinOrCreateTeamComponent} from "./components/join-or-create-team/join-or-create-team.component";
 import {EventCardComponent} from "./components/event-card/event-card.component";
+import {ShareComponent} from "./components/share/share.component";
 import {RouterModule} from "@angular/router";
 import {GameCardComponent} from "./components/game-card/game-card.component";
 import {QRCodeModule} from "angularx-qrcode";
@@ -40,7 +41,8 @@ import {TranslateModule} from "@ngx-translate/core";
     SavedComponent,
     JoinOrCreateTeamComponent,
     EventCardComponent,
-    GameCardComponent
+    GameCardComponent,
+    ShareComponent
   ],
   imports: [
     CommonModule,
@@ -68,7 +70,8 @@ import {TranslateModule} from "@ngx-translate/core";
     SavedComponent,
     JoinOrCreateTeamComponent,
     EventCardComponent,
-    GameCardComponent
+    GameCardComponent,
+    ShareComponent
   ]
 })
 export class SharedModule { }

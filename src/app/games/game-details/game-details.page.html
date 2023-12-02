@@ -6,7 +6,7 @@
     <ion-title>{{ isLoading ? 'Loading ... ' : game.name }}</ion-title>
     <ion-buttons slot="end" *ngIf="!isLoading" class="ion-no-margin ion-no-padding">
       <app-favourite *ngIf="user" [gameId]="game.id"></app-favourite>
-      <ion-button *ngIf="user">
+      <ion-button *ngIf="user" (click)="shareGame()">
         <ion-icon name="share-social"></ion-icon>
       </ion-button>
       <ion-button *ngIf="ownGame" (click)="editGame(game.id)">

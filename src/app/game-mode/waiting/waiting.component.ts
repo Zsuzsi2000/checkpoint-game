@@ -6,7 +6,9 @@ import {interval, Subscription} from "rxjs";
 import {switchMap, take} from "rxjs/operators";
 import {LiveGameService} from "../live-game.service";
 import {Router} from "@angular/router";
-import {LoadingController} from "@ionic/angular";
+import {LoadingController, ModalController} from "@ionic/angular";
+import {ShareComponent} from "../../shared/components/share/share.component";
+import {User} from "../../models/user.model";
 
 @Component({
   selector: 'app-waiting',
@@ -17,6 +19,7 @@ export class WaitingComponent implements OnInit {
 
   @Input() liveGame: LiveGame;
   @Input() creator: boolean;
+  @Input() creatorObject: User;
   @Input() event: Event;
   players: PlayerModel[] = [];
   playersSub: Subscription;
@@ -25,7 +28,8 @@ export class WaitingComponent implements OnInit {
 
   constructor(private liveGameService: LiveGameService,
               private router: Router,
-              private loadingController: LoadingController) { }
+              private loadingController: LoadingController,
+              private modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.playersSub = interval(3000).pipe(
@@ -80,6 +84,17 @@ export class WaitingComponent implements OnInit {
   ionViewDidLeave() {
     if (this.playersSub) this.playersSub.unsubscribe();
     if (this.startSub) this.startSub.unsubscribe();
+  }
+
+  shareAccessCode() {
+    this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.creatorObject, accessCode: this.liveGame.accessCode } }).then(modalEl => {
+      modalEl.onDidDismiss().then(modalData => {
+        if (modalData.data) {
+          console.log(modalData.data);
+        }
+      });
+      modalEl.present();
+    });
   }
 
 }

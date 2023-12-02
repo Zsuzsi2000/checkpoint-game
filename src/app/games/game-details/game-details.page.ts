@@ -12,6 +12,7 @@ import {UserService} from "../../services/user.service";
 import {jsPDF} from "jspdf";
 import {Checkpoint} from "../../models/checkpoint.model";
 import {LocationIdentification} from "../../enums/LocationIdentification";
+import {ShareComponent} from "../../shared/components/share/share.component";
 
 @Component({
   selector: 'app-game-details',
@@ -130,6 +131,18 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   editGame(id: string) {
     this.router.navigate(['/', 'games', 'edit-game', id]);
+  }
+
+  shareGame() {
+    this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.user, game: this.game } }).then(modalEl => {
+      modalEl.onDidDismiss().then(modalData => {
+        if (modalData.data) {
+          console.log(modalData.data);
+          this.router.navigate(['/', 'connections', 'chat', modalData.data]);
+        }
+      });
+      modalEl.present();
+    });
   }
 
   navigateToGameMode() {

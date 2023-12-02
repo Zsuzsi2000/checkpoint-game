@@ -3,6 +3,7 @@ import {Event} from "../../../models/event.model";
 import {GameMode} from "../../../enums/GameMode";
 import {LocationType} from "../../../enums/LocationType";
 import {JoinOrCreateTeamComponent} from "../join-or-create-team/join-or-create-team.component";
+import {ShareComponent} from "../share/share.component";
 import {catchError, switchMap, take} from "rxjs/operators";
 import {of} from "rxjs";
 import {AlertController, ModalController} from "@ionic/angular";
@@ -12,6 +13,9 @@ import {User} from "../../../models/user.model";
 import {EventsService} from "../../../events/events.service";
 import {UserService} from "../../../services/user.service";
 import {UserData} from "../../../interfaces/UserData";
+import {Chat} from "../../../models/chat.model";
+import {ChatType} from "../../../enums/ChatType";
+import {ConnectionsService} from "../../../connections/connections.service";
 
 @Component({
   selector: 'app-event-card',
@@ -33,7 +37,8 @@ export class EventCardComponent implements OnInit {
               private modalCtrl: ModalController,
               private eventsService: EventsService,
               private userService: UserService,
-              private router: Router) { }
+              private router: Router,
+              private connectionsService: ConnectionsService) { }
 
   ngOnInit() {
     if (this.loggedUser) {
@@ -175,8 +180,32 @@ export class EventCardComponent implements OnInit {
     });
   }
 
-  goToChat(eventId: string) {
-    //TODO: goToChat
+  goToChat() {
+    this.connectionsService.fetchChats().pipe(take(1)).subscribe(chats => {
+      if (chats) {
+        let chat = chats.find(chat => chat.eventId === this.event.id);
+        if (chat === undefined) {
+          let newChat = new Chat(null, this.event.name, this.event.id, this.event.players,[], ChatType.eventGroup);
+          this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(id => {
+            this.router.navigate(['/', 'connections', 'chat', id]);
+          })
+        } else {
+          this.router.navigate(['/', 'connections', 'chat', chat.id]);
+        }
+      }
+    });
+  }
+
+  shareEvent() {
+    this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.loggedUser, event: this.event } }).then(modalEl => {
+      modalEl.onDidDismiss().then(modalData => {
+        if (modalData.data) {
+          console.log(modalData.data);
+          this.router.navigate(['/', 'connections', 'chat', modalData.data]);
+        }
+      });
+      modalEl.present();
+    });
   }
 
   deleteEvent(id: string) {

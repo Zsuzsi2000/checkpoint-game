@@ -20,7 +20,7 @@
               <ion-icon name="trash"></ion-icon>
             </ion-button>
             <app-saved [eventId]="event.id"></app-saved>
-            <ion-button *ngIf="loggedUser">
+            <ion-button *ngIf="loggedUser" (click)="shareEvent()">
               <ion-icon name="share-social"></ion-icon>
             </ion-button>
             <ion-button disabled class="whiteDisabled">
@@ -78,7 +78,7 @@
         <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                     class="custom-align-item margin-top" fill="solid" size="small" shape="round"
                     *ngIf="event.players.includes(loggedUser.id)"
-                    (click)="goToChat(event.id)">
+                    (click)="goToChat()">
           Chat
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>

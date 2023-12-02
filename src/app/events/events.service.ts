@@ -7,6 +7,9 @@ import {HttpClient} from "@angular/common/http";
 import {map, switchMap, take, tap} from "rxjs/operators";
 import {GameMode} from "../enums/GameMode";
 import {LiveGameSettings} from "../models/liveGameSettings";
+import {ConnectionsService} from "../connections/connections.service";
+import {Chat} from "../models/chat.model";
+import {ChatType} from "../enums/ChatType";
 
 interface EventData {
   name: string,
@@ -33,7 +36,10 @@ export class EventsService {
     return this._events.asObservable();
   }
 
-  constructor(private authService: AuthService, private userService: UserService, private http: HttpClient) {}
+  constructor(private authService: AuthService,
+              private userService: UserService,
+              private http: HttpClient,
+              private connectionsService: ConnectionsService) {}
 
   fetchEvents() {
     return this.http.get<{ [key: string]: EventData }>("https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/events.json")
@@ -107,6 +113,10 @@ export class EventsService {
       tap(id => {
         newEvent.id = id;
         this._events.next([...this._events.getValue(), newEvent]);
+        let newChat = new Chat(null, newEvent.name, newEvent.id, newEvent.players,[], ChatType.eventGroup);
+        this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(chat => {
+          console.log(chat);
+        })
       })
     );
   }
@@ -114,6 +124,7 @@ export class EventsService {
   updateEvent(event: Event) {
     let updatedEvents: Event[];
     let token;
+    let updatedEventIndex;
     return this.authService.token.pipe(
       take(1),
       switchMap(t => {
@@ -128,7 +139,7 @@ export class EventsService {
         }
       }),
       switchMap(events => {
-        const updatedEventIndex = events.findIndex(e => e.id === event.id);
+        updatedEventIndex = events.findIndex(e => e.id === event.id);
         updatedEvents = [...events];
         updatedEvents[updatedEventIndex] = event;
         return this.http.put(
@@ -138,6 +149,22 @@ export class EventsService {
       }),
       tap(() => {
         this._events.next(updatedEvents);
+        this.connectionsService.fetchChats().pipe(take(1)).subscribe(chats => {
+          if (chats) {
+            let chat = chats.find(chat => chat.eventId === updatedEvents[updatedEventIndex].id);
+            if (chat === undefined) {
+              let newChat = new Chat(null, updatedEvents[updatedEventIndex].name, updatedEvents[updatedEventIndex].id, updatedEvents[updatedEventIndex].players,[], ChatType.eventGroup);
+              this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(id => {
+                console.log(id);
+              })
+            } else {
+              chat.participants = updatedEvents[updatedEventIndex].players;
+              this.connectionsService.updateChat(chat).pipe(take(1)).subscribe(id => {
+                console.log(id);
+              })
+            }
+          }
+        })
       })
     );
   }

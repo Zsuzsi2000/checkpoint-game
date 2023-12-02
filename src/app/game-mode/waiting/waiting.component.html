@@ -6,6 +6,9 @@
           <ion-badge color="secondary fit-content">ACCESS CODE</ion-badge>
           <ion-item lines="none" class="ion-text-center">
             <ion-label class="ion-no-margin accesscode-style">{{ liveGame.accessCode }}</ion-label>
+            <ion-button *ngIf="creator" (click)="shareAccessCode()">
+              <ion-icon name="share-social"></ion-icon>
+            </ion-button>
           </ion-item>
         </ion-card-content>
       </ion-card>

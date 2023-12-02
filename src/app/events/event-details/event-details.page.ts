@@ -13,6 +13,10 @@ import {EventsService} from "../events.service";
 import {LocationType} from "../../enums/LocationType";
 import {GameMode} from "../../enums/GameMode";
 import {JoinOrCreateTeamComponent} from "../../shared/components/join-or-create-team/join-or-create-team.component";
+import {ChatType} from "../../enums/ChatType";
+import {Chat} from "../../models/chat.model";
+import {ConnectionsService} from "../../connections/connections.service";
+import {ShareComponent} from "../../shared/components/share/share.component";
 
 @Component({
   selector: 'app-event-details',
@@ -38,6 +42,7 @@ export class EventDetailsPage implements OnInit {
               private eventsService: EventsService,
               private authService: AuthService,
               private userService: UserService,
+              private connectionsService: ConnectionsService,
               private alertController: AlertController,
               private router: Router) {
   }
@@ -270,7 +275,31 @@ export class EventDetailsPage implements OnInit {
   }
 
   goToChat() {
-    //TODO: goToChat
+    this.connectionsService.fetchChats().pipe(take(1)).subscribe(chats => {
+      if (chats) {
+        let chat = chats.find(chat => chat.eventId === this.event.id);
+        if (chat === undefined) {
+          let newChat = new Chat(null, this.event.name, this.event.id, this.event.players,[], ChatType.eventGroup);
+          this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(id => {
+            this.router.navigate(['/', 'connections', 'chat', id]);
+          })
+        } else {
+          this.router.navigate(['/', 'connections', 'chat', chat.id]);
+        }
+      }
+    });
+  }
+
+  shareEvent() {
+    this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.user, event: this.event } }).then(modalEl => {
+      modalEl.onDidDismiss().then(modalData => {
+        if (modalData.data) {
+          console.log(modalData.data);
+          this.router.navigate(['/', 'connections', 'chat', modalData.data]);
+        }
+      });
+      modalEl.present();
+    });
   }
 
   showAlertAndNavigate() {

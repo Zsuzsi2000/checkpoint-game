@@ -17,7 +17,7 @@
               <ion-icon name="trash"></ion-icon>
             </ion-button>
             <app-favourite [gameId]="game.id"></app-favourite>
-            <ion-button *ngIf="loggedUser">
+            <ion-button *ngIf="loggedUser" (click)="shareGame()">
               <ion-icon name="share-social"></ion-icon>
             </ion-button>
             <ion-button disabled class="whiteDisabled">

@@ -2,10 +2,11 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Game} from "../../../models/game.model";
 import {User} from "../../../models/user.model";
 import {UserData} from "../../../interfaces/UserData";
-import {AlertController} from "@ionic/angular";
+import {AlertController, ModalController} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {GamesService} from "../../../games/games.service";
 import {LocationType} from "../../../enums/LocationType";
+import {ShareComponent} from "../share/share.component";
 
 @Component({
   selector: 'app-game-card',
@@ -25,7 +26,8 @@ export class GameCardComponent implements OnInit {
 
   constructor(private alertCtrl: AlertController,
               private router: Router,
-              private gamesService: GamesService) { }
+              private gamesService: GamesService,
+              private modalCtrl: ModalController) { }
 
   ngOnInit() {}
 
@@ -67,6 +69,18 @@ export class GameCardComponent implements OnInit {
 
   navigateToGameMode() {
     this.router.navigate(['/', 'game-mode'], { queryParams: { gameId: this.game.id }});
+  }
+
+  shareGame() {
+    this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.loggedUser, game: this.game } }).then(modalEl => {
+      modalEl.onDidDismiss().then(modalData => {
+        if (modalData.data) {
+          console.log(modalData.data);
+          this.router.navigate(['/', 'connections', 'chat', modalData.data]);
+        }
+      });
+      modalEl.present();
+    });
   }
 
 }

@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" (click)="back()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+    <ion-title>{{ 'CONNECTIONS.CHATS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar [debounce]="1000"
+                 (ionInput)="filtering($event)"
+                 [placeholder]="currentLanguage === 'hu' ? 'Keresés' : 'Search'"></ion-searchbar>
+  <ion-list *ngIf="chats">
+    <ion-list-header>
+      <ion-label>{{ 'CONNECTIONS.CHATS' | translate }}</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let chat of filteredChats">
+      <ng-container [ngSwitch]="chat.type">
+        <ion-icon *ngSwitchCase="ChatType.personal" name="person-circle-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.group" name="people-circle-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.eventGroup" name="calendar-clear-outline"></ion-icon>
+      </ng-container>
+      <ion-label>{{ chat.name }}</ion-label>
+      <ion-button slot="end" size="small" (click)="select(chat)">
+        <ion-icon name="send-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

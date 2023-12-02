@@ -90,5 +90,5 @@
     </ion-row>
   </ion-grid>
   <app-create-multi *ngIf="creatingLiveGameSetting" (sendLiveGameSetting)="setLiveGameSettings($event)" [event]="event"></app-create-multi>
-  <app-waiting *ngIf="waiting && liveGame" [liveGame]="liveGame" [creator]="creator" [event]="event"></app-waiting>
+  <app-waiting *ngIf="waiting && liveGame" [liveGame]="liveGame" [creator]="creator" [creatorObject]="creator ? user : null" [event]="event"></app-waiting>
 </ion-content>

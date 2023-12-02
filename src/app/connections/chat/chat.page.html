@@ -10,21 +10,40 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ng-container *ngIf="chat && chat.message && chat.message.length > 0">
-    <ion-card *ngFor="let message of chat.message">
-      <ion-card-header>
-        <ion-card-header>
-          <ion-label>{{ message.user }}</ion-label>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-item lines="none">
-            <ion-label>{{ message.text }}</ion-label>
-          </ion-item>
-        </ion-card-content>
-      </ion-card-header>
-    </ion-card>
-  </ng-container>
+<ion-content *ngIf="chat && chat.message && chat.message.length > 0" (ionScroll)="loadMoreMessages($event)">
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreMessages($event)">
+      <ion-infinite-scroll-content loadingText="Loading more messages...">
+        <ion-card *ngFor="let message of showedMessages">
+            <ion-card-header>
+              <ion-label>{{ message.user }}</ion-label>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-button *ngIf="isLink(message.text); else simpleText" (click)="goTo(message.text)">
+                <ion-label>{{ 'CONNECTIONS.GOTO' | translate }}</ion-label>
+              </ion-button>
+              <ng-template #simpleText>
+                <ion-item lines="none">
+                  <ion-label>{{ message.text }}</ion-label>
+                </ion-item>
+              </ng-template>
+            </ion-card-content>
+        </ion-card>
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+<!--    <ion-card *ngFor="let message of chat.message">-->
+<!--      <ion-card-header>-->
+<!--        <ion-card-header>-->
+<!--          <ion-label>{{ message.user }}</ion-label>-->
+<!--        </ion-card-header>-->
+<!--        <ion-card-content>-->
+<!--          <ion-item lines="none">-->
+<!--            <ion-label>{{ message.text }}</ion-label>-->
+<!--          </ion-item>-->
+<!--        </ion-card-content>-->
+<!--      </ion-card-header>-->
+<!--    </ion-card>-->
+</ion-content>
+<ion-footer>
   <ion-item lines="none" class="ion-margin type">
     <ion-input
       type="text"
@@ -33,7 +52,7 @@
       #textMessage
     ></ion-input>
     <ion-button (click)="sendMessage(textMessage.value)">
-      <ion-icon name="arrow-forward-outline"></ion-icon>
+      <ion-icon name="send-outline"></ion-icon>
     </ion-button>
   </ion-item>
-</ion-content>
+</ion-footer>

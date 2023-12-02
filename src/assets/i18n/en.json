@@ -54,6 +54,7 @@
     "FRIEND_REQUESTS": "Friend requests",
     "MARKED": "Marked",
     "CONFIRM": "Confirm",
-    "REMOVE": "Remove"
+    "REMOVE": "Remove",
+    "GOTO": "Go to"
   }
 }
