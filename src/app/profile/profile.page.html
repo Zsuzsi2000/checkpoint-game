@@ -5,7 +5,7 @@
       <ion-back-button *ngIf="!ownProfile" defaultHref="/games"></ion-back-button>
 
     </ion-buttons>
-    <ion-title>Profile</ion-title>
+    <ion-title>{{ "PROFILE.PROFILE" | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button *ngIf="ownProfile" (click)="startDeleteTheProfile()">
         <ion-icon name="trash"></ion-icon>
@@ -42,7 +42,7 @@
           <ion-list class="ion-no-padding ion-no-margin profile-data" lines="none">
             <ion-item class="ion-no-padding ion-no-margin">
               <ion-label class="ion-no-padding ion-no-margin">
-                <h2>Username</h2>
+                <h2>{{ 'PROFILE.USERNAME' | translate}}</h2>
                 <p>{{ loadedUser.username }}</p>
               </ion-label>
               <ion-button *ngIf="ownProfile" slot="end" (click)="editUsernameAlert()">
@@ -57,7 +57,7 @@
             </ion-item>
             <ion-item class="ion-no-padding ion-no-margin" [detail]="false">
               <ion-label class="ion-no-padding ion-no-margin">
-                <h2>Country</h2>
+                <h2>{{ 'PROFILE.COUNTRY' | translate}}</h2>
                 <p>{{ loadedUser.country }}</p>
               </ion-label>
               <ion-button *ngIf="ownProfile" slot="end" (click)="selectCountry()">
@@ -71,11 +71,11 @@
         <ion-col size="12">
           <ion-segment (ionChange)="onFilterUpdate($event)" value="games">
             <ion-segment-button value="games">
-              <ion-label>Own games</ion-label>
+              <ion-label>{{ 'PROFILE.OWN_GAMES' | translate}}</ion-label>
               <ion-icon name="game-controller-sharp"></ion-icon>
             </ion-segment-button>
             <ion-segment-button value="events">
-              <ion-label>Upcoming events</ion-label>
+              <ion-label>{{ 'PROFILE.UPCOMING_EVENTS' | translate}}</ion-label>
               <ion-icon name="calendar"></ion-icon>
             </ion-segment-button>
           </ion-segment>
@@ -105,12 +105,12 @@
                        class="ion-align-items-center ion-justify-content-center">
                 <ion-list *ngIf="ownProfile" lines="none" class="ion-align-items-center ion-justify-content-center">
                   <ion-item>
-                    <ion-label>Don't have your own game yet?</ion-label>
+                    <ion-label>{{ 'PROFILE.DONT_HAVE' | translate}}</ion-label>
                   </ion-item>
                   <ion-item>
                     <ion-button [routerLink]="['/', 'games', 'create-game']">
                       <ion-icon slot="start" name="add"></ion-icon>
-                      <ion-label>Create game</ion-label>
+                      <ion-label>{{ 'PROFILE.CREATE_GAME' | translate}}</ion-label>
                     </ion-button>
                   </ion-item>
                 </ion-list>
@@ -143,12 +143,12 @@
                        class="ion-align-items-center ion-justify-content-center">
                 <ion-list *ngIf="ownProfile" lines="none" class="ion-align-items-center ion-justify-content-center">
                   <ion-item>
-                    <ion-label>Don't have your own event yet?</ion-label>
+                    <ion-label>{{ 'PROFILE.DONT_HAVE_EVENT' | translate}}</ion-label>
                   </ion-item>
                   <ion-item>
                     <ion-button [routerLink]="['/', 'games']">
                       <ion-icon slot="start" name="add"></ion-icon>
-                      <ion-label>Search for game</ion-label>
+                      <ion-label>{{ 'PROFILE.SEARCH_FOR_GAME' | translate}}</ion-label>
                     </ion-button>
                   </ion-item>
                 </ion-list>

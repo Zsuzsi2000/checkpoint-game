@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/games"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ isLoading ? 'Loading ... ' : game.name }}</ion-title>
+    <ion-title>{{ isLoading ? ( 'LOADING' | translate ) : game.name }}</ion-title>
     <ion-buttons slot="end" *ngIf="!isLoading" class="ion-no-margin ion-no-padding">
       <app-favourite *ngIf="user" [gameId]="game.id"></app-favourite>
       <ion-button *ngIf="user" (click)="shareGame()">
@@ -48,11 +48,11 @@
           <ion-item>
             <ion-icon slot="start" name="grid"></ion-icon>
             <ion-label>{{ game.category }}</ion-label>
-            <ion-chip slot="end">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
+            <ion-chip slot="end">{{ game.quiz ? ('GAMES.DETAILS.QUIZ' | translate) : ('GAMES.DETAILS.LEARNING' | translate) }}</ion-chip>
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="map"></ion-icon>
-            <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
+            <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">{{ 'GAMES.DETAILS.ANYWHERE' | translate }}</ion-label>
             <ng-template #hasLocation>
               <ion-label>{{ game.country }}</ion-label>
             </ng-template>
@@ -67,7 +67,7 @@
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="hourglass"></ion-icon>
-            <ion-label>{{ game.duration }} hour</ion-label>
+            <ion-label>{{ game.duration + " " + ('GAMES.DETAILS.HOUR' | translate)}}</ion-label>
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="flag"></ion-icon>
@@ -80,17 +80,17 @@
       <ion-col class="ion-no-padding">
         <ion-card>
           <ion-card-header>
-            <ion-label>Bests</ion-label>
+            <ion-label>{{ 'GAMES.DETAILS.BESTS' | translate }}</ion-label>
           </ion-card-header>
           <ion-card-content>
             <ion-item lines="none" *ngIf="game.bests.score && game.quiz">
-              <ion-label>{{ 'Score: ' + game.bests.score }}</ion-label>
+              <ion-label>{{ ("GAMES.DETAILS.SCORE" | translate) + ' ' + game.bests.score }}</ion-label>
             </ion-item>
             <ion-item lines="none" *ngIf="game.bests.duration">
-              <ion-label>{{ 'Duration: ' + transform(game.bests.duration) }}</ion-label>
+              <ion-label>{{ ("GAMES.DETAILS.DURATION" | translate) + ' ' + transform(game.bests.duration) }}</ion-label>
             </ion-item>
             <ion-item lines="none" *ngIf="game.bests.checkpointDuration && game.quiz">
-              <ion-label>{{ 'Checkpoints duration: ' + transform(game.bests.checkpointDuration) }}</ion-label>
+              <ion-label>{{ ("GAMES.DETAILS.CHECKPOINTS_DURATION" | translate) + ' ' + transform(game.bests.checkpointDuration) }}</ion-label>
             </ion-item>
           </ion-card-content>
         </ion-card>
@@ -100,7 +100,7 @@
       <ion-col class="ion-no-padding">
         <ion-card>
           <ion-card-header>
-            <ion-label>Description</ion-label>
+            <ion-label>{{ "GAMES.DETAILS.DESCRIPTION" | translate }}</ion-label>
           </ion-card-header>
           <ion-card-content>
             <ion-item lines="none">
@@ -115,7 +115,7 @@
         <ion-card>
           <ion-card-header>
             <ion-item lines="none">
-              <ion-label>Ratings</ion-label>
+              <ion-label>{{ "GAMES.DETAILS.RATINGS" | translate }}</ion-label>
               <ion-badge slot="end">{{ game.ratings.length }}</ion-badge>
             </ion-item>
           </ion-card-header>
@@ -134,15 +134,15 @@
       <ion-col class="ion-no-padding">
         <ion-buttons class="ion-justify-content-between">
           <ion-button color="secondary" fill="solid" size="small" shape="round" (click)="navigate()">
-            Create event
+            {{ "GAMES.DETAILS.CREATE_EVENT" | translate }}
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>
           <ion-button *ngIf="game.locationType === LocationType.description" color="secondary" fill="solid" size="small" shape="round" (click)="getPdf()">
-            Get Codes
+            {{ "GAMES.DETAILS.GET_CODES" | translate }}
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>
           <ion-button color="secondary" fill="solid" size="small" shape="round" (click)="navigateToGameMode()">
-            Play
+            {{ "GAMES.DETAILS.PLAY" | translate }}
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>
         </ion-buttons>

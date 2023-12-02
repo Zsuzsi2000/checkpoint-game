@@ -12,6 +12,7 @@ import {CountryService} from "../services/country.service";
 import {PickThingsComponent} from "../shared/components/pick-things/pick-things.component";
 import {User} from "../models/user.model";
 import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -45,6 +46,7 @@ export class GamesPage implements OnInit, OnDestroy {
   categories: { id: string, name: string }[];
   countries: string[] = [];
   types: string[] = ["Quiz", "Learning"];
+  currentLanguage = "";
   private gamesSub: Subscription;
 
   constructor(private gamesService: GamesService,
@@ -52,7 +54,10 @@ export class GamesPage implements OnInit, OnDestroy {
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
               private router: Router,
-              private countryService: CountryService) { }
+              private translate: TranslateService,
+              private countryService: CountryService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
     this.filtersObject = {

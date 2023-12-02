@@ -25,9 +25,43 @@
     "VALID_PASSWORDS": "Passwords do not match."
   },
   "GAMES": {
-    "NAME": "Games"
+    "GAMES": "Games",
+    "SORTING": "Sorting",
+    "BY_DATE": "By creation date",
+    "BY_NAME": "By game name",
+    "BY_POPULARITY": "By popularity",
+    "CATEGORIES": "Categories",
+    "COUNTRIES": "Countries",
+    "TYPES": "Types",
+    "FAVOURITES": "Favourites",
+    "MY_COUNTRY": "My country",
+    "NO_GAMES": "There are no games right know",
+    "DETAILS": {
+      "QUIZ": "Quiz",
+      "LEARNING": "Learning",
+      "ANYWHERE": "Anywhere",
+      "HOUR": "hour",
+      "SCORE": "Score",
+      "DURATION": "Duration",
+      "CHECKPOINTS_DURATION": "Checkpoints duration",
+      "DESCRIPTION": "Description",
+      "RATINGS": "Ratings",
+      "CREATE_EVENT": "Create event",
+      "GET_CODES": "Get codes",
+      "PLAY": "Play",
+      "BESTS": "Bests"
+    }
   },
   "PROFILE": {
+    "PROFILE": "Profile",
+    "USERNAME": "Username",
+    "COUNTRY": "Country",
+    "OWN_GAMES": "Own games",
+    "UPCOMING_EVENTS": "Upcoming events",
+    "DONT_HAVE": "Don't have your own game yet?",
+    "CREATE_GAME": "Create game",
+    "DONT_HAVE_EVENT": "Don't have your own event yet?",
+    "SEARCH_FOR_GAME": "Search for game",
     "SETTINGS": {
       "SETTINGS": "Settings",
       "LANGUAGE": "Language",

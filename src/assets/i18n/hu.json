@@ -27,9 +27,43 @@
     "VALID_PASSWORDS": "A jelszavak nem egyeznek."
   },
   "GAMES": {
-    "GAMES": "Játékok"
+    "GAMES": "Játékok",
+    "SORTING": "Rendezés",
+    "BY_DATE": "Létrehozás dátuma alapján",
+    "BY_NAME": "Játék neve alapján",
+    "BY_POPULARITY": "Népszerűség alapján",
+    "CATEGORIES": "Kategóriák",
+    "COUNTRIES": "Országok",
+    "TYPES": "Típusok",
+    "FAVOURITES": "Kedvencek",
+    "MY_COUNTRY": "Saját ország",
+    "NO_GAMES": "Nincs játék egyelőre",
+    "DETAILS": {
+      "QUIZ": "Kvíz",
+      "LEARNING": "Tanulós",
+      "ANYWHERE": "Bárhol",
+      "HOUR": "óra",
+      "SCORE": "Pont",
+      "DURATION": "Időtartam",
+      "CHECKPOINTS_DURATION": "Válaszadás időtartama",
+      "DESCRIPTION": "Leírás",
+      "RATINGS": "Értéklések",
+      "CREATE_EVENT": "Esemény készítés",
+      "GET_CODES": "Kódok elkérése",
+      "PLAY": "Játék",
+      "BESTS": "Legjobbak"
+    }
   },
   "PROFILE": {
+    "PROFILE": "Profil",
+    "USERNAME": "Felhasználónév",
+    "COUNTRY": "Ország",
+    "OWN_GAMES": "Saját játékok",
+    "UPCOMING_EVENTS": "Közelgő események",
+    "DONT_HAVE": "Még nincs saját játékod?",
+    "CREATE_GAME": "Játék készítése",
+    "DONT_HAVE_EVENT": "Még nincs eseményed?",
+    "SEARCH_FOR_GAME": "Keresés a játékok között",
     "SETTINGS": {
       "SETTINGS": "Beállítások",
       "LANGUAGE": "Nyelv",
@@ -58,5 +92,5 @@
     "CONFIRM": "Elfogad",
     "REMOVE": "Eltávolít",
     "GOTO": "Nézd meg"
-  }
+  },
 }
