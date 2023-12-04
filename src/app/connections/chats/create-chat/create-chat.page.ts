@@ -16,6 +16,7 @@ import {ChatType} from "../../../enums/ChatType";
 export class CreateChatPage implements OnInit {
 
   @Input() user: User;
+  @Input() existingChat: Chat = null;
   filter = "";
   currentLanguage = "";
   friends: UserData[] = [];
@@ -31,11 +32,18 @@ export class CreateChatPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.existingChat, this.user)
     this.connectionsService.getFriends(this.user.id).pipe(take(1)).subscribe(f => {
-      this.friends = f;
-      this.filteredFriends = [...f];
+      this.friends = (this.existingChat !== null) ? f.filter(friend => !this.existingChat.participants.includes(friend.id)) : f;
+      this.filteredFriends = [...this.friends];
+      console.log(this.friends);
     });
-    this.chat = new Chat(null, null, null, [this.user.id], [], ChatType.group)
+    if (this.existingChat !== null) {
+      this.chat = this.existingChat;
+    } else {
+      this.chat = new Chat(null, null, null, [this.user.id], [], ChatType.group)
+    }
+
   }
 
   back() {
@@ -44,14 +52,14 @@ export class CreateChatPage implements OnInit {
 
   done() {
     this.chat.type = (this.chat.participants.length === 2) ? ChatType.personal : ChatType.group;
-    this.chat.name = this.name;
+    this.chat.name = (this.chat.type === ChatType.personal) ? (this.user.username + ';' + this.addedUsers[0].username) : this.name;
     this.connectionsService.createChat(this.chat).subscribe(id => {
       this.modalCtrl.dismiss(id);
     });
   }
 
   canCreate() {
-    return this.chat.participants.length > 1 && this.name !== "";
+    return (this.chat.participants.length === 2 || (this.chat.participants.length > 2 && this.name !== ""));
   }
 
   canAdd(id: string) {
@@ -64,8 +72,13 @@ export class CreateChatPage implements OnInit {
   }
 
   addToChat(friend: UserData) {
-    this.chat.participants.push(friend.id);
-    this.addedUsers.push(friend);
+    if (this.existingChat !== null) {
+      this.chat.participants.push(friend.id);
+      this.modalCtrl.dismiss(this.chat);
+    } else {
+      this.chat.participants.push(friend.id);
+      this.addedUsers.push(friend);
+    }
   }
 
   deleteFromAdded(id: string) {

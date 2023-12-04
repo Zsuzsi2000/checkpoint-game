@@ -13,7 +13,11 @@
       <ion-button *ngIf="ownProfile" (click)="showSettings()">
         <ion-icon name="settings-outline"></ion-icon>
       </ion-button>
+      <ion-button *ngIf="loggedUser && !ownProfile && canAddToFriends()" (click)="createRequest()">
+        <ion-icon name="person-add"></ion-icon>
+      </ion-button>
     </ion-buttons>
+    <ion-badge slot="end" *ngIf="loggedUser && !ownProfile && !canAddToFriends()">Friend</ion-badge>
   </ion-toolbar>
 </ion-header>
 

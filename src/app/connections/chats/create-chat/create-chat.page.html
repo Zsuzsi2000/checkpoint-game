@@ -4,14 +4,15 @@
       <ion-icon name="chevron-back-outline"></ion-icon>
     </ion-button>
     <ion-title>{{ 'CONNECTIONS.CREATE_CHAT' | translate }}</ion-title>
-    <ion-button slot="end" (click)="done()" [disabled]="!canCreate()" class="custom-button-white">
+    <ion-button *ngIf="existingChat === null" slot="end" (click)="done()" [disabled]="!canCreate()"
+                class="custom-button-white">
       <ion-label>{{ 'DONE' | translate }}</ion-label>
     </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-item lines="none">
+  <ion-item lines="none" *ngIf="addedUsers.length > 1">
     <ion-label position="stacked">{{ 'CONNECTIONS.NAME_OF_THE_CHAT' | translate }}</ion-label>
     <ion-input
       [(ngModel)]="name"
@@ -20,7 +21,7 @@
       [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy csapatnevet' : 'Enter a group name'"
     ></ion-input>
   </ion-item>
-  <ion-item lines="none" *ngIf="name === ''">
+  <ion-item lines="none" *ngIf="name === '' && addedUsers.length > 1">
     <ion-label color="danger">{{ 'CONNECTIONS.GROUP_IS_REQUIRED' | translate }}</ion-label>
   </ion-item>
   <ion-searchbar [debounce]="1000"
@@ -31,15 +32,15 @@
       <ion-label>{{ 'CONNECTIONS.ADDED_TO_CHAT' | translate }}</ion-label>
     </ion-list-header>
     <div class="list-users">
-          <div *ngFor="let user of addedUsers" class="user-container">
-            <ion-avatar slot="start" class="set-width ion-justify-content-center ion-align-items-center ion-text-center">
-              <img alt="Profile picture" [src]="user.picture"/>
-            </ion-avatar>
-            <ion-label class="ion-text-center">{{ user.username }}</ion-label>
-            <ion-button (click)="deleteFromAdded(user.id)" size="small" shape="round" class="icoon">
-              <ion-icon slot="end" name="trash"></ion-icon>
-            </ion-button>
-          </div>
+      <div *ngFor="let user of addedUsers" class="user-container">
+        <ion-avatar slot="start" class="set-width ion-justify-content-center ion-align-items-center ion-text-center">
+          <img alt="Profile picture" [src]="user.picture"/>
+        </ion-avatar>
+        <ion-label class="ion-text-center">{{ user.username }}</ion-label>
+        <ion-button (click)="deleteFromAdded(user.id)" size="small" shape="round" class="icoon">
+          <ion-icon slot="end" name="trash"></ion-icon>
+        </ion-button>
+      </div>
     </div>
   </ion-list>
   <ion-list *ngIf="friends" class="ion-no-margin ion-no-padding">
@@ -51,9 +52,9 @@
         <img alt="Profile picture" [src]="friend.picture"/>
       </ion-avatar>
       <ion-label>{{ friend.username }}</ion-label>
-        <ion-button *ngIf="!canAdd(friend.id)" slot="end" size="small" (click)="addToChat(friend)" class="custom-button">
-          <ion-label>{{ 'CONNECTIONS.ADD' | translate }}</ion-label>
-        </ion-button>
+      <ion-button *ngIf="!canAdd(friend.id)" slot="end" size="small" (click)="addToChat(friend)" class="custom-button">
+        <ion-label>{{ 'CONNECTIONS.ADD' | translate }}</ion-label>
+      </ion-button>
     </ion-item>
   </ion-list>
 </ion-content>

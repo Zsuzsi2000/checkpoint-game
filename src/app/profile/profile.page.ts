@@ -16,6 +16,8 @@ import {PickAThingComponent} from "../shared/components/pick-a-thing/pick-a-thin
 import {EventsService} from "../events/events.service";
 import {Event} from "../models/event.model";
 import {SettingsComponent} from "./settings/settings.component";
+import {ConnectionsService} from "../connections/connections.service";
+import {Request} from "../models/request.model";
 
 @Component({
   selector: 'app-profile',
@@ -42,6 +44,7 @@ export class ProfilePage implements OnInit, OnDestroy {
               private eventsService: EventsService,
               private userService: UserService,
               private authService: AuthService,
+              private connectionService: ConnectionsService,
               private alertCtrl: AlertController,
               private activatedRoute: ActivatedRoute,
               private router: Router,
@@ -218,6 +221,19 @@ export class ProfilePage implements OnInit, OnDestroy {
         }
       });
       modaEl.present();
+    });
+  }
+
+  canAddToFriends() {
+    this.connectionService.getFriends(this.loggedUser.id).pipe(take(1)).subscribe(friends => {
+      return !friends.includes(this.loadedUser);
+    })
+  }
+
+  createRequest() {
+    let request = new Request(null, this.loggedUser.id, this.loadedUser.id);
+    this.connectionService.createRequest(request).pipe(take(1)).subscribe(f => {
+      console.log(f);
     });
   }
 

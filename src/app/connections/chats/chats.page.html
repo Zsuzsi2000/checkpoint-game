@@ -17,11 +17,11 @@
     </ion-list-header>
     <ion-item *ngFor="let chat of filteredChats">
       <ng-container [ngSwitch]="chat.type">
-        <ion-icon *ngSwitchCase="ChatType.personal" name="person-circle-outline"></ion-icon>
-        <ion-icon *ngSwitchCase="ChatType.group" name="people-circle-outline"></ion-icon>
-        <ion-icon *ngSwitchCase="ChatType.eventGroup" name="calendar-clear-outline"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.personal" name="person-circle-outline" class="ion-padding"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.group" name="people-circle-outline" class="ion-padding"></ion-icon>
+        <ion-icon *ngSwitchCase="ChatType.eventGroup" name="calendar-clear-outline" class="ion-padding"></ion-icon>
       </ng-container>
-      <ion-label>{{ chat.name }}</ion-label>
+      <ion-label>{{ getChatName(chat) }}</ion-label>
       <ion-buttons slot="end">
         <ion-button size="small" (click)="deleteChat(chat)">
           <ion-icon name="trash"></ion-icon>
@@ -33,7 +33,7 @@
     </ion-item>
   </ion-list>
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" color="tertiary">
-    <ion-fab-button (click)="createChat()">
+    <ion-fab-button (click)="createChat()" color="tertiary">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

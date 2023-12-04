@@ -7,7 +7,6 @@ import { ChatsPage } from './chats.page';
 import {SharedModule} from '../../shared/shared.module';
 import {TranslateModule} from "@ngx-translate/core";
 import {CreateChatPage} from "./create-chat/create-chat.page";
-import {ChatPage} from "../chat/chat.page";
 
 @NgModule({
   imports: [

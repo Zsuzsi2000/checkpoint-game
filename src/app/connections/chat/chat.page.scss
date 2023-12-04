@@ -1,5 +1,9 @@
 ion-toolbar {
   color: #2b2b2b;
+  ion-button {
+    --background: var(--ion-color-tertiary);
+    --color: black;
+  }
 }
 
 .edit-flex {
@@ -21,4 +25,70 @@ ion-toolbar {
   flex: 1;
   overflow-y: auto;
   margin-top: auto;
+}
+
+.right-card {
+  --background: #4d5c4d;
+  --color: white;
+  width: 60%;
+  align-self: end;
+  min-height: 75px;
+
+  ion-item {
+    --color: white;
+  }
+  ion-button {
+    --background: white;
+    --color: black;
+  }
+}
+
+.left-card {
+  width: 60%;
+  min-height: 75px;
+
+  ion-button {
+    --background: white;
+    --color: black;
+  }
+}
+
+.align {
+  align-items: center;
+}
+
+.shared {
+  --background: white;
+  --color: black;
+}
+
+.right {
+  justify-content: end;
+}
+
+.left {
+  justify-content: start;
+}
+
+.row {
+  display: flex;
+}
+
+.margin {
+  margin-right: 1%;
+  margin-left: 1%;
+}
+
+.label {
+  white-space: normal;
+  overflow: auto;
+}
+
+ion-footer {
+  ion-button {
+    --background: white;
+    ion-icon {
+      color: black;
+    }
+  }
 }

@@ -3,45 +3,46 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/connections/tabs/chats"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ chat ? chat.name : 'LOADING' | translate }}</ion-title>
-    <ion-button slot="end" (click)="settings()">
-      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
-    </ion-button>
+    <ion-title>{{ chat ? getChatName() : 'LOADING' | translate }}</ion-title>
+    <ion-buttons *ngIf="chat && chat.type !== ChatType.eventGroup" slot="end">
+      <ion-button *ngIf="chat.type === ChatType.group"  slot="end" (click)="addNewMember()">
+        <ion-icon name="person-add"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" (click)="settings()">
+        <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="chat && chat.message && chat.message.length > 0" (ionScroll)="loadMoreMessages($event)">
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreMessages($event)">
-      <ion-infinite-scroll-content loadingText="Loading more messages...">
-        <ion-card *ngFor="let message of showedMessages">
-            <ion-card-header>
-              <ion-label>{{ message.user }}</ion-label>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-button *ngIf="isLink(message.text); else simpleText" (click)="goTo(message.text)">
-                <ion-label>{{ 'CONNECTIONS.GOTO' | translate }}</ion-label>
-              </ion-button>
-              <ng-template #simpleText>
-                <ion-item lines="none">
-                  <ion-label>{{ message.text }}</ion-label>
-                </ion-item>
-              </ng-template>
-            </ion-card-content>
-        </ion-card>
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-<!--    <ion-card *ngFor="let message of chat.message">-->
-<!--      <ion-card-header>-->
-<!--        <ion-card-header>-->
-<!--          <ion-label>{{ message.user }}</ion-label>-->
-<!--        </ion-card-header>-->
-<!--        <ion-card-content>-->
-<!--          <ion-item lines="none">-->
-<!--            <ion-label>{{ message.text }}</ion-label>-->
-<!--          </ion-item>-->
-<!--        </ion-card-content>-->
-<!--      </ion-card-header>-->
-<!--    </ion-card>-->
+<ion-content #content>
+  <ion-infinite-scroll threshold="50px" position="top" (ionInfinite)="loadMoreMessages($event)">
+    <ion-infinite-scroll-content loadingText="Loading more messages..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <div role="feed" *ngIf="chat && chat.message && chat.message.length > 0">
+    <div *ngFor="let message of showedMessages" role="article" class="row" [ngClass]="user.id === message.user
+        ? (isLink(message.text) ? 'align right' : 'right')
+        : (isLink(message.text) ? 'align left' : 'left')">
+      <ion-avatar *ngIf="user.id !== message.user" class="ion-margin margin">
+        <img alt="Profile picture" [src]="getPicture(message.user)"/>
+      </ion-avatar>
+      <ion-card *ngIf="!isLink(message.text); else simpleText" [ngClass]="user.id === message.user ? 'right-card' : 'left-card'">
+        <ion-card-content class="ion-no-padding">
+          <ion-item lines="none">
+            <ion-label class="label">{{ message.text }}</ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+      <ng-template #simpleText>
+        <ion-button (click)="goTo(message.text)" class="shared ion-margin">
+          <ion-label>{{ 'CONNECTIONS.GOTO' | translate }}</ion-label>
+        </ion-button>
+      </ng-template>
+      <ion-avatar *ngIf="user.id === message.user" class="ion-margin margin">
+        <img alt="Profile picture" [src]="getPicture(message.user)"/>
+      </ion-avatar>
+    </div>
+  </div>
 </ion-content>
 <ion-footer>
   <ion-item lines="none" class="ion-margin type">

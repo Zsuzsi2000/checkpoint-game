@@ -106,7 +106,7 @@ export class FriendsPage implements OnInit {
       if (chats) {
         let chat = chats.find(chat => (chat.participants.includes(friend.id) && chat.type === ChatType.personal));
         if (chat === undefined) {
-          let newChat = new Chat(null, friend.username, null, [this.user.id, friend.id],[], ChatType.personal);
+          let newChat = new Chat(null, this.user.username + ';' + friend.username, null, [this.user.id, friend.id],[], ChatType.personal);
           this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(id => {
             this.router.navigate(['/', 'connections', 'chat', id]);
           })

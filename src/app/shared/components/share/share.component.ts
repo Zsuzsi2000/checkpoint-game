@@ -71,4 +71,13 @@ export class ShareComponent implements OnInit {
     });
   }
 
+  getChatName(chat: Chat) {
+    let name = chat.name;
+    if (chat.type === ChatType.personal) {
+      let names = chat.name.split(';');
+      name = (chat.participants[0] === this.user.id) ? names[names.length - 1] : names[0];
+    }
+    return name;
+  }
+
 }
