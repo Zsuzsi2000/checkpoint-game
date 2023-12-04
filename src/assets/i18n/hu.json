@@ -52,6 +52,28 @@
       "GET_CODES": "Kódok elkérése",
       "PLAY": "Játék",
       "BESTS": "Legjobbak"
+    },
+    "EDIT": {
+      "EDIT_GAME": "Játék szerkesztése",
+      "CREATE_GAME": "Játék készítése",
+      "NAME_OF_GAME": "A játék neve",
+      "NAME_IS_REQUIRED": "A név kötelező",
+      "CATEGORY": "Kategória",
+      "OTHER_CATEGORY": "Más kategória",
+      "NEW_CATEGORY": "Új kategória",
+      "WANT_SHARE": "Meg szeretnéd osztani a játékod?",
+      "PUBLIC": "Publikus",
+      "PRIVATE": "Privát",
+      "COUNTRY": "Ország",
+      "DESCRIPTION_REQUIRED": "A leírás kötelező.",
+      "DISTANCE": "Távolság (km)",
+      "DURATION": "Időtartam (hour)",
+      "DISTANCE_REQUIRED": "A távolság kötelező.",
+      "DURATION_REQUIRED": "Az időtartam kötelező.",
+      "PICK_IMAGE": "Válassz egy képet a játéknak",
+      "PICK_MAP_IMAGE": "Tölts fel egy térképet",
+      "EDIT_CHECKPOINTS": "Checkpointok szerkesztése",
+      "SAVE_THE_GAME": "Játék mentése"
     }
   },
   "PROFILE": {

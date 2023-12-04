@@ -12,6 +12,7 @@ import {ImageService} from "../../services/image.service";
 import {Checkpoint} from "../../models/checkpoint.model";
 import {forkJoin, of} from "rxjs";
 import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-create-game',
@@ -29,6 +30,7 @@ export class CreateGamePage implements OnInit {
   checkpointsReady = false;
   checkpoints: {checkpoint: Checkpoint, imageFile: File | Blob | string}[] = [];
   mapUrl = "";
+  currentLanguage = "";
 
   constructor(private gamesService: GamesService,
               private countryService: CountryService,
@@ -36,7 +38,10 @@ export class CreateGamePage implements OnInit {
               private imageService: ImageService,
               private loadingCtrl: LoadingController,
               private activatedRoute: ActivatedRoute,
-              private modalCtrl: ModalController) {}
+              private modalCtrl: ModalController,
+              private translate: TranslateService) {
+    this.currentLanguage = this.translate.currentLang;
+  }
 
   ngOnInit() {
     this.gameForm = new FormGroup({

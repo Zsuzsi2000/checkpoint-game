@@ -50,6 +50,28 @@
       "GET_CODES": "Get codes",
       "PLAY": "Play",
       "BESTS": "Bests"
+    },
+    "EDIT": {
+      "EDIT_GAME": "Game editing",
+      "CREATE_GAME": "Game making",
+      "NAME_OF_GAME": "Name of the game",
+      "NAME_IS_REQUIRED": "Name is required",
+      "CATEGORY": "Category",
+      "OTHER_CATEGORY": "Other category",
+      "NEW_CATEGORY": "New category",
+      "WANT_SHARE": "Do you want to share your game?",
+      "PUBLIC": "Public",
+      "PRIVATE": "Private",
+      "COUNTRY": "Country",
+      "DESCRIPTION_REQUIRED": "Description is required.",
+      "DISTANCE": "Distance (km)",
+      "DURATION": "Duration (hour)",
+      "DISTANCE_REQUIRED": "Distance is required.",
+      "DURATION_REQUIRED": "Duration is required.",
+      "PICK_IMAGE": "Pick an image for the game",
+      "PICK_MAP_IMAGE": "Pick map image",
+      "EDIT_CHECKPOINTS": "Edit checkpoints",
+      "SAVE_THE_GAME": "Save the game"
     }
   },
   "PROFILE": {

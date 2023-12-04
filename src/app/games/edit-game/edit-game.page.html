@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/games"></ion-back-button>
     </ion-buttons>
-    <ion-title>Editing game</ion-title>
+    <ion-title>{{ 'GAMES.EDIT.EDIT_GAME' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,11 +11,11 @@
   <form [formGroup]="gameForm" (ngSubmit)="updateGame()" *ngIf="gameForm">
     <ion-list class="ion-padding" lines="none">
       <ion-item>
-        <ion-label position="floating">Name of the game *</ion-label>
+        <ion-label position="floating">{{ 'GAMES.EDIT.NAME_OF_GAME' | translate }} *</ion-label>
         <ion-input
           type="text"
           labelPlacement="floating"
-          placeholder="Enter a game name"
+          [placeholder]="currentLanguage === 'hu' ? 'Add meg a játék nevét' : 'Enter a game name'"
           formControlName="name"
         ></ion-input>
       </ion-item>
@@ -24,46 +24,47 @@
         lines="none"
       >
         <ion-label color="danger">
-          Name is required.
+          {{ 'GAMES.EDIT.NAME_IS_REQUIRED' | translate }}
         </ion-label>
       </ion-item>
       <ion-item *ngIf="categories">
-        <ion-select placeholder="Select a category" formControlName="category">
-          <div slot="label">Category *</div>
+        <ion-select formControlName="category"
+          [placeholder]="currentLanguage === 'hu' ? 'Válassz kategóriát' : 'Select a category'">
+          <div slot="label">{{ 'GAMES.EDIT.CATEGORY' | translate }} *</div>
           <ng-container *ngFor="let category of categories">
             <ion-select-option [value]="category.name">{{ category.name }}</ion-select-option>
           </ng-container>
-          <ion-select-option [value]="'otherCategory'">Other category</ion-select-option>
+          <ion-select-option [value]="'otherCategory'">{{ 'GAMES.EDIT.OTHER_CATEGORY' | translate }}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item *ngIf="gameForm.get('category').value === 'otherCategory'">
-        <ion-label position="floating">New category</ion-label>
+        <ion-label position="floating">{{ 'GAMES.EDIT.NEW_CATEGORY' | translate }}</ion-label>
         <ion-input
           type="text"
           labelPlacement="floating"
-          placeholder="Enter a new category"
+          [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy új kategóriát' : 'Enter a new category'"
           formControlName="newCategory"
         ></ion-input>
       </ion-item>
       <ion-item class="ion-align-items-center" lines="none">
         <ion-label class="ion-text-center">
-          Do you want to share your game?
+          {{ 'GAMES.EDIT.WANT_SHARE' | translate }}
         </ion-label>
       </ion-item>
       <div class="ion-segment-container">
         <ion-segment color="primary" (ionChange)="setPublic($event)" value="true">
           <ion-segment-button [value]="true">
-            <ion-label>PUBLIC</ion-label>
+            <ion-label>{{ 'GAMES.EDIT.PUBLIC' | translate }}</ion-label>
           </ion-segment-button>
           <ion-segment-button [value]="false">
-            <ion-label>PRIVATE</ion-label>
+            <ion-label>{{ 'GAMES.EDIT.PRIVATE' | translate }}</ion-label>
           </ion-segment-button>
         </ion-segment>
       </div>
       <ng-container *ngIf="(game.locationType === LocationType.description) ||
       (game.locationType === LocationType.location)">
         <ion-item [button]="true" [detail]="false" (click)="selectCountry()">
-          <ion-label>Country</ion-label>
+          <ion-label>{{ 'GAMES.EDIT.COUNTRY' | translate }}</ion-label>
           <div slot="end">{{ selectedCountry }}</div>
         </ion-item>
         <app-location-picker
@@ -75,25 +76,29 @@
         </ng-template>
       </ng-container>
       <ion-item>
-        <ion-textarea label="Description *"
+        <ion-textarea [label]="currentLanguage === 'hu' ? 'Leírás *' : 'Description *'"
                       labelPlacement="floating"
                       formControlName="description"
-                      placeholder="Give a description of the game. Who would you recommend it to?"></ion-textarea>
+                      [placeholder]="currentLanguage === 'hu'
+                      ? 'Adj meg egy leírást. Kinek ajánlanád a játékot?'
+                      : 'Give a description of the game. Who would you recommend it to?'"></ion-textarea>
       </ion-item>
       <ion-item
         *ngIf="(!gameForm.get('description').valid && gameForm.get('description').touched)"
         lines="none"
       >
         <ion-label color="danger">
-          Description is required.
+          {{ 'GAMES.EDIT.DESCRIPTION_REQUIRED' | translate }}
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Distance (km)*</ion-label>
+        <ion-label position="floating">{{ 'GAMES.EDIT.DISTANCE' | translate }} *</ion-label>
         <ion-input
           type="number"
           labelPlacement="floating"
-          placeholder="Enter approximately how long the game is in km."
+          [placeholder]="currentLanguage === 'hu'
+          ? 'Add meg, hogy körülbelül milyen hosszú a játék kilométerben.'
+          : 'Enter approximately how long the game is in km.'"
           formControlName="distance"
         ></ion-input>
       </ion-item>
@@ -102,15 +107,17 @@
         lines="none"
       >
         <ion-label color="danger">
-          Distance is required.
+          {{ 'GAMES.EDIT.DISTANCE_REQUIRED' | translate }}
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Duration (hour) *</ion-label>
+        <ion-label position="floating">{{ 'GAMES.EDIT.DURATION' | translate }} *</ion-label>
         <ion-input
           type="number"
           labelPlacement="floating"
-          placeholder="Enter the approximate length of the game in hours."
+          [placeholder]="currentLanguage === 'hu'
+          ? 'Add meg, hogy körülbelül mennyi a játék időtartama órában.'
+          : 'Enter the approximate length of the game in hours.'"
           formControlName="duration"
         ></ion-input>
       </ion-item>
@@ -119,12 +126,12 @@
         lines="none"
       >
         <ion-label color="danger">
-          Duration is required.
+          {{ 'GAMES.EDIT.DURATION_REQUIRED' | translate }}
         </ion-label>
       </ion-item>
       <ion-item>
         <ion-label class="ion-text-center">
-          Pick an image for the game
+          {{ 'GAMES.EDIT.PICK_IMAGE' | translate }}
         </ion-label>
       </ion-item>
       <app-image-picker (imagePick)="onImagePick($event, 'image')"
@@ -133,7 +140,7 @@
       <ng-container *ngIf="game.locationType === LocationType.description">
         <ion-item>
           <ion-label class="ion-text-center">
-            Pick map image
+            {{ 'GAMES.EDIT.PICK_MAP_IMAGE' | translate }}
           </ion-label>
         </ion-item>
         <app-image-picker (imagePick)="onImagePick($event, 'map')"
@@ -145,7 +152,7 @@
       class="ion-text-center ion-justify-content-center align-center"
       color="primary"
       (click)="openCheckpointsEditor()">
-      Edit checkpoints
+      {{ 'GAMES.EDIT.EDIT_CHECKPOINTS' | translate }}
     </ion-button>
     <ion-button
       class="ion-text-center ion-justify-content-center"
@@ -153,7 +160,7 @@
       color="primary"
       expand="full"
       [disabled]="!gameForm.valid">
-      Save the game
+      {{ 'GAMES.EDIT.SAVE_THE_GAME' | translate }}
     </ion-button>
   </form>
 </ion-content>

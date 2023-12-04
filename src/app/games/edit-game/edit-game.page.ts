@@ -14,6 +14,7 @@ import {LocationIdentification} from "../../enums/LocationIdentification";
 import {Game} from "../../models/game.model";
 import {PickAThingComponent} from "../../shared/components/pick-a-thing/pick-a-thing.component";
 import {environment} from "../../../environments/environment";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-edit-game',
@@ -34,6 +35,7 @@ export class EditGamePage implements OnInit {
   checkpointsChanged = false;
   isLoading = false;
   first = true;
+  currentLanguage = "";
 
   constructor(private gamesService: GamesService,
               private countryService: CountryService,
@@ -43,7 +45,9 @@ export class EditGamePage implements OnInit {
               private loadingCtrl: LoadingController,
               private activatedRoute: ActivatedRoute,
               private alertController: AlertController,
-              private modalCtrl: ModalController) {
+              private modalCtrl: ModalController,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
   }
 
   ngOnInit() {
