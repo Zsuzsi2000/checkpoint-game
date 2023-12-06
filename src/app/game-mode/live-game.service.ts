@@ -7,7 +7,6 @@ import {PlayerModel} from "../models/player.model";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../auth/auth.service";
 import {CheckpointState} from "../interfaces/CheckpointState";
-import {Event} from "../models/event.model";
 
 interface LiveGameData {
   gameId: string,

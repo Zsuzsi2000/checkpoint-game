@@ -53,7 +53,7 @@ export class GameModePage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.userSub = this.authService.user.subscribe(user => {
+    this.userSub = this.authService.user.pipe(take(1)).subscribe(user => {
       if (user) this.user = user;
     });
     if (this.activatedRoute.snapshot.queryParamMap.has('gameId')) {
@@ -322,7 +322,11 @@ export class GameModePage implements OnInit, OnDestroy {
       this.liveGameService.createPlayer(this.player).pipe(take(1)).subscribe(createdPlayer => {
         if (createdPlayer) {
           loadingEl.dismiss();
-          this.waiting = true;
+          if (this.liveGame.liveGameSettings.gameMode === GameMode.solo) {
+            this.router.navigate(['/', 'game-mode', 'game', this.liveGame.id]);
+          } else {
+            this.waiting = true;
+          }
         }
       }, error => {
         this.showAlert('Failed', 'Something went wrong');
