@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="onCancel()">Cancel</ion-button>
+      <ion-button (click)="onCancel()">{{ 'CANCEL' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title>Checkpoints</ion-title>
+    <ion-title>{{ 'GAME_MODE.GAME.CHECKPOINTS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -16,7 +16,7 @@
     <ng-template #loaded>
       <ion-row *ngIf="game.mapUrl" class="ion-justify-content-center">
         <ion-col size-sm="10" class="ion-align-items-center ion-text-center display-flex ion-justify-content-center">
-          <ion-label>Map</ion-label>
+          <ion-label>{{ 'GAME_MODE.GAME.MAP' | translate }}</ion-label>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="game.mapUrl" class="ion-justify-content-center">
@@ -29,7 +29,7 @@
         <ion-col size-sm="10" class="ion-align-items-center ion-text-center">
           <ion-list class="ion-no-padding">
             <ion-list-header>
-              <ion-label>Checkpoints</ion-label>
+              <ion-label>{{ 'GAME_MODE.GAME.CHECKPOINTS' | translate }}</ion-label>
             </ion-list-header>
             <ion-item *ngFor="let checkpoint of actualCheckpoints">
               <ion-icon [name]="checkpoint.done ? 'checkmark-circle' : 'close-circle'" slot="start"></ion-icon>

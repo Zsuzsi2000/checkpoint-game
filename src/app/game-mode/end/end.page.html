@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar class="ion-text-center">
-    <ion-title>Game over</ion-title>
+    <ion-title>{{ 'GAME_MODE.END.GAME_OVER' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-item class="ion-text-center final" lines="none">
-    <ion-label>Final leaderboard</ion-label>
+    <ion-label>{{ 'GAME_MODE.END.FINAL_LEADERBOARD' | translate }}</ion-label>
   </ion-item>
   <ion-grid class="ion-justify-content-center ion-align-items-center">
     <ion-row *ngIf="isLoading; else loaded">
@@ -20,27 +20,27 @@
             <ion-card-content>
               <ion-item class="ion-text-center ion-no-margin ion-no-padding">
                 <ion-label class="ion-no-margin ion-no-padding">{{ player.teamName }}</ion-label>
-                <ion-badge *ngIf="game && game.quiz" class="ion-no-margin custom-margin">{{ player.score + ' pont' }}</ion-badge>
+                <ion-badge *ngIf="game && game.quiz" class="ion-no-margin custom-margin">{{ player.score + ' ' + ('GAME_MODE.GAME.POINT' | translate) }}</ion-badge>
               </ion-item>
               <ion-item class="ion-text-center ion-no-margin ion-no-padding">
-                <ion-label  class="ion-no-margin ion-no-padding">{{ 'Duration: '}}<br/>{{ transform(player.duration) }}</ion-label>
+                <ion-label  class="ion-no-margin ion-no-padding">{{ ('GAME_MODE.END.DURATION' | translate) + ': ' }}<br/>{{ transform(player.duration) }}</ion-label>
               </ion-item>
               <ion-item *ngIf="game && game.quiz" class="ion-text-center ion-no-margin ion-no-padding">
-                <ion-label  class="ion-no-margin ion-no-padding">{{ 'Response time: '}}<br/>{{ transform(player.checkpointsDuration) }}</ion-label>
+                <ion-label  class="ion-no-margin ion-no-padding">{{ ('GAME_MODE.END.RESPONSE_TIME' | translate) + ': ' }}<br/>{{ transform(player.checkpointsDuration) }}</ion-label>
               </ion-item>
             </ion-card-content>
           </ion-card>
         </ion-col>
         <ion-col size="6" class="ion-justify-content-center ion-align-items-center ion-text-center flex-set">
           <ion-item class="ion-text-center" lines="none">
-            <ion-label>Would you like to<br/> leave a rating?</ion-label>
+            <ion-label>{{ 'GAME_MODE.END.WOULD_YOU_LIKE_TO' | translate }}<br/>{{ 'GAME_MODE.END.LEAVE_A_RATING' | translate }}</ion-label>
           </ion-item>
           <ion-button color="primary" fill="solid" class="button-border" (click)="addRating()">
-            Add Rating
+            {{ 'GAME_MODE.END.ADD_RATING' | translate }}
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>
           <ion-button color="secondary" fill="solid" shape="round" (click)="backToMenu()">
-            Back to<br/>games
+            {{ 'GAME_MODE.END.BACK_TO' | translate }}<br/>{{ 'GAME_MODE.END.GAMES' | translate }}
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>
         </ion-col>
@@ -49,13 +49,13 @@
         <ion-col>
           <ion-segment [value]="(game && game.quiz) ? 'Score' : 'BigDuration'" (ionChange)="sort($event)">
             <ion-segment-button *ngIf="game && game.quiz" value="Score">
-              <ion-label>Score</ion-label>
+              <ion-label>{{ 'GAME_MODE.GAME.SCORE' | translate }}</ion-label>
             </ion-segment-button>
             <ion-segment-button value="BigDuration">
-              <ion-label>Full<br/>Duration</ion-label>
+              <ion-label>{{ 'GAME_MODE.END.FULL' | translate }}<br/>{{ 'GAME_MODE.END.DURATION' | translate }}</ion-label>
             </ion-segment-button>
             <ion-segment-button *ngIf="game && game.quiz" value="CheckpointsDuration">
-              <ion-label>Response<br/>Time</ion-label>
+              <ion-label>{{ 'GAME_MODE.END.RESPONSE' | translate }}<br/>{{ 'GAME_MODE.END.TIME' | translate }}</ion-label>
             </ion-segment-button>
           </ion-segment>
         </ion-col>
@@ -69,8 +69,8 @@
               <ion-icon *ngIf="!checkDone(otherPlayer)" slot="end" name="hourglass-outline"></ion-icon>
               <ion-label *ngIf="sortType === 'CheckpointsDuration' && game && game.quiz && checkDone(otherPlayer)"
                          slot="end">{{ transform(otherPlayer.checkpointsDuration) }}</ion-label>
-              <ion-badge *ngIf="sortType === 'Score' && game && game.quiz && getHelp(otherPlayer) > 0 && checkDone(otherPlayer)" slot="end" class="custom-margin">{{  getHelp(otherPlayer) + ' help' }}</ion-badge>
-              <ion-badge *ngIf="sortType === 'Score' && game && game.quiz && checkDone(otherPlayer)" slot="end" class="custom-margin">{{ otherPlayer.score + ' pont' }}</ion-badge>
+              <ion-badge *ngIf="sortType === 'Score' && game && game.quiz && getHelp(otherPlayer) > 0 && checkDone(otherPlayer)" slot="end" class="custom-margin">{{  getHelp(otherPlayer) + ' ' + ('GAME_MODE.GAME.HELP' | translate) }}</ion-badge>
+              <ion-badge *ngIf="sortType === 'Score' && game && game.quiz && checkDone(otherPlayer)" slot="end" class="custom-margin">{{ otherPlayer.score + ' ' + ('GAME_MODE.GAME.POINT' | translate) }}</ion-badge>
             </ion-item>
           </ion-list>
         </ion-col>

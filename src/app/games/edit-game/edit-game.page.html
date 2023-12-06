@@ -37,6 +37,14 @@
           <ion-select-option [value]="'otherCategory'">{{ 'GAMES.EDIT.OTHER_CATEGORY' | translate }}</ion-select-option>
         </ion-select>
       </ion-item>
+      <ion-item
+        *ngIf="(!gameForm.get('category').valid && gameForm.get('category').touched)"
+        lines="none"
+      >
+        <ion-label color="danger">
+          {{ 'GAMES.EDIT.CATEGORY_REQUIRED' | translate }}
+        </ion-label>
+      </ion-item>
       <ion-item *ngIf="gameForm.get('category').value === 'otherCategory'">
         <ion-label position="floating">{{ 'GAMES.EDIT.NEW_CATEGORY' | translate }}</ion-label>
         <ion-input
@@ -76,8 +84,8 @@
         </ng-template>
       </ng-container>
       <ion-item>
-        <ion-textarea [label]="currentLanguage === 'hu' ? 'Leírás *' : 'Description *'"
-                      labelPlacement="floating"
+        <ion-label position="floating">{{ 'GAMES.DETAILS.DESCRIPTION' | translate }} *</ion-label>
+        <ion-textarea labelPlacement="floating"
                       formControlName="description"
                       [placeholder]="currentLanguage === 'hu'
                       ? 'Adj meg egy leírást. Kinek ajánlanád a játékot?'

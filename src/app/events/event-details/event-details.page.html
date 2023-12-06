@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/events"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ isLoading ? 'Loading ... ' : event.name }}</ion-title>
+    <ion-title>{{ isLoading ? ('LOADING' | translate) : event.name }}</ion-title>
     <ion-buttons slot="end" *ngIf="!isLoading" class="ion-no-margin ion-no-padding">
       <app-saved *ngIf="user" [eventId]="event.id"></app-saved>
       <ion-button *ngIf="user" (click)="shareEvent()">
@@ -27,7 +27,7 @@
     <ion-row class="img-container">
       <ion-col>
         <div *ngIf="!canJoin()" class="background-image-container">
-          <h1>FULL</h1>
+          <h1>{{ 'EVENTS.FULL' | translate }}</h1>
         </div>
         <ion-img class="game-img"
                  [src]="event.imgUrl">
@@ -53,8 +53,8 @@
             </ng-container>
           </ion-item>
           <ion-item *ngIf="game || user">
-            <ion-chip *ngIf="game" slot="start">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
-            <ion-chip slot="end" *ngIf="user && event.players.includes(user.id)">Joined</ion-chip>
+            <ion-chip *ngIf="game" slot="start">{{ game.quiz ? ('GAMES.DETAILS.QUIZ' | translate) : ('GAMES.DETAILS.LEARNING' | translate) }}</ion-chip>
+            <ion-chip slot="end" *ngIf="user && event.players.includes(user.id)">{{ 'EVENTS.JOINED' | translate }}</ion-chip>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -68,10 +68,10 @@
           </ion-item>
           <ion-item *ngIf="event.liveGameSettings.gameMode" [ngSwitch]="event.liveGameSettings.gameMode">
             <ion-icon slot="start" name="game-controller"></ion-icon>
-            <ion-label *ngSwitchCase="GameMode.againstEachOther">Against each other</ion-label>
-            <ion-label *ngSwitchCase="GameMode.teamGame">Team game</ion-label>
-            <ion-label *ngSwitchCase="GameMode.teamVsTeam">Team VS Team</ion-label>
-            <ion-label *ngSwitchCase="GameMode.notSpecified">Not specified</ion-label>
+            <ion-label *ngSwitchCase="GameMode.againstEachOther">{{ 'GAME_MODE.AGAINST_EACH_OTHER' | translate }}</ion-label>
+            <ion-label *ngSwitchCase="GameMode.teamGame">{{ 'GAME_MODE.TEAM_GAME' | translate }}</ion-label>
+            <ion-label *ngSwitchCase="GameMode.teamVsTeam">{{ 'GAME_MODE.TEAM_VS_TEAM' | translate }}</ion-label>
+            <ion-label *ngSwitchCase="GameMode.notSpecified">{{ 'GAME_MODE.NOT_SPECIFIED' | translate }}</ion-label>
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="calendar-clear"></ion-icon>
@@ -83,7 +83,7 @@
           </ion-item>
           <ion-item>
             <ion-icon slot="start" name="hourglass"></ion-icon>
-            <ion-label>{{ game.duration }} hour</ion-label>
+            <ion-label>{{ game.duration + ' '+ ('GAMES.DETAILS.HOUR' | translate) }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -91,7 +91,7 @@
         <ion-list lines="none" class="ion-no-padding">
           <ion-item>
             <ion-icon slot="start" name="map"></ion-icon>
-            <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
+            <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">{{ 'GAMES.DETAILS.ANYWHERE' | translate }}</ion-label>
             <ng-template #hasLocation>
               <ion-label>{{ game.country }}</ion-label>
             </ng-template>
@@ -115,7 +115,7 @@
       <ion-col class="ion-no-padding">
         <ion-card>
           <ion-card-header>
-            <ion-label>Description</ion-label>
+            <ion-label>{{ 'GAMES.DETAILS.DESCRIPTION' | translate }}</ion-label>
           </ion-card-header>
           <ion-card-content>
             <ion-item lines="none">
@@ -128,7 +128,7 @@
     <ion-row class="ion-padding">
       <ion-col size="12" class="ion-no-padding">
           <ion-button color="secondary" fill="solid" size="small" shape="round" (click)="navigateToGame()">
-            Go to the game
+            {{ 'EVENTS.GO_TO_THE_GAME' | translate }}
             <ion-icon slot="end" name="arrow-forward"></ion-icon>
           </ion-button>
           <ng-container *ngIf="user && user.id">
@@ -136,26 +136,26 @@
                         [disabled]="!canJoin() || canStartEvent()"
                         *ngIf="!event.players.includes(user.id)"
                         (click)="joinEvent()">
-              Join event
+              {{ 'EVENTS.JOIN_EVENTS' | translate }}
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
             <ion-button color="secondary" fill="solid" size="small" shape="round"
                         *ngIf="event.players.includes(user.id)"
                         (click)="goToChat()">
-              Chat
+              {{ 'EVENTS.CHAT' | translate }}
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
             <ion-button color="secondary" fill="solid" size="small" shape="round"
                         *ngIf="event.players.includes(user.id)"
                         (click)="cancelEvent()">
-              Cancel join
+              {{ 'EVENTS.CANCEL_JOIN' | translate }}
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
             <ion-button color="secondary" fill="solid" size="small" shape="round"
                         *ngIf="user && event.creatorId === user.id"
                         [disabled]="!canStartEvent()"
                         (click)="startEvent()">
-              Start event
+              {{ 'EVENTS.START_EVENT' | translate }}
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
             </ion-button>
           </ng-container>

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Events</ion-title>
+    <ion-title>{{ 'EVENTS.EVENTS' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="toggleFiltering()">
         <ion-icon name="options"></ion-icon>
@@ -18,20 +18,21 @@
 <ion-content>
   <ion-searchbar [debounce]="1000"
                  (ionInput)="filtering($event)"
-                 placeholder="Search"></ion-searchbar>
+                 [placeholder]="currentLanguage === 'hu' ? 'Keresés' : 'Search'"></ion-searchbar>
   <ion-grid size="10" *ngIf="actualEvents && sortingMode">
     <ion-row class="ion-align-items-center">
       <ion-col size="12">
         <ion-item>
-          <ion-select placeholder="Select a sorting mode" (ionChange)="sortEventsEvent($event)">
-            <div slot="label">Sorting *</div>
-            <ion-select-option [value]="SortingMode.byDate">By date
+          <ion-select [placeholder]="currentLanguage === 'hu' ? 'Válassz rendezési módot' : 'Select a sorting mode'"
+                      (ionChange)="sortEventsEvent($event)">
+            <div slot="label">{{ 'EVENTS.SORTING' | translate }} *</div>
+            <ion-select-option [value]="SortingMode.byDate">{{ 'EVENTS.BY_DATE' | translate }}
             </ion-select-option>
-            <ion-select-option [value]="SortingMode.byCreationDate">By creation date
+            <ion-select-option [value]="SortingMode.byCreationDate">{{ 'EVENTS.BY_CREATION_DATE' | translate }}
             </ion-select-option>
-            <ion-select-option [value]="SortingMode.byGameName">By event name
+            <ion-select-option [value]="SortingMode.byGameName">{{ 'EVENTS.BY_EVENT_NAME' | translate }}
             </ion-select-option>
-            <ion-select-option [value]="SortingMode.byPopularity">By popularity
+            <ion-select-option [value]="SortingMode.byPopularity">{{ 'EVENTS.BY_POPULARITY' | translate }}
             </ion-select-option>
           </ion-select>
           <ion-buttons slot="end">
@@ -49,12 +50,12 @@
   <ion-grid size="10" *ngIf="actualEvents && filteringMode">
     <ion-row class="ion-align-items-center">
       <ion-col size="12" class="ion-justify-content-center">
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byCategories)">Categories</ion-button>
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byCountries)">Countries</ion-button>
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byTypes)">Types</ion-button>
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byFavourites)" [disabled]="user === null">Favourites</ion-button>
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.bySaved)" [disabled]="user === null">Saved</ion-button>
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byOwnCountry)" [disabled]="user === null">My country</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byCategories)">{{ 'GAMES.CATEGORIES' | translate }}</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byCountries)">{{ 'GAMES.COUNTRIES' | translate }}</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byTypes)">{{ 'GAMES.TYPES' | translate }}</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byFavourites)" [disabled]="user === null">{{ 'GAMES.FAVOURITES' | translate }}</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.bySaved)" [disabled]="user === null">{{ 'EVENTS.SAVED' | translate }}</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byOwnCountry)" [disabled]="user === null">My {{ 'GAMES.MY_COUNTRY' | translate }}</ion-button>
       </ion-col>
     </ion-row>
     <ion-row class="ion-align-items-center" *ngIf=" filters.length > 0">
@@ -70,7 +71,7 @@
     <ion-row class="ion-align-items-center">
       <ion-col size="12">
         <div *ngIf="!actualEvents || actualEvents.length === 0" class="ion-text-center">
-          <p>There are no events right know.</p>
+          <p>{{ 'EVENTS.NO_EVENTS' | translate }}</p>
         </div>
         <div *ngIf="isLoading" class="ion-text-center">
           <ion-spinner name="lines-sharp" color="secondary" *ngIf="isLoading"></ion-spinner>

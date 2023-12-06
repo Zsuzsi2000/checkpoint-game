@@ -14,6 +14,7 @@ import {GamesService} from "../games/games.service";
 import {Game} from "../models/game.model";
 import {LocationType} from "../enums/LocationType";
 import {UserService} from "../services/user.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-events',
@@ -46,6 +47,7 @@ export class EventsPage implements OnInit {
   categories: { id: string, name: string }[];
   countries: string[] = [];
   types: string[] = ["Quiz", "Learning"];
+  currentLanguage = ""
   private eventsSub: Subscription;
 
   constructor(private eventService: EventsService,
@@ -54,7 +56,10 @@ export class EventsPage implements OnInit {
               private userService: UserService,
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
-              private countryService: CountryService) { }
+              private countryService: CountryService,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
     this.filtersObject = {

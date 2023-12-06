@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="onCancel()">Cancel</ion-button>
+      <ion-button (click)="onCancel()">{{ 'CANCEL' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title>Leaderboard</ion-title>
+    <ion-title>{{ 'GAME_MODE.GAME.LEADERBOARD' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -18,10 +18,10 @@
         <ion-col>
           <ion-segment value="Done" (ionChange)="sort($event)">
             <ion-segment-button value="Done">
-              <ion-label>Checkpoints</ion-label>
+              <ion-label>{{ 'GAME_MODE.GAME.CHECKPOINTS' | translate }}</ion-label>
             </ion-segment-button>
             <ion-segment-button value="Score">
-              <ion-label>Score</ion-label>
+              <ion-label>{{ 'GAME_MODE.GAME.SCORE' | translate }}</ion-label>
             </ion-segment-button>
           </ion-segment>
         </ion-col>
@@ -31,7 +31,7 @@
           <ion-list class="ion-padding">
             <ion-item *ngFor="let player of players; let i = index">
               <ion-label>{{ (i +  1) + '. ' + player.player.teamName }}</ion-label>
-              <ion-badge *ngIf="quiz" slot="end">{{ player.score + ' pont' }}</ion-badge>
+              <ion-badge *ngIf="quiz" slot="end">{{ player.score + ' ' + ('GAME_MODE.GAME.POINT' | translate) }}</ion-badge>
               <ion-label slot="end" class="ion-no-margin ion-no-padding">{{ player.doneNumber }}</ion-label>
               <ion-icon name="flag" slot="end" class="ion-no-margin ion-no-padding"></ion-icon>
             </ion-item>

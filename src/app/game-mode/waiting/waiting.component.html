@@ -3,7 +3,7 @@
     <ion-col class="ion-align-items-center ion-justify-content-center">
       <ion-card color="primary" class="ion-text-center">
         <ion-card-content class="ion-justify-content-center ion-align-items-center flex-set">
-          <ion-badge color="secondary fit-content">ACCESS CODE</ion-badge>
+          <ion-badge color="secondary fit-content">{{ 'GAME_MODE.ACCESS_CODE' | translate }}</ion-badge>
           <ion-item lines="none" class="ion-text-center">
             <ion-label class="ion-no-margin accesscode-style">{{ liveGame.accessCode }}</ion-label>
             <ion-button *ngIf="creator" (click)="shareAccessCode()">
@@ -18,7 +18,9 @@
     <ion-col class="ion-align-items-center ion-justify-content-center">
       <ion-card color="primary" class="ion-text-center">
         <ion-card-content class="ion-justify-content-center ion-align-items-center ion-text-center">
-          <ion-label class="ion-no-margin wait-style">{{ 'Waiting for ' + (event.players.length - alreadyJoined) + ' people' }}</ion-label>
+          <ion-label class="ion-no-margin wait-style">
+            {{ ('GAME_MODE.WAITING_FOR' | translate) + (event.players.length - alreadyJoined) + ('GAME_MODE.PEOPLE' | translate) }}
+          </ion-label>
         </ion-card-content>
       </ion-card>
     </ion-col>
@@ -26,7 +28,7 @@
   <ion-row class="ion-no-margin ion-no-padding" *ngIf="creator">
     <ion-col class="ion-no-margin ion-no-padding">
       <ion-button color="secondary" class="ion-no-margin" expand="full" (click)="startTheGame()">
-        <ion-label>Start the game</ion-label>
+        <ion-label>{{ 'GAME_MODE.START_THE_GAME' | translate }}</ion-label>
       </ion-button>
     </ion-col>
   </ion-row>
@@ -34,7 +36,7 @@
     <ion-col class="ion-align-items-center ion-justify-content-center">
       <ion-card class="ion-text-center">
         <ion-card-header class="ion-text-center">
-          <ion-label>Teams</ion-label>
+          <ion-label>{{ 'GAME_MODE.TEAMS' | translate }}</ion-label>
         </ion-card-header>
         <ion-card-content class="ion-justify-content-center ion-align-items-center flex-row">
           <ng-container *ngIf="!event; else getEvent">
@@ -61,7 +63,7 @@
     <ion-col class="ion-align-items-center ion-justify-content-center">
       <ion-list>
         <ion-list-header class="ion-text-center">
-          <ion-label>Players</ion-label>
+          <ion-label>{{ 'GAME_MODE.PLAYERS' | translate }}</ion-label>
         </ion-list-header>
         <ng-container *ngFor="let player of players">
           <ion-item *ngFor="let member of player.teamMembers">

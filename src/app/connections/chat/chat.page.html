@@ -17,7 +17,8 @@
 
 <ion-content #content>
   <ion-infinite-scroll threshold="50px" position="top" (ionInfinite)="loadMoreMessages($event)">
-    <ion-infinite-scroll-content loadingText="Loading more messages..."></ion-infinite-scroll-content>
+    <ion-infinite-scroll-content [loadingText]="currentLanguage === 'hu' ? 'Üzenetek betöltése' : 'Loading more messages...'">
+    </ion-infinite-scroll-content>
   </ion-infinite-scroll>
   <div role="feed" *ngIf="chat && chat.message && chat.message.length > 0">
     <div *ngFor="let message of showedMessages" role="article" class="row" [ngClass]="user.id === message.user

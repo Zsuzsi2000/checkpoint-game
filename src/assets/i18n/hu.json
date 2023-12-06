@@ -61,6 +61,8 @@
       "CATEGORY": "Kategória",
       "OTHER_CATEGORY": "Más kategória",
       "NEW_CATEGORY": "Új kategória",
+      "CATEGORY_REQUIRED": "Kategória megadása kötelező",
+      "CHOOSE_GAME_TYPE": "Válassz játék típust",
       "WANT_SHARE": "Meg szeretnéd osztani a játékod?",
       "PUBLIC": "Publikus",
       "PRIVATE": "Privát",
@@ -73,7 +75,105 @@
       "PICK_IMAGE": "Válassz egy képet a játéknak",
       "PICK_MAP_IMAGE": "Tölts fel egy térképet",
       "EDIT_CHECKPOINTS": "Checkpointok szerkesztése",
-      "SAVE_THE_GAME": "Játék mentése"
+      "SAVE_THE_GAME": "Játék mentése",
+      "CHECKPOINTS_LOCATION_DESCRIPTION": "Checkpointok helyszíne",
+      "IN_TOWN": "VÁROSBAN",
+      "OUTDOORS": "SZABADBAN",
+      "IN_A_BUILDING": "ÉPÜLETBEN",
+      "SMALL_AREA": "KIS TERÜLETEN",
+      "ANYWHERE": "BÁRHOL",
+      "IDENTIFICATIONS": "Azonosítás",
+      "CODE": "Azonosító kód",
+      "QR": "QR kód"
+    }
+  },
+  "EVENTS": {
+    "EVENTS": "Események",
+    "SORTING": "Rendezés",
+    "BY_DATE": "Dátum alapján",
+    "BY_CREATION_DATE": "Létrehozás dátuma alapján",
+    "BY_EVENT_NAME": "Esemény neve alapján",
+    "BY_POPULARITY": "Népszerűség alapján",
+    "SAVED": "Mentett",
+    "NO_EVENTS": "Nincs esemény egyelőre",
+    "FULL": "BETELT",
+    "JOINED": "Csatlakozva",
+    "GO_TO_THE_GAME": "Mutasd a játékot",
+    "JOIN_EVENTS": "Csatlakozás",
+    "CHAT": "Csevegés",
+    "CANCEL_JOIN": "Visszavonás",
+    "START_EVENT": "Esemény indítása",
+    "EDIT": {
+      "EDIT": "Esemény szerkesztés",
+      "CREATE": "Esemény létrehozás"
+    }
+  },
+  "GAME_MODE": {
+    "AGAINST_EACH_OTHER": "Egymás ellen",
+    "TEAM_GAME": "Csapat játék",
+    "TEAM_VS_TEAM": "Csapat VS Csapat",
+    "NOT_SPECIFIED": "Nincs meghatározva",
+    "TIME_TO_PLAY": "Játék idő",
+    "CHOOSE_GAME": "VÁLASSZ JÁTÉKOT",
+    "SOLO": "EGYÉNI",
+    "JOIN": "CSATLAKOZÁS",
+    "CREATE_MULTIPLAYER_GAME": "MULTIPLAYER JÁTÉK KÉSZÍTÉSE",
+    "CHOOSE_EVENT_TO_START": "VÁLASSZ ESEMÉNYT A KEZDÉSHEZ",
+    "ACCESS_CODE": "HOZZÁFÉRÉSI KÓD",
+    "START_THE_GAME": "Játék indítása",
+    "TEAMS": "Csapatok",
+    "PLAYERS": "Játékosok",
+    "WAITING_FOR": "Várakozás ",
+    "PEOPLE": " emberre",
+    "GAME": {
+      "THE_QUESTION": "A kérdés",
+      "ANSWER": "Válasz",
+      "ASKING_FOR_HELP": "Segítség kérése",
+      "HELP": "Segítség",
+      "CHECK_THE_ANSWER": "Válasz ellenőrzése",
+      "GO_TO_FINAL_LEADERBOARD": "Mutasd a végleges ranglistát",
+      "GO_TO_NEXT_CHECKPOINT": "Menj a következő checkpointhoz",
+      "INFO": "Infó",
+      "DESCRIPTION": "Leírás",
+      "HOW_TO_GET_THERE": "Útmutató",
+      "GET_A_QUESTION": "Kérdés kérése",
+      "GET_A_NEW_INFO": "Infó kérése",
+      "LEADERBOARD": "Ranglista",
+      "CHECKPOINTS": "Checkpointok",
+      "SCORE": "Pontszám",
+      "POINT": "pont",
+      "MAP": "Térkép"
+    },
+    "END": {
+      "GAME_OVER": "Játék vége",
+      "FINAL_LEADERBOARD": "Végleges ranglista",
+      "WOULD_YOU_LIKE_TO": "Szeretnéd értékelni",
+      "LEAVE_A_RATING?": " a játékot?",
+      "DURATION": "Időtartam",
+      "RESPONSE_TIME": "Válaszidő",
+      "FULL": "Teljes",
+      "RESPONSE": "Válasz",
+      "TIME": "idő",
+      "ADD_RATING": "Értékelés hozzáadása",
+      "BACK_TO": "Vissza a",
+      "GAMES": "játékokhoz",
+      "HELP": "segítség"
+    },
+    "CREATE_MULTI": {
+      "CHOOSE_GAME_MODE": "Válassz játékmódot",
+      "AGAINST": "EGYMÁS",
+      "EACH": "ELLEN",
+      "OTHER": "",
+      "TEAM": "CSAPAT",
+      "GAME": "JÁTÉK",
+      "VS": "VS",
+      "NUMBER_OF_TEAMS": "Csapatok száma",
+      "NUMBER_OF_MEMBERS": "Résztvevők száma",
+      "NUMBER_OF_TEAM_MEMBERS": "Csapattagok száma",
+      "MAX_IS_20": "A maximum érték 20.",
+      "MAKE_SURE": "Győződjön meg arról, hogy mind a ",
+      "APPLICANTS_FIT": " jelentkező belefér a játékba.",
+      "SAVE_SETTINGS": "Beállítások mentése"
     }
   },
   "PROFILE": {
@@ -95,7 +195,8 @@
       "MESSAGE": "Üzenet",
       "FRIEND_REQUESTS": "Barát kérelmek",
       "EVENT_REMINDER": "Esemény emlékeztető"
-    }
+    },
+    "FRIEND": "Barát"
   },
   "CONNECTIONS": {
     "CONNECTIONS": "Kapcsolatok",
@@ -115,4 +216,12 @@
     "REMOVE": "Eltávolít",
     "GOTO": "Nézd meg"
   },
+  "SHARED": {
+    "CHECKPOINTS": {
+
+    },
+    "EVENTS": {
+
+    }
+  }
 }

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Time to play</ion-title>
+    <ion-title>{{ 'GAME_MODE.TIME_TO_PLAY' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -23,7 +23,7 @@
                 class="modeSelectionButtons"
                 color="primary"
                 expand="full">
-                CHOOSE GAME
+                {{ 'GAME_MODE.CHOOSE_GAME' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -33,7 +33,7 @@
                           class="modeSelectionButtons"
                           color="primary"
                           expand="full">
-                SOLO
+                {{ 'GAME_MODE.SOLO' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -45,7 +45,7 @@
                 expand="full"
                 (click)="enterAccessCode()"
                 [disabled]="user === null">
-                JOIN
+                {{ 'GAME_MODE.JOIN' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -57,7 +57,7 @@
                 expand="full"
                 [disabled]="user === null"
                 (click)="createMultiplayer()">
-                CREATE MULTIPLAYER GAME
+                {{ 'GAME_MODE.CREATE_MULTIPLAYER_GAME' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -69,7 +69,7 @@
                 expand="full"
                 [disabled]="user === null"
                 [routerLink]="['/','profile']">
-                CHOOSE EVENT TO START
+                {{ 'GAME_MODE.CHOOSE_EVENT_TO_START' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>
@@ -81,7 +81,7 @@
                 expand="full"
                 [routerLink]="['/','game-mode']"
                 (click)="back()">
-                BACK
+                {{ 'BACK' | translate }}
               </ion-button>
             </ion-col>
           </ion-row>

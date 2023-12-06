@@ -59,6 +59,8 @@
       "CATEGORY": "Category",
       "OTHER_CATEGORY": "Other category",
       "NEW_CATEGORY": "New category",
+      "CATEGORY_REQUIRED": "Category is required",
+      "CHOOSE_GAME_TYPE": "Choose game type",
       "WANT_SHARE": "Do you want to share your game?",
       "PUBLIC": "Public",
       "PRIVATE": "Private",
@@ -71,7 +73,105 @@
       "PICK_IMAGE": "Pick an image for the game",
       "PICK_MAP_IMAGE": "Pick map image",
       "EDIT_CHECKPOINTS": "Edit checkpoints",
-      "SAVE_THE_GAME": "Save the game"
+      "SAVE_THE_GAME": "Save the game",
+      "CHECKPOINTS_LOCATION_DESCRIPTION": "Checkpoints location",
+      "IN_TOWN": "IN TOWN",
+      "OUTDOORS": "OUTDOORS",
+      "IN_A_BUILDING": "IN A BUILDING",
+      "SMALL_AREA": "SMALL AREA",
+      "ANYWHERE": "ANYWHERE",
+      "IDENTIFICATIONS": "Identifications",
+      "CODE": "Identification code",
+      "QR": "QR code"
+    }
+  },
+  "EVENTS": {
+    "EVENTS": "Events",
+    "SORTING": "Sorting",
+    "BY_DATE": "By date",
+    "BY_CREATION_DATE": "By creation date",
+    "BY_EVENT_NAME": "By event name",
+    "BY_POPULARITY": "By popularity",
+    "SAVED": "Saved",
+    "NO_EVENTS": "There are no events right know",
+    "FULL": "FULL",
+    "JOINED": "Joined",
+    "GO_TO_THE_GAME": "Go to the game",
+    "JOIN_EVENTS": "Join event",
+    "CHAT": "Chat",
+    "CANCEL_JOIN": "Cancel join",
+    "START_EVENT": "Start event",
+    "EDIT": {
+      "EDIT": "Event editing",
+      "CREATE": "Event creating"
+    }
+  },
+  "GAME_MODE": {
+    "AGAINST_EACH_OTHER": "Against each other",
+    "TEAM_GAME": "Team game",
+    "TEAM_VS_TEAM": "Team VS Team",
+    "NOT_SPECIFIED": "Not specified",
+    "TIME_TO_PLAY": "Time to play",
+    "CHOOSE_GAME": "CHOOSE GAME",
+    "SOLO": "SOLO",
+    "JOIN": "JOIN",
+    "CREATE_MULTIPLAYER_GAME": "CREATE MULTIPLAYER GAME",
+    "CHOOSE_EVENT_TO_START": "CHOOSE EVENT TO START",
+    "ACCESS_CODE": "ACCESS CODE",
+    "START_THE_GAME": "Start the game",
+    "TEAMS": "Teams",
+    "PLAYERS": "Players",
+    "WAITING_FOR": "Waiting for ",
+    "PEOPLE": " people",
+    "GAME": {
+      "THE_QUESTION": "The question",
+      "ANSWER": "Answer",
+      "ASKING_FOR_HELP": "Asking for help",
+      "HELP": "Help",
+      "CHECK_THE_ANSWER": "Check the answer",
+      "GO_TO_FINAL_LEADERBOARD": "Go to final leaderboard",
+      "GO_TO_NEXT_CHECKPOINT": "Go to next checkpoint",
+      "INFO": "Info",
+      "DESCRIPTION": "Description",
+      "HOW_TO_GET_THERE": "How to get there",
+      "GET_A_QUESTION": "Get a question",
+      "GET_A_NEW_INFO": "Get a new info",
+      "LEADERBOARD": "Leaderboard",
+      "CHECKPOINTS": "Checkpoints",
+      "SCORE": "Score",
+      "POINT": "point",
+      "MAP": "Map"
+    },
+    "END": {
+      "GAME_OVER": "Game over",
+      "FINAL_LEADERBOARD": "Final leaderboard",
+      "WOULD_YOU_LIKE_TO": "Would you like to",
+      "LEAVE_A_RATING?": " leave a rating?",
+      "DURATION": "Duration",
+      "RESPONSE_TIME": "Response time",
+      "FULL": "Full",
+      "RESPONSE": "Response",
+      "TIME": "Time",
+      "ADD_RATING": "Add rating",
+      "BACK_TO": "Back to",
+      "GAMES": "games",
+      "HELP": "help"
+    },
+    "CREATE_MULTI": {
+      "CHOOSE_GAME_MODE": "Choose game mode",
+      "AGAINST": "AGAINST",
+      "EACH": "EACH",
+      "OTHER": "OTHER",
+      "TEAM": "TEAM",
+      "GAME": "GAME",
+      "VS": "VS",
+      "NUMBER_OF_TEAMS": "Number of teams",
+      "NUMBER_OF_MEMBERS": "Number of members",
+      "NUMBER_OF_TEAM_MEMBERS": "Number of team members",
+      "MAX_IS_20": "The max value is 20.",
+      "MAKE_SURE": "Make sure that all ",
+      "APPLICANTS_FIT": " applicants fit in the game.",
+      "SAVE_SETTINGS": "Save settings"
     }
   },
   "PROFILE": {
@@ -93,7 +193,8 @@
       "MESSAGE": "Message",
       "FRIEND_REQUESTS": "Friend requests",
       "EVENT_REMINDER": "Event reminder"
-    }
+    },
+    "FRIEND": "Friend"
   },
   "CONNECTIONS": {
     "CONNECTIONS": "Connections",
@@ -112,5 +213,13 @@
     "CONFIRM": "Confirm",
     "REMOVE": "Remove",
     "GOTO": "Go to"
+  },
+  "SHARED": {
+    "CHECKPOINTS": {
+
+    },
+    "EVENTS": {
+
+    }
   }
 }

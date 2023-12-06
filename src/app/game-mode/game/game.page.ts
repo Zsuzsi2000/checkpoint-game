@@ -20,6 +20,7 @@ import {BarcodeFormat} from '@zxing/library';
 import {Capacitor} from "@capacitor/core";
 import {Geolocation} from "@capacitor/geolocation";
 import {GameMode} from "../../enums/GameMode";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -52,6 +53,7 @@ export class GamePage implements OnInit, OnDestroy {
   last = false;
   first = false;
   wait = false;
+  currentLanguage = "";
 
   constructor(private activatedRoute: ActivatedRoute,
               private navCtrl: NavController,
@@ -61,7 +63,9 @@ export class GamePage implements OnInit, OnDestroy {
               private alertController: AlertController,
               private modalController: ModalController,
               private router: Router,
-              private loadingController: LoadingController) {
+              private loadingController: LoadingController,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
   }
 
   ngOnInit() {

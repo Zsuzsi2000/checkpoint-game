@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start" *ngIf="qrScanner">
-      <ion-button (click)="back()">Back</ion-button>
+      <ion-button (click)="back()">{{ 'BACK' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title *ngIf="!qrScanner">{{ isLoading ? 'Loading...' : actualCheckpoint.name }}</ion-title>
+    <ion-title *ngIf="!qrScanner">{{ isLoading ? ('LOADING' | translate) : actualCheckpoint.name }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -28,7 +28,7 @@
             <ion-col class="ion-justify-content-center ion-align-items-center" size-sm="10" size-md="8">
               <ion-card>
                 <ion-card-header class="ion-text-center">
-                  <ion-label>The question</ion-label>
+                  <ion-label>{{ 'GAME_MODE.GAME.THE_QUESTION' | translate }}</ion-label>
                 </ion-card-header>
                 <ion-card-content>
                   <ion-list lines="none" class="ion-no-padding ion-no-margin ion-text-center">
@@ -38,12 +38,12 @@
                     <ion-item *ngIf="actualCheckpoint.quiz.answers.length === 1"
                               [ngClass]="(correctAnswer !== null && correctAnswer) ? 'good-answer' : (correctAnswer === false ? 'bad-answer' : '')"
                               class="button-border">
-                      <ion-label position="stacked">Answer</ion-label>
+                      <ion-label position="stacked">{{ 'GAME_MODE.GAME.ANSWER' | translate }}</ion-label>
                       <ion-input
                         [(ngModel)]="answer"
                         type="text"
                         labelPlacement="stacked"
-                        placeholder="Enter your answer"
+                        [placeholder]="currentLanguage === 'hu' ? 'Írd ide a válaszod' : 'Enter your answer'"
                       ></ion-input>
                     </ion-item>
                     <ng-container *ngIf="actualCheckpoint.quiz.answers.length > 1">
@@ -63,7 +63,7 @@
           <ion-row *ngIf="actualCheckpoint.quiz.help" class="ion-justify-content-center ion-margin">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-button color="secondary" fill="solid" class="button-border" (click)="showHelp()">
-                Asking for help
+                {{ 'GAME_MODE.GAME.ASKING_FOR_HELP' | translate }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
             </ion-col>
@@ -71,14 +71,14 @@
           <ion-row *ngIf="actualCheckpoint.quiz.help && useHelp" class="ion-justify-content-center ion-margin">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-item lines="none" class="border-and-radius">
-                <ion-label>{{ 'Help: ' + actualCheckpoint.quiz.help}}</ion-label>
+                <ion-label>{{ ('GAME_MODE.GAME.HELP' | translate) + ': ' + actualCheckpoint.quiz.help}}</ion-label>
               </ion-item>
             </ion-col>
           </ion-row>
           <ion-row class="ion-justify-content-center ion-margin" *ngIf="correctAnswer === null">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-button color="secondary" fill="solid" class="button-border" (click)="checkAnswer()">
-                Check the answer
+                {{ 'GAME_MODE.GAME.CHECK_THE_ANSWER' | translate }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
             </ion-col>
@@ -86,7 +86,7 @@
           <ion-row class="ion-justify-content-center ion-margin" *ngIf="correctAnswer !== null">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-button color="secondary" fill="solid" class="button-border" (click)="last ? finish() : goToNextCheckpoint()">
-                {{ last ? 'Go to final leaderboard' : 'Go to next checkpoint' }}
+                {{ last ? ('GAME_MODE.GAME.GO_TO_FINAL_LEADERBOARD' | translate) : ('GAME_MODE.GAME.GO_TO_NEXT_CHECKPOINT' | translate) }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
             </ion-col>
@@ -97,7 +97,7 @@
             <ion-col class="ion-justify-content-center ion-align-items-center" size-sm="10" size-md="8">
               <ion-card>
                 <ion-card-header>
-                  <ion-label>Info</ion-label>
+                  <ion-label>{{ 'GAME_MODE.GAME.INFO' | translate }}</ion-label>
                 </ion-card-header>
                 <ion-card-content>
                   <ion-label>{{ actualCheckpoint.info }}</ion-label>
@@ -108,7 +108,7 @@
           <ion-row class="ion-justify-content-center ion-margin">
             <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
               <ion-button color="secondary" fill="solid" class="button-border" (click)="last ? finish() : goToNextCheckpoint()">
-                {{ last ? 'Go to final leaderboard' : 'Go to next checkpoint' }}
+                {{ last ? ('GAME_MODE.GAME.GO_TO_FINAL_LEADERBOARD' | translate) : ('GAME_MODE.GAME.GO_TO_NEXT_CHECKPOINT' | translate) }}
                 <ion-icon slot="end" name="arrow-forward"></ion-icon>
               </ion-button>
             </ion-col>
@@ -121,7 +121,7 @@
           <ion-col class="ion-justify-content-center ion-align-items-center" size-sm="10" size-md="8">
             <ion-card>
               <ion-card-header>
-                <ion-label>Description</ion-label>
+                <ion-label>{{ 'GAME_MODE.GAME.DESCRIPTION' | translate }}</ion-label>
               </ion-card-header>
               <ion-card-content>
                 <ion-label>{{ actualCheckpoint.description }}</ion-label>
@@ -133,7 +133,7 @@
           <ion-col class="ion-justify-content-center ion-align-items-center" size-sm="10" size-md="8">
             <ion-card>
               <ion-card-header>
-                <ion-label>How to get there</ion-label>
+                <ion-label>{{ 'GAME_MODE.GAME.HOW_TO_GET_THERE' | translate }}</ion-label>
               </ion-card-header>
               <ion-card-content>
                 <ion-label>{{ game.locationType === LocationType.location ? actualCheckpoint.locationAddress.address : actualCheckpoint.locationDescription }}</ion-label>
@@ -144,7 +144,7 @@
         <ion-row class="ion-justify-content-center ion-margin">
           <ion-col class="ion-justify-content-center ion-align-items-center flex-set">
             <ion-button color="secondary" fill="solid" class="button-border" (click)="identifyLocation()" [ngSwitch]="game.locationIdentification">
-              {{ game.quiz ? 'Get a question' : 'Get a new info' }}
+              {{ game.quiz ? ('GAME_MODE.GAME.GET_A_QUESTION' | translate) : ('GAME_MODE.GAME.GET_A_NEW_INFO' | translate) }}
               <ion-icon *ngSwitchCase="LocationIdentification.qr" name="qr-code-outline"></ion-icon>
               <ion-icon *ngSwitchCase="LocationIdentification.locator" name="location-outline"></ion-icon>
               <ion-icon *ngSwitchDefault slot="end" name="arrow-forward"></ion-icon>
@@ -154,11 +154,11 @@
         <ion-row class="ion-justify-content-center">
           <ion-col class="flex-set ion-justify-content-center ion-align-items-center">
             <ion-button fill="solid" size="small" shape="round" (click)="showLeaderboard()" class="ion-margin">
-              Leaderboard
+              {{ 'GAME_MODE.GAME.LEADERBOARD' | translate }}
               <ion-icon slot="end" name="trophy"></ion-icon>
             </ion-button>
             <ion-button fill="solid" size="small" shape="round" (click)="showCheckpoints()" class="ion-margin">
-              Checkpoints
+              {{ 'GAME_MODE.GAME.CHECKPOINTS' | translate }}
               <ion-icon slot="end" name="flag"></ion-icon>
             </ion-button>
           </ion-col>

@@ -3,18 +3,23 @@
     <ion-col class="ion-text-center ion-padding" size-sm="6">
       <ion-item class="ion-align-items-center" lines="none">
         <ion-label class="ion-text-center">
-          Choose game mode
+          {{ 'GAME_MODE.CREATE_MULTI.CHOOSE_GAME_MODE' | translate }}
         </ion-label>
       </ion-item>
       <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="GameMode.againstEachOther">
         <ion-segment-button [value]="GameMode.againstEachOther">
-          <ion-label>AGAINST<br>EACH<br>OTHER</ion-label>
+          <ion-label>{{ 'GAME_MODE.CREATE_MULTI.AGAINST' | translate }}<br>
+            {{ 'GAME_MODE.CREATE_MULTI.EACH' | translate }}<br>
+            {{ 'GAME_MODE.CREATE_MULTI.OTHER' | translate }}</ion-label>
         </ion-segment-button>
         <ion-segment-button [value]="GameMode.teamGame">
-          <ion-label>TEAM<br>GAME</ion-label>
+          <ion-label>{{ 'GAME_MODE.CREATE_MULTI.TEAM' | translate }}<br>
+            {{ 'GAME_MODE.CREATE_MULTI.GAME' | translate }}</ion-label>
         </ion-segment-button>
         <ion-segment-button [value]="GameMode.teamVsTeam">
-          <ion-label>TEAM<br>VS<br>TEAM</ion-label>
+          <ion-label>{{ 'GAME_MODE.CREATE_MULTI.TEAM' | translate }}<br>
+            {{ 'GAME_MODE.CREATE_MULTI.VS' | translate }}<br>
+            {{ 'GAME_MODE.CREATE_MULTI.TEAM' | translate }}</ion-label>
         </ion-segment-button>
       </ion-segment>
     </ion-col>
@@ -23,12 +28,14 @@
     <ion-col class="ion-text-center" size-sm="6">
       <ion-list class="ion-padding" lines="none">
         <ion-item class="ion-align-items-center" *ngIf="liveGameSetting.gameMode !== GameMode.teamGame">
-          <ion-label position="stacked">{{ liveGameSetting.gameMode === GameMode.teamVsTeam ? 'Number of teams' : 'Number of members'}}</ion-label>
+          <ion-label position="stacked">{{ liveGameSetting.gameMode === GameMode.teamVsTeam
+            ? ('GAME_MODE.CREATE_MULTI.NUMBER_OF_TEAMS' | translate)
+            : ('GAME_MODE.CREATE_MULTI.NUMBER_OF_MEMBERS' | translate)}}</ion-label>
           <ion-input
             [(ngModel)]="maxTeam"
             type="number"
             labelPlacement="stacked"
-            placeholder="Enter the number"
+            [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy számot' : 'Enter the number'"
           ></ion-input>
         </ion-item>
         <ion-item
@@ -36,16 +43,16 @@
           *ngIf="maxTeam < 1 || maxTeam > 20"
           lines="none">
           <ion-label color="danger">
-            The max value is 20.
+            {{ 'GAME_MODE.CREATE_MULTI.MAX_IS_20' | translate }}
           </ion-label>
         </ion-item>
         <ion-item class="ion-align-items-center" *ngIf="liveGameSetting.gameMode !== GameMode.againstEachOther">
-          <ion-label position="stacked">Number of team members</ion-label>
+          <ion-label position="stacked">{{ 'GAME_MODE.CREATE_MULTI.NUMBER_OF_TEAM_MEMBERS' | translate }}</ion-label>
           <ion-input
             [(ngModel)]="maxTeamMember"
             type="number"
             labelPlacement="stacked"
-            placeholder="Enter the maximum number of people in a team"
+            [placeholder]="currentLanguage === 'hu' ? 'Add meg egy csapat maximum létszámát' : 'Enter the maximum number of people in a team'"
           ></ion-input>
         </ion-item>
         <ion-item
@@ -53,7 +60,7 @@
           *ngIf="maxTeamMember < 1 || maxTeamMember > 20"
           lines="none">
           <ion-label color="danger">
-            The max value is 20.
+            {{ 'GAME_MODE.CREATE_MULTI.MAX_IS_20' | translate }}
           </ion-label>
         </ion-item>
         <ion-item
@@ -61,7 +68,7 @@
           *ngIf="event && event.players && !checkEveryPlayersCanJoin()"
           lines="none">
           <ion-label color="danger">
-            {{'Make sure that all ' + event.players.length + ' applicants fit in the game.'}}
+            {{ ('GAME_MODE.CREATE_MULTI.MAKE_SURE' | translate) + event.players.length + ('GAME_MODE.CREATE_MULTI.APPLICANTS_FIT' | translate)}}
           </ion-label>
         </ion-item>
       </ion-list>
@@ -74,7 +81,7 @@
       color="secondary"
       [disabled]="maxTeamMember < 1 || maxTeamMember > 20 || maxTeam < 1 || maxTeam > 20 || !checkEveryPlayersCanJoin()"
       (click)="createLiveGameSettings()">
-        <ion-label>Save settings</ion-label>
+        <ion-label>{{ 'GAME_MODE.CREATE_MULTI.SAVE_SETTINGS' | translate }}</ion-label>
       </ion-button>
     </ion-col>
   </ion-row>

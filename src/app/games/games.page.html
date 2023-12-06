@@ -22,7 +22,8 @@
     <ion-row class="ion-align-items-center">
       <ion-col size="12">
         <ion-item>
-          <ion-select placeholder="Select a sorting mode" (ionChange)="sortGamesEvent($event)">
+          <ion-select [placeholder]="currentLanguage === 'hu' ? 'Válassz rendezési módot' : 'Select a sorting mode'"
+            (ionChange)="sortGamesEvent($event)">
             <div slot="label">{{ 'GAMES.SORTING' | translate}}</div>
             <ion-select-option [value]="SortingMode.byCreationDate">{{ 'GAMES.BY_DATE' | translate}}
             </ion-select-option>

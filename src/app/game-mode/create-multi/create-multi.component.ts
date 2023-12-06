@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {LiveGameSettings} from "../../models/liveGameSettings";
 import {GameMode} from "../../enums/GameMode";
 import {Event} from "../../models/event.model";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-create-multi',
@@ -16,8 +17,10 @@ export class CreateMultiComponent implements OnInit {
   maxTeam = 5;
   maxTeamMember = 1;
   GameMode = GameMode;
+  currentLanguage = "";
 
-  constructor() {
+  constructor(private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
   }
 
   ngOnInit() {
