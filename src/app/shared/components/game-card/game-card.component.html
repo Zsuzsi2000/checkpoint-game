@@ -6,7 +6,7 @@
     <ion-item lines="none">
       <div class="custom-align">
         <div class="custom-align-item">
-          <ion-card-title class="justify-first">{{ game.name}}</ion-card-title>
+          <ion-card-title class="justify-first">{{ game.name }}</ion-card-title>
         </div>
         <div class="custom-align-item justify-second">
           <ion-buttons slot="end" class="justify-second">
@@ -29,7 +29,7 @@
       </div>
     </ion-item>
     <ion-item lines="none">
-      <ion-chip slot="start">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
+      <ion-chip slot="start">{{ game.quiz ? ('GAMES.DETAILS.QUIZ' | translate) : ('GAMES.DETAILS.LEARNING' | translate) }}</ion-chip>
     </ion-item>
   </ion-card-header>
   <ion-card-content>
@@ -40,7 +40,7 @@
       </ion-item>
       <ion-item>
         <ion-icon name="map" size="small" class="rigt-padding"></ion-icon>
-        <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
+        <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">{{ 'GAMES.DETAILS.ANYWHERE' | translate }}</ion-label>
         <ng-template #hasLocation>
           <ion-label>{{ game.country }}</ion-label>
         </ng-template>
@@ -50,19 +50,19 @@
       <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                   class="custom-align-item margin-top" fill="solid" size="small" shape="round"
                   [routerLink]="['/', 'games', 'details', game.id]">
-        Details
+        {{ 'GAMES.DETAILS.DETAILS' | translate }}
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
       </ion-button>
       <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                   *ngIf="loggedUser" class="custom-align-item margin-top" fill="solid"
                   size="small" shape="round" (click)="createEvent(game.id)">
-        Create event
+        {{ 'GAMES.DETAILS.CREATE_EVENT' | translate }}
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
       </ion-button>
       <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                   class="custom-align-item margin-top" fill="solid" size="small" shape="round"
                   (click)="navigateToGameMode()">
-        Play
+        {{ 'GAMES.DETAILS.PLAY' | translate }}
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
       </ion-button>
     </ion-buttons>

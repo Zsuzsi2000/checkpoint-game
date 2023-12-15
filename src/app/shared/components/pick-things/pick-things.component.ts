@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ModalController} from "@ionic/angular";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-pick-things',
@@ -14,8 +15,12 @@ export class PickThingsComponent implements OnInit {
 
   filter: string = "";
   workingPickedThings: string[] = [];
+  currentLanguage = "";
 
-  constructor(private modalCtrl: ModalController) {}
+  constructor(private modalCtrl: ModalController,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
     this.workingPickedThings = this.pickedThings;

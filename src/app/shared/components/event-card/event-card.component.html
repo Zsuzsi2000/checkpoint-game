@@ -3,13 +3,13 @@
     <ion-img [src]="event.imgUrl" class="background-image"></ion-img>
   </div>
   <div *ngIf="!canJoin(event)" class="background-image-container">
-    <h1>FULL</h1>
+    <h1>{{ 'EVENTS.FULL' | translate }}</h1>
   </div>
   <ion-card-header class="ion-no-padding">
     <ion-item lines="none">
       <div class="custom-align">
         <div class="custom-align-item">
-          <ion-card-title class="justify-first">{{ event.name}}</ion-card-title>
+          <ion-card-title class="justify-first">{{ event.name }}</ion-card-title>
         </div>
         <div class="custom-align-item justify-second">
           <ion-buttons slot="end" class="justify-second">
@@ -32,9 +32,9 @@
       </div>
     </ion-item>
     <ion-item lines="none" class="ion-justify-content-center">
-      <ion-chip *ngIf="game">{{ game.quiz ? 'Quiz' : 'Learning' }}</ion-chip>
-      <ion-chip slot=end class="joined-chip" *ngIf="loadedUser && event.players.includes(loadedUser.id)">Joined</ion-chip>
-      <ion-chip slot=end class="joined-chip" *ngIf="loadedUser && event.creatorId === loadedUser.id">Creator</ion-chip>
+      <ion-chip *ngIf="game">{{ game.quiz ? ('GAMES.DETAILS.QUIZ' | translate) : ('GAMES.DETAILS.LEARNING' | translate) }}</ion-chip>
+      <ion-chip slot=end class="joined-chip" *ngIf="loadedUser && event.players.includes(loadedUser.id)">{{ 'EVENTS.JOINED' | translate }}</ion-chip>
+      <ion-chip slot=end class="joined-chip" *ngIf="loadedUser && event.creatorId === loadedUser.id">{{ 'EVENTS.CREATOR' | translate }}</ion-chip>
     </ion-item>
   </ion-card-header>
   <ion-card-content>
@@ -45,7 +45,7 @@
       </ion-item>
       <ion-item>
         <ion-icon name="hourglass-outline" size="small" class="rigt-padding"></ion-icon>
-        <ion-label>{{ getDays(event.date) + ' days from now' }}</ion-label>
+        <ion-label>{{ getDays(event.date) + ' ' + ('EVENTS.DAYS_FROM_NOW' | translate) }}</ion-label>
       </ion-item>
       <ion-item *ngIf="game">
         <ion-icon name="grid" size="small" class="rigt-padding"></ion-icon>
@@ -53,7 +53,7 @@
       </ion-item>
       <ion-item *ngIf="game">
         <ion-icon name="map" size="small" class="rigt-padding"></ion-icon>
-        <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">Anywhere</ion-label>
+        <ion-label *ngIf="game.locationType === LocationType.anywhere; else hasLocation">{{ 'GAMES.DETAILS.ANYWHERE' | translate }}</ion-label>
         <ng-template #hasLocation>
           <ion-label>{{ game.country }}</ion-label>
         </ng-template>
@@ -62,7 +62,7 @@
     <ion-buttons class="custom-align-2">
       <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'" class="custom-align-item margin-top" fill="solid" size="small" shape="round"
                   [routerLink]="['/', 'events', 'details', event.id]">
-        Details
+        {{ 'EVENTS.DETAILS' | translate }}
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
       </ion-button>
       <ng-container *ngIf="loggedUser && loggedUser.id">
@@ -72,21 +72,21 @@
                     [disabled]="!canJoin(event) || canStartEvent()"
                     *ngIf="!event.players.includes(loggedUser.id)"
                     (click)="joinEvent(event)">
-          Join event
+          {{ 'EVENTS.JOIN_EVENTS' | translate }}
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>
         <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                     class="custom-align-item margin-top" fill="solid" size="small" shape="round"
                     *ngIf="event.players.includes(loggedUser.id)"
                     (click)="goToChat()">
-          Chat
+          {{ 'EVENTS.CHAT' | translate }}
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>
         <ion-button [ngClass]="profile ? 'colored-profile' : 'colored-sample'"
                     class="custom-align-item margin-top" fill="solid" size="small" shape="round"
                     *ngIf="event.players.includes(loggedUser.id)"
                     (click)="cancelEvent(event)">
-          Cancel join
+          {{ 'EVENTS.CANCEL_JOIN' | translate }}
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>
         <ion-button class="custom-align-item margin-top" fill="solid" size="small" shape="round"
@@ -94,7 +94,7 @@
                     *ngIf="ownProfile && event.creatorId === loadedUser.id"
                     [disabled]="!canStartEvent()"
                     (click)="startEvent()">
-          Start event
+          {{ 'EVENTS.START_EVENT' | translate }}
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
         </ion-button>
       </ng-container>

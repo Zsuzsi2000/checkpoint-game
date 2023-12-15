@@ -6,7 +6,7 @@
   ></ion-img>
   <ion-button color="primary" (click)="onPickImage()">
     <ion-icon name="camera" slot="start"></ion-icon>
-    <ion-label>{{ selectedImage ? 'Take other picture' : 'Take picture'}}</ion-label>
+    <ion-label>{{ selectedImage ? ('SHARED.TAKE_OTHER_PICTURE' | translate) : ('SHARED.TAKE_PICTURE' | translate)}}</ion-label>
   </ion-button>
 </div>
 <input

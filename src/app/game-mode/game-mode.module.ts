@@ -6,13 +6,15 @@ import { GameModePageRoutingModule } from './game-mode-routing.module';
 import { GameModePage } from './game-mode.page';
 import {CreateMultiComponent} from "./create-multi/create-multi.component";
 import {WaitingComponent} from "./waiting/waiting.component";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        GameModePageRoutingModule
+        GameModePageRoutingModule,
+        TranslateModule
     ],
     declarations: [
         GameModePage,

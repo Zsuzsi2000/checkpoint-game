@@ -197,24 +197,24 @@ export class GamePage implements OnInit, OnDestroy {
 
   checkAccessCode() {
     this.alertController.create({
-      header: "Enter the access code",
+      header:  this.currentLanguage === 'hu' ? 'Add meg az azonosító kódot' : 'Enter the access code',
       inputs: [{
-        placeholder: "Access code",
+        placeholder: this.currentLanguage === 'hu' ? 'Azonosító kód' :'Access code',
         type: "text",
         name: "accessCode",
       }],
       buttons: [
         {
-          text: "Cancel",
+          text: this.currentLanguage === 'hu' ? 'Vissza' : 'Cancel',
           role: "cancel"
         },
         {
-          text: "Go",
+          text: this.currentLanguage === 'hu' ? 'Mehet' : 'Go',
           handler: (event) => {
             if (event.accessCode && this.actualCheckpoint.locationAccessCode === event.accessCode) {
               this.findCheckpoint();
             } else {
-              this.showALert('Unfortunately, the access code does not match..');
+              this.showALert(this.currentLanguage === 'hu' ? 'Sajnos nem egyezik az azonosító kód' :'Unfortunately, the access code does not match.');
             }
           }
         }
@@ -229,15 +229,17 @@ export class GamePage implements OnInit, OnDestroy {
     if (event && this.actualCheckpoint.locationAccessCode === event) {
       this.findCheckpoint();
     } else {
-      this.showALert('Unfortunately, the access code does not match.');
+      this.showALert(this.currentLanguage === 'hu' ? 'Sajnos nem egyezik a QR kód' :'Unfortunately, the QR code does not match.');
     }
   }
 
   checkLocation() {
-    this.loadingController.create({keyboardClose: true, message: 'Check location...',}).then(loadingEl => {
+    this.loadingController.create({
+      keyboardClose: true,
+      message: this.currentLanguage === 'hu' ? 'Helyszín ellenőrzése' : 'Check location...'}).then(loadingEl => {
       loadingEl.present();
       if (!Capacitor.isPluginAvailable('Geolocation')) {
-        this.showALert('Unable to determine your location.');
+        this.showALert(this.currentLanguage === 'hu' ? 'Nem lehet meghatározni a helyzeted.' : 'Unable to determine your location.');
         return;
       }
       Geolocation.getCurrentPosition()
@@ -247,13 +249,13 @@ export class GamePage implements OnInit, OnDestroy {
         })
         .catch(err => {
           loadingEl.dismiss();
-          this.showALert('Unable to determine your location.');
+          this.showALert(this.currentLanguage === 'hu' ? 'Nem lehet meghatározni a helyzeted.' : 'Unable to determine your location.');
         });
     });
   }
 
   checkDistance(myLat: number, myLng: number) {
-    const R = 6371; // Radius of the Earth in kilometers
+    const R = 6371;
     const dLat = this.deg2rad(this.actualCheckpoint.locationAddress.lat - myLat);
     const dLon = this.deg2rad(this.actualCheckpoint.locationAddress.lng - myLng);
 
@@ -267,7 +269,7 @@ export class GamePage implements OnInit, OnDestroy {
     if (distance < 0.05) {
       this.findCheckpoint();
     } else {
-      this.showALert('Unfortunately you are not in the right place');
+      this.showALert(this.currentLanguage === 'hu' ? 'Sajnos nem jó helyen vagy.' :'Unfortunately you are not in the right place');
     }
   }
 

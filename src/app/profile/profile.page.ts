@@ -39,6 +39,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   countries = [];
   userSub: Subscription;
   firstTime = false;
+  canAdd = true;
 
   constructor(private gamesService: GamesService,
               private eventsService: EventsService,
@@ -155,6 +156,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       console.log(error);
       this.fetchJoinedEvents();
     });
+
+    this.canAddToFriends();
   }
 
   fetchJoinedEvents() {
@@ -226,7 +229,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   canAddToFriends() {
     this.connectionService.getFriends(this.loggedUser.id).pipe(take(1)).subscribe(friends => {
-      return !friends.includes(this.loadedUser);
+      this.canAdd = !friends.includes(this.loadedUser)
     })
   }
 

@@ -37,6 +37,7 @@
     "MY_COUNTRY": "My country",
     "NO_GAMES": "There are no games right know",
     "DETAILS": {
+      "DETAILS": "Details",
       "QUIZ": "Quiz",
       "LEARNING": "Learning",
       "ANYWHERE": "Anywhere",
@@ -96,6 +97,9 @@
     "NO_EVENTS": "There are no events right know",
     "FULL": "FULL",
     "JOINED": "Joined",
+    "CREATOR": "Creator",
+    "DAYS_FROM_NOW": "days from now",
+    "DETAILS": "Details",
     "GO_TO_THE_GAME": "Go to the game",
     "JOIN_EVENTS": "Join event",
     "CHAT": "Chat",
@@ -103,7 +107,16 @@
     "START_EVENT": "Start event",
     "EDIT": {
       "EDIT": "Event editing",
-      "CREATE": "Event creating"
+      "CREATE": "Event creating",
+      "NAME_OF_EVENT": "Name of the event",
+      "NAME_IS_REQUIRED": "Name is required",
+      "PICK_IMAGE": "Pick an image for the event",
+      "DESCRIPTION": "Description",
+      "SHARE": "Do you want to share your event?",
+      "CHOOSE_GAMEMODE": "Choose game mode",
+      "PUBLIC": "Public",
+      "PRIVATE": "Private",
+      "SAVE_THE_EVENT": "Save the event"
     }
   },
   "GAME_MODE": {
@@ -171,7 +184,8 @@
       "MAX_IS_20": "The max value is 20.",
       "MAKE_SURE": "Make sure that all ",
       "APPLICANTS_FIT": " applicants fit in the game.",
-      "SAVE_SETTINGS": "Save settings"
+      "SAVE_SETTINGS": "Save settings",
+      "HIGHER_THAN_PREVIOUS": "You can only enter a higher value than the previous one."
     }
   },
   "PROFILE": {
@@ -216,10 +230,41 @@
   },
   "SHARED": {
     "CHECKPOINTS": {
-
+      "CHECKPOINTS": "CHECKPOINTS",
+      "WAITING_TO_BE_EDITING": "Waiting to be edited",
+      "REORDERING_IS_DONE": "Reordering is done",
+      "REORDER_CH": "Reorder checkpoints",
+      "SELECT_ON_MAP": "Select on Map",
+      "ADD_CHECKPOINT": "Add checkpoint",
+      "DONE": "Done",
+      "EDIT_CHECKPOINTS": "Edit checkpoints",
+      "NAME": "Name of the checkpoint",
+      "NAME_IS_REQUIRED": "Name is required.",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_OF_LOCATION": "Description of Location",
+      "PICK_IMAGE": "Pick an image for the checkpoint",
+      "QUIZ": "Quiz",
+      "QUESTION": "Question",
+      "ANSWER": "Answer",
+      "GOOD_ANSWER": "Good answer?",
+      "ADD_NEW_ANSWER": "Add new answer",
+      "SHOULD_BE_CORRECT": "Should be one correct answer",
+      "HELP": "Help",
+      "INFO": "Info",
+      "SAVE_THE_CHECKPOINTS": "Save the checkpoint"
     },
-    "EVENTS": {
-
+    "TAKE_PICTURE": "Take other picture",
+    "TAKE_OTHER_PICTURE": "Take picture",
+    "PICK_NEW_IMAGE": "Pick new image",
+    "SELECT_NEW_CH_ON_MAP": "Select new checkpoints on map",
+    "SELECT_LOCATION": "Select location",
+    "SELECT_OTHER_LOCATION": "Select OTHER location",
+    "JOIN_OR_CREATE": {
+      "TEAMS": "Teams",
+      "DO_YOU_WANT_TO": "Do you want to create a new team or join an existing one?",
+      "JOIN": "Join",
+      "CREATE": "Create",
+      "NAME_OF_THE_TEAM": "Name of the team"
     }
   }
 }

@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="cancelChanges()">Cancel</ion-button>
+      <ion-button (click)="cancelChanges()">{{ 'CANCEL' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title>Pick new image</ion-title>
+    <ion-title>{{ 'SHARED.PICK_NEW_IMAGE' | translate }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="confirmChanges()">Done</ion-button>
+      <ion-button (click)="confirmChanges()">{{ 'DONE' | translate }}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

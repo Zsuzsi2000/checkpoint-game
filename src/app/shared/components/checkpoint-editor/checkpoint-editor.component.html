@@ -1,20 +1,20 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="onCancel()">Cancel</ion-button>
+      <ion-button (click)="onCancel()">{{ 'CANCEL' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title>Edit checkpoints</ion-title>
+    <ion-title>{{ 'SHARED.CHECKPOINTS.EDIT_CHECKPOINTS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <form [formGroup]="checkpointForm" (ngSubmit)="createCheckpoint()">
     <ion-list class="ion-padding" lines="none">
       <ion-item>
-        <ion-label position="stacked">Name of the checkpoint *</ion-label>
+        <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.NAME' | translate }} *</ion-label>
         <ion-input
           type="text"
           labelPlacement="stacked"
-          placeholder="Enter a checkpoint name"
+          [placeholder]="currentLanguage === 'hu' ? 'Add meg a checkpoint nevét' : 'Enter a checkpoint name'"
           formControlName="name"
         ></ion-input>
       </ion-item>
@@ -22,33 +22,32 @@
         *ngIf="(!checkpointForm.get('name').valid && checkpointForm.get('name').touched)"
         lines="none">
         <ion-label color="danger">
-          Name is required.
+          {{ 'SHARED.CHECKPOINTS.NAME_IS_REQUIRED' | translate }}
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-label position="stacked">Description</ion-label>
+        <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.DESCRIPTION' | translate }}</ion-label>
         <ion-textarea label="Description"
                       labelPlacement="stacked"
                       formControlName="description"
-                      placeholder="Give a description of the checkpoint">
+                      [placeholder]="currentLanguage === 'hu' ? 'Adj egy leírást a checkpointhoz' : 'Give a description of the checkpoint'">
         </ion-textarea>
       </ion-item>
       <ion-item>
         <ion-label class="ion-text-center">
-          Pick an image for the checkpoint
+          {{ 'SHARED.CHECKPOINTS.PICK_IMAGE' | translate }}
         </ion-label>
       </ion-item>
       <app-image-picker (imagePick)="onImagePick($event)"
                         [showPreview]="checkpointForm.get('imgUrl').value"
                         [previewImage]="checkpointForm.get('imgUrl').value"></app-image-picker>
       <ion-item *ngIf="locationType === LocationType.description">
-        <ion-label position="stacked">Description of Location</ion-label>
+        <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.DESCRIPTION_OF_LOCATION' | translate }}</ion-label>
         <ion-input
           type="text"
           labelPlacement="stacked"
-          placeholder="Give a description of where the checkpoint is located"
-          formControlName="locationDescription"
-        >
+          [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy útmutatót, hogy hogyan lehet eljutni a checkpointhoz' : 'Give a description of where the checkpoint is located'"
+          formControlName="locationDescription">
         </ion-input>
       </ion-item>
       <ng-container *ngIf="locationType === LocationType.location">
@@ -63,24 +62,24 @@
       </ng-container>
       <ion-list formGroupName="quiz" *ngIf="isQuiz; else noQuiz" class="quiz ion-no-padding">
         <ion-list-header class="ion-text-center">
-          <ion-label>Quiz</ion-label>
+          <ion-label>{{ 'SHARED.CHECKPOINTS.QUIZ' | translate }}</ion-label>
         </ion-list-header>
         <ion-item>
-          <ion-label position="stacked">Question</ion-label>
+          <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.QUESTION' | translate }}</ion-label>
           <ion-input
             type="text"
             labelPlacement="stacked"
-            placeholder="Enter a question"
+            [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy kérdést' : 'Enter a question'"
             formControlName="question"
           ></ion-input>
         </ion-item>
         <ion-list class="ion-margin answers" *ngIf="answers.length > 0">
           <ion-item *ngFor="let answer of answers" class="ion-align-items-center">
-            <ion-label position="stacked">Answer</ion-label>
+            <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.ANSWER' | translate }}</ion-label>
             <ion-input
               type="text"
               labelPlacement="stacked"
-              placeholder="Enter an answer"
+              [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy választ' : 'Enter an answer'"
               (ionChange)="changeAnswer(answer, $event)"
               [value]="answer.answer"
             ></ion-input>
@@ -91,43 +90,43 @@
           </ion-item>
         </ion-list>
         <ion-item>
-          <ion-label position="stacked">Answer</ion-label>
+          <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.ANSWER' | translate }}</ion-label>
           <ion-input
             type="text"
             labelPlacement="stacked"
-            placeholder="Enter an answer"
+            [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy választ' : 'Enter an answer'"
             #newAnswer
           ></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label>Good answer?</ion-label>
+          <ion-label>{{ 'SHARED.CHECKPOINTS.GOOD_ANSWER' | translate }}</ion-label>
           <ion-toggle slot="end" labelPlacement="start" color="secondary" #isItGood></ion-toggle>
         </ion-item>
         <ion-item>
           <ion-button (click)="addAnswer(newAnswer.value, isItGood.checked)" class="answer-button">
-            <ion-label>Add new answer</ion-label>
+            <ion-label>{{ 'SHARED.CHECKPOINTS.ADD_NEW_ANSWER' | translate }}</ion-label>
           </ion-button>
         </ion-item>
         <ion-item *ngIf="!quizIsReady()">
-          <ion-label color="danger">Should be one correct answer</ion-label>
+          <ion-label color="danger">{{ 'SHARED.CHECKPOINTS.SHOULD_BE_CORRECT' | translate }}</ion-label>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Help</ion-label>
+          <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.HELP' | translate }}</ion-label>
           <ion-input
             type="text"
             labelPlacement="stacked"
-            placeholder="Give help"
+            [placeholder]="currentLanguage === 'hu' ? 'Adj segítséget' : 'Give help'"
             formControlName="help"
           ></ion-input>
         </ion-item>
       </ion-list>
       <ng-template #noQuiz>
         <ion-item>
-          <ion-label position="stacked">Info</ion-label>
+          <ion-label position="stacked">{{ 'SHARED.CHECKPOINTS.INFO' | translate }}</ion-label>
           <ion-textarea
             type="text"
             labelPlacement="stacked"
-            placeholder="Enter an info"
+            [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy információt' : 'Enter an info'"
             formControlName="info"
           ></ion-textarea>
         </ion-item>
@@ -138,7 +137,7 @@
       type="submit"
       expand="full"
       [disabled]="isNotValid()">
-      <ion-label>Save the checkpoint</ion-label>
+      <ion-label>{{ 'SHARED.CHECKPOINTS.SAVE_THE_CHECKPOINTS' | translate }}</ion-label>
     </ion-button>
   </form>
 </ion-content>

@@ -10,6 +10,7 @@ import {LiveGameSettings} from "../../../models/liveGameSettings";
 import {EventsService} from "../../../events/events.service";
 import {of} from "rxjs";
 import {ISODateString} from "@capacitor/core";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -30,13 +31,17 @@ export class EventEditorComponent implements OnInit {
   GameMode = GameMode;
   actualGameMode: GameMode = GameMode.notSpecified;
   canEditGameMode = true;
+  currentLanguage = "";
 
   constructor(private modalCtrl: ModalController,
               private loadingCtrl: LoadingController,
               private formBuilder: FormBuilder,
               private authService: AuthService,
               private eventsService: EventsService,
-              private imageService: ImageService) { }
+              private imageService: ImageService,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
     this.defaultDate = new Date().toISOString();

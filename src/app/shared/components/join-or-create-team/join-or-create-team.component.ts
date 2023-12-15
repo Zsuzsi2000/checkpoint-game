@@ -8,6 +8,7 @@ import {LiveGameService} from "../../../game-mode/live-game.service";
 import { take} from "rxjs/operators";
 import {CheckpointState} from "../../../interfaces/CheckpointState";
 import {Game} from "../../../models/game.model";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-join-or-create-team',
@@ -27,12 +28,16 @@ export class JoinOrCreateTeamComponent implements OnInit {
   chosenTeam = "";
   canJoinToATeam: boolean;
   canCreateATeam: boolean;
+  currentLanguage = "";
 
   constructor(private modalCtrl: ModalController,
               private liveGameService: LiveGameService,
               private loadingController: LoadingController,
               private alertCtrl: AlertController,
-              private navCtrl: NavController) { }
+              private navCtrl: NavController,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
     if (this.event) {

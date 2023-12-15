@@ -182,8 +182,12 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     pdf.text(this.game.name, 2, 2);
     checks.forEach((check, index) => {
       if ( index > 0 && index % 4 === 0) { pdf.addPage() }
-      pdf.text((1 + check.checkpoint.index) + '. ' + check.checkpoint.name, (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 4 : 15);
-      pdf.addImage(check.url, 'PNG', (index % 2 === 0) ? 2 : 10.5, (index % 4 === 0 || index % 4 === 1) ? 6 : 17, 7, 7);
+      pdf.text((1 + check.checkpoint.index) + '. ' + check.checkpoint.name,
+        (index % 2 === 0) ? 2 : 10.5,
+        (index % 4 === 0 || index % 4 === 1) ? 4 : 15);
+      pdf.addImage(check.url, 'PNG',
+        (index % 2 === 0) ? 2 : 10.5,
+        (index % 4 === 0 || index % 4 === 1) ? 6 : 17, 7, 7);
     });
 
     pdf.save(this.game.name.replace(/\s/g, "") + '.pdf');

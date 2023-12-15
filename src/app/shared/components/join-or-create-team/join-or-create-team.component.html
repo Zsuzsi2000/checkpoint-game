@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar [ngClass]="gameMode ? 'game-mode' : 'join'">
     <ion-buttons slot="start">
-      <ion-button (click)="onCancel()">Cancel</ion-button>
+      <ion-button (click)="onCancel()">{{ 'CANCEL' | translate }}</ion-button>
     </ion-buttons>
-    <ion-title>Teams</ion-title>
+    <ion-title>{{ 'SHARED.JOIN_OR_CREATE.TEAMS' | translate }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="submit()">Done</ion-button>
+      <ion-button (click)="submit()">{{ 'DONE' | translate }}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -15,15 +15,15 @@
       <ion-col>
         <ion-item class="ion-align-items-center" lines="none">
           <ion-label class="ion-text-center">
-            Do you want to create a new team or join an existing one?
+            {{ 'SHARED.JOIN_OR_CREATE.DO_YOU_WANT_TO' | translate }}
           </ion-label>
         </ion-item>
         <ion-segment color="primary" (ionChange)="setJoin($event)" [value]="join">
           <ion-segment-button [value]="true" [disabled]="!canJoinToATeam">
-            <ion-label>Join</ion-label>
+            <ion-label>{{ 'SHARED.JOIN_OR_CREATE.JOIN' | translate }}</ion-label>
           </ion-segment-button>
           <ion-segment-button [value]="false" [disabled]="!canCreateATeam">
-            <ion-label>Create</ion-label>
+            <ion-label>{{ 'SHARED.JOIN_OR_CREATE.CREATE' | translate }}</ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-col>
@@ -32,7 +32,7 @@
       <ion-col>
         <ion-list lines="none">
           <ion-item class="ion-text-center">
-            <ion-label>Teams</ion-label>
+            <ion-label>{{ 'SHARED.JOIN_OR_CREATE.TEAMS' | translate }}</ion-label>
           </ion-item>
             <ion-buttons class="brownie ion-justify-content-center">
               <ng-container *ngIf="event; else liveGamePlayers">
@@ -65,12 +65,12 @@
     <ion-row class="ion-justify-content-center" *ngIf="!join">
       <ion-col>
         <ion-item lines="none">
-          <ion-label position="stacked">Name of the team</ion-label>
+          <ion-label position="stacked">{{ 'SHARED.JOIN_OR_CREATE.NAME_OF_THE_TEAM' | translate }}</ion-label>
           <ion-input
             [(ngModel)]="chosenTeam"
             type="text"
             labelPlacement="stacked"
-            placeholder="Enter a team name"
+            [placeholder]="currentLanguage === 'hu' ? 'Adj meg egy csapat nevet' : 'Enter a team name'"
           ></ion-input>
         </ion-item>
       </ion-col>

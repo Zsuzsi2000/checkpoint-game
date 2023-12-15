@@ -6,6 +6,6 @@
     class="location-img"></ion-img>
   <ion-button *ngIf="!isLoading" color="primary" (click)="onPickLocation()" class="ion-margin">
     <ion-icon name="map" slot="start"></ion-icon>
-    <ion-label>{{ location ? 'Select other location' : 'Select location'}}</ion-label>
+    <ion-label>{{ location ? ('SHARED.SELECT_OTHER_LOCATION' | translate) : ('SHARED.SELECT_LOCATION' | translate)}}</ion-label>
   </ion-button>
 </div>

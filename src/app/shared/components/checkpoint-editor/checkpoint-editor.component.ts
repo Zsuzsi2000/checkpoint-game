@@ -6,6 +6,7 @@ import {Coordinates, Location} from "../../../interfaces/Location";
 import {Quiz} from "../../../interfaces/Quiz";
 import {LocationType} from "../../../enums/LocationType";
 import {ImageService} from "../../../services/image.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-checkpoint-editor',
@@ -26,10 +27,14 @@ export class CheckpointEditorComponent implements OnInit {
   answers: { answer: string, correct: boolean }[] = [];
   LocationType = LocationType;
   qrString = '';
+  currentLanguage = "";
 
   constructor(private modalCtrl: ModalController,
               private formBuilder: FormBuilder,
-              private imageService: ImageService) { }
+              private imageService: ImageService,
+              private translate: TranslateService) {
+    this.currentLanguage = translate.currentLang;
+  }
 
   ngOnInit() {
     if (this.checkpoint) {

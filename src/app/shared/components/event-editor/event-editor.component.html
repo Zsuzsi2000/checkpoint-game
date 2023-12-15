@@ -4,11 +4,11 @@
       <ion-col class="ion-text-center" size-sm="6">
         <ion-list class="ion-padding" lines="none">
           <ion-item class="ion-align-items-center">
-            <ion-label position="stacked">Name of the event *</ion-label>
+            <ion-label position="stacked">{{ 'EVENTS.EDIT.NAME_OF_EVENT' | translate }} *</ion-label>
             <ion-input
               type="text"
               labelPlacement="stacked"
-              placeholder="Enter an event name"
+              [placeholder]="currentLanguage === 'hu' ? 'Add meg az esemény nevét' : 'Enter an event name'"
               formControlName="name"
             ></ion-input>
           </ion-item>
@@ -17,7 +17,7 @@
             *ngIf="(!eventForm.get('name').valid && eventForm.get('name').touched)"
             lines="none">
             <ion-label color="danger">
-              Name is required.
+              {{ 'EVENTS.EDIT.NAME_IS_REQUIRED' | translate }}
             </ion-label>
           </ion-item>
         </ion-list>
@@ -36,18 +36,18 @@
         <ion-list class="ion-padding" lines="none">
           <ion-item class="ion-align-items-center">
             <ion-label class="ion-text-center">
-              Pick an image for the event
+              {{ 'EVENTS.EDIT.PICK_IMAGE' | translate }}
             </ion-label>
           </ion-item>
           <app-image-picker (imagePick)="onImagePick($event)"
                             [showPreview]="eventForm.get('imgUrl').value"
                             [previewImage]="eventForm.get('imgUrl').value"></app-image-picker>
           <ion-item class="ion-align-items-center">
-            <ion-label position="stacked">Description</ion-label>
+            <ion-label position="stacked">{{ 'EVENTS.EDIT.DESCRIPTION' | translate }}</ion-label>
             <ion-textarea label="Description"
                           labelPlacement="stacked"
                           formControlName="description"
-                          placeholder="Give a description of the checkpoint">
+                          [placeholder]="currentLanguage === 'hu' ? 'Adj egy leírást az eseményhez' : 'Give a description of the event'">
             </ion-textarea>
           </ion-item>
         </ion-list>
@@ -57,15 +57,15 @@
       <ion-col class="ion-text-center ion-padding" size-sm="6">
         <ion-item class="ion-align-items-center" lines="none">
           <ion-label class="ion-text-center">
-            Do you want to share your event?
+            {{ 'EVENTS.EDIT.SHARE' | translate }}
           </ion-label>
         </ion-item>
         <ion-segment color="primary" (ionChange)="setPublic($event)" [value]="event ? event.isItPublic : true">
           <ion-segment-button [value]="true">
-            <ion-label>PUBLIC</ion-label>
+            <ion-label>{{ 'EVENTS.EDIT.PUBLIC' | translate }}</ion-label>
           </ion-segment-button>
           <ion-segment-button [value]="false">
-            <ion-label>PRIVATE</ion-label>
+            <ion-label>{{ 'EVENTS.EDIT.PRIVATE' | translate }}</ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-col>
@@ -74,18 +74,18 @@
       <ion-col class="ion-text-center ion-padding" size-sm="6">
         <ion-item class="ion-align-items-center" lines="none">
           <ion-label class="ion-text-center">
-            Choose game mode
+            {{ 'EVENTS.EDIT.CHOOSE_GAMEMODE' | translate }}
           </ion-label>
         </ion-item>
         <ion-segment color="primary" (ionChange)="setGameMode($event)" [value]="event ? event.liveGameSettings.gameMode : GameMode.notSpecified">
           <ion-segment-button [value]="GameMode.againstEachOther">
-            <ion-label>AGAINST<br>EACH<br>OTHER</ion-label>
+            <ion-label>{{ 'GAME_MODE.CREATE_MULTI.AGAINST' | translate }}<br>{{ 'GAME_MODE.CREATE_MULTI.EACH' | translate }}<br>{{ 'GAME_MODE.CREATE_MULTI.OTHER' | translate }}</ion-label>
           </ion-segment-button>
           <ion-segment-button [value]="GameMode.teamGame">
-            <ion-label>TEAM<br>GAME</ion-label>
+            <ion-label>{{ 'GAME_MODE.CREATE_MULTI.TEAM' | translate }}<br>{{ 'GAME_MODE.CREATE_MULTI.GAME' | translate }}</ion-label>
           </ion-segment-button>
           <ion-segment-button [value]="GameMode.teamVsTeam">
-            <ion-label>TEAM<br>VS<br>TEAM</ion-label>
+            <ion-label>{{ 'GAME_MODE.CREATE_MULTI.TEAM' | translate }}<br>{{ 'GAME_MODE.CREATE_MULTI.VS' | translate }}<br>{{ 'GAME_MODE.CREATE_MULTI.TEAM' | translate }}</ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-col>
@@ -95,11 +95,11 @@
         <ion-list class="ion-padding" lines="none" formGroupName="liveGameSettings">
           <ng-container *ngIf="actualGameMode === GameMode.teamVsTeam">
             <ion-item class="ion-align-items-center">
-              <ion-label position="stacked">Number of teams</ion-label>
+              <ion-label position="stacked">{{ 'GAME_MODE.CREATE_MULTI.NUMBER_OF_TEAMS' | translate }}</ion-label>
               <ion-input
                 type="number"
                 labelPlacement="stacked"
-                placeholder="Enter the number of teams"
+                [placeholder]="currentLanguage === 'hu' ? 'Add meg a csapatok számát' : 'Enter the number of teams'"
                 formControlName="maxTeam"
               ></ion-input>
             </ion-item>
@@ -108,7 +108,7 @@
               *ngIf="(!eventForm.get('liveGameSettings').get('maxTeam').valid && eventForm.get('liveGameSettings').get('maxTeam').touched)"
               lines="none">
               <ion-label color="danger">
-                Should be less than 20.
+                {{ 'GAME_MODE.CREATE_MULTI.MAX_IS_20' | translate }}
               </ion-label>
             </ion-item>
             <ion-item
@@ -116,15 +116,15 @@
               *ngIf="showWarningMessage(true)"
               lines="none">
               <ion-label color="danger">
-                You can only enter a higher value than the previous one.
+                {{ 'GAME_MODE.CREATE_MULTI.HIGHER_THAN_PREVIOUS' | translate }}
               </ion-label>
             </ion-item>
             <ion-item class="ion-align-items-center">
-              <ion-label position="stacked">Number of team members</ion-label>
+              <ion-label position="stacked">{{ 'GAME_MODE.CREATE_MULTI.NUMBER_OF_TEAM_MEMBERS' | translate }}</ion-label>
               <ion-input
                 type="number"
                 labelPlacement="stacked"
-                placeholder="Enter the maximum number of people in a team"
+                [placeholder]="currentLanguage === 'hu' ? 'Add meg egy csapat maximum létszámát' : 'Enter the maximum number of people in a team'"
                 formControlName="maxTeamMember"
               ></ion-input>
             </ion-item>
@@ -133,7 +133,7 @@
               *ngIf="(!eventForm.get('liveGameSettings').get('maxTeamMember').valid && eventForm.get('liveGameSettings').get('maxTeamMember').touched)"
               lines="none">
               <ion-label color="danger">
-                Should be less than 20.
+                {{ 'GAME_MODE.CREATE_MULTI.MAX_IS_20' | translate }}
               </ion-label>
             </ion-item>
             <ion-item
@@ -141,17 +141,17 @@
               *ngIf="showWarningMessage(false)"
               lines="none">
               <ion-label color="danger">
-                You can only enter a higher value than the previous one.
+                {{ 'GAME_MODE.CREATE_MULTI.HIGHER_THAN_PREVIOUS' | translate }}
               </ion-label>
             </ion-item>
           </ng-container>
           <ng-container *ngIf="actualGameMode === GameMode.teamGame">
             <ion-item class="ion-align-items-center">
-              <ion-label position="stacked">Number of members</ion-label>
+              <ion-label position="stacked">{{ 'GAME_MODE.CREATE_MULTI.NUMBER_OF_MEMBERS' | translate }}</ion-label>
               <ion-input
                 type="number"
                 labelPlacement="stacked"
-                placeholder="Enter the number of members"
+                [placeholder]="currentLanguage === 'hu' ? 'Add meg a résztvevők számát' : 'Enter the number of members'"
                 formControlName="maxTeam"
               ></ion-input>
             </ion-item>
@@ -160,7 +160,7 @@
               *ngIf="(!eventForm.get('liveGameSettings').get('maxTeam').valid && eventForm.get('liveGameSettings').get('maxTeam').touched)"
               lines="none">
               <ion-label color="danger">
-                Should be less than 20.
+                {{ 'GAME_MODE.CREATE_MULTI.MAX_IS_20' | translate }}
               </ion-label>
             </ion-item>
             <ion-item
@@ -168,17 +168,17 @@
               *ngIf="showWarningMessage(true)"
               lines="none">
               <ion-label color="danger">
-                You can only enter a higher value than the previous one.
+                {{ 'GAME_MODE.CREATE_MULTI.HIGHER_THAN_PREVIOUS' | translate }}
               </ion-label>
             </ion-item>
           </ng-container>
           <ng-container *ngIf="actualGameMode === GameMode.againstEachOther">
             <ion-item class="ion-align-items-center">
-              <ion-label position="stacked">Number of members</ion-label>
+              <ion-label position="stacked">{{ 'GAME_MODE.CREATE_MULTI.NUMBER_OF_MEMBERS' | translate }}</ion-label>
               <ion-input
                 type="number"
                 labelPlacement="stacked"
-                placeholder="Enter the number of members"
+                [placeholder]="currentLanguage === 'hu' ? 'Add meg a résztvevők számát' : 'Enter the number of members'"
                 formControlName="maxTeamMember"
               ></ion-input>
             </ion-item>
@@ -187,7 +187,7 @@
               *ngIf="(!eventForm.get('liveGameSettings').get('maxTeamMember').valid && eventForm.get('liveGameSettings').get('maxTeamMember').touched)"
               lines="none">
               <ion-label color="danger">
-                Should be less than 20.
+                {{ 'GAME_MODE.CREATE_MULTI.MAX_IS_20' | translate }}
               </ion-label>
             </ion-item>
             <ion-item
@@ -195,7 +195,7 @@
               *ngIf="showWarningMessage(false)"
               lines="none">
               <ion-label color="danger">
-                You can only enter a higher value than the previous one.
+                {{ 'GAME_MODE.CREATE_MULTI.HIGHER_THAN_PREVIOUS' | translate }}
               </ion-label>
             </ion-item>
           </ng-container>
@@ -210,7 +210,7 @@
           color="secondary"
           size="large"
           [disabled]="!eventForm.valid || showWarningMessage(true) || showWarningMessage(false)">
-          <ion-label>Save the event</ion-label>
+          <ion-label>{{ 'EVENTS.EDIT.SAVE_THE_EVENT' | translate }}</ion-label>
         </ion-button>
       </ion-col>
     </ion-row>

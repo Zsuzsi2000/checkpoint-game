@@ -9,8 +9,6 @@
     "LOGIN_AS_A_GUEST": "Bejelentkezés vendégként",
     "SIGN_UP": "Regisztráció",
     "LOGOUT": "Kijelentkezés",
-    "TYPE_EMAIL": "Írd be az email címed",
-    "TYPE_PASSWORD": "Írd be a jelszavad",
     "NEW_PASSWORD": "Új jelszó beállítása",
     "FORGOT_PASSWORD": "Elfelejtetted a jelszavad?",
     "NO_ACCOUNT": "Még nincs felhasználói fiókod?",
@@ -39,6 +37,7 @@
     "MY_COUNTRY": "Saját ország",
     "NO_GAMES": "Nincs játék egyelőre",
     "DETAILS": {
+      "DETAILS": "Részletek",
       "QUIZ": "Kvíz",
       "LEARNING": "Tanulós",
       "ANYWHERE": "Bárhol",
@@ -97,6 +96,9 @@
     "SAVED": "Mentett",
     "NO_EVENTS": "Nincs esemény egyelőre",
     "FULL": "BETELT",
+    "CREATOR": "Készítő",
+    "DAYS_FROM_NOW": "nap múlva",
+    "DETAILS": "Részletek",
     "JOINED": "Csatlakozva",
     "GO_TO_THE_GAME": "Mutasd a játékot",
     "JOIN_EVENTS": "Csatlakozás",
@@ -105,7 +107,16 @@
     "START_EVENT": "Esemény indítása",
     "EDIT": {
       "EDIT": "Esemény szerkesztés",
-      "CREATE": "Esemény létrehozás"
+      "CREATE": "Esemény létrehozás",
+      "NAME_OF_EVENT": "Esemény neve",
+      "NAME_IS_REQUIRED": "Név megadása kötelező",
+      "PICK_IMAGE": "Válassz egy képet az eseményhez",
+      "DESCRIPTION": "Leírás",
+      "SHARE": "Szeretnéd megosztani az eseményt?",
+      "CHOOSE_GAMEMODE": "Válassz játékmódot",
+      "PUBLIC": "Publikus",
+      "PRIVATE": "Privát",
+      "SAVE_THE_EVENT": "Esemény mentése"
     }
   },
   "GAME_MODE": {
@@ -173,7 +184,8 @@
       "MAX_IS_20": "A maximum érték 20.",
       "MAKE_SURE": "Győződjön meg arról, hogy mind a ",
       "APPLICANTS_FIT": " jelentkező belefér a játékba.",
-      "SAVE_SETTINGS": "Beállítások mentése"
+      "SAVE_SETTINGS": "Beállítások mentése",
+      "HIGHER_THAN_PREVIOUS": "Az előzőnél csak nagyobb számot tudsz megadni."
     }
   },
   "PROFILE": {
@@ -218,10 +230,41 @@
   },
   "SHARED": {
     "CHECKPOINTS": {
-
+      "CHECKPOINTS": "CHECKPOINTS",
+      "WAITING_TO_BE_EDITING": "Szerkesztésre vár",
+      "REORDERING_IS_DONE": "Rendezés kész",
+      "REORDER_CH": "Checkpointok rendezése",
+      "SELECT_ON_MAP": "Kiválasztás térképen",
+      "ADD_CHECKPOINT": "Checkpoint hozzáadása",
+      "DONE": "Kész",
+      "EDIT_CHECKPOINTS": "Checkpointok szerkesztése",
+      "NAME": "Checkpoint neve",
+      "NAME_IS_REQUIRED": "A név kötelező",
+      "DESCRIPTION": "Leírás",
+      "DESCRIPTION_OF_LOCATION": "Útmutató a helyszínhez",
+      "PICK_IMAGE": "Kép választása a checkpointhoz",
+      "QUIZ": "Kvíz",
+      "QUESTION": "Kérdés",
+      "ANSWER": "Válasz",
+      "GOOD_ANSWER": "Jó válasz?",
+      "ADD_NEW_ANSWER": "Válasz hozzáadása",
+      "SHOULD_BE_CORRECT": "Egy jó válasz kell, hogy legyen.",
+      "HELP": "Segítség",
+      "INFO": "Infó",
+      "SAVE_THE_CHECKPOINTS": "Checkpoint mentése"
     },
-    "EVENTS": {
-
+    "TAKE_PICTURE": "Másik kép választása",
+    "TAKE_OTHER_PICTURE": "Kép választása",
+    "PICK_NEW_IMAGE": "Új kép választása",
+    "SELECT_NEW_CH_ON_MAP": "Új checkpointok választása térképről",
+    "SELECT_LOCATION": "Helyszín kiválasztása",
+    "SELECT_OTHER_LOCATION": "Másik helyszín választása",
+    "JOIN_OR_CREATE": {
+      "TEAMS": "Csapatok",
+      "DO_YOU_WANT_TO": "Új csapatot szeretnél létrehozni vagy csatlakozni szeretnél egy meglévőhöz?",
+      "JOIN": "Csatlakozás",
+      "CREATE": "Készítés",
+      "NAME_OF_THE_TEAM": "Csapat neve"
     }
   }
 }
