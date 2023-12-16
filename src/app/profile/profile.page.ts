@@ -15,9 +15,10 @@ import {ImagePickerModalComponent} from "../shared/components/image-picker-modal
 import {PickAThingComponent} from "../shared/components/pick-a-thing/pick-a-thing.component";
 import {EventsService} from "../events/events.service";
 import {Event} from "../models/event.model";
-import {SettingsComponent} from "./settings/settings.component";
+import {SettingsComponent} from "../shared/components/settings/settings.component";
 import {ConnectionsService} from "../connections/connections.service";
 import {Request} from "../models/request.model";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-profile',
@@ -39,7 +40,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   countries = [];
   userSub: Subscription;
   firstTime = false;
-  canAdd = true;
+  canAdd = "noFriend";
 
   constructor(private gamesService: GamesService,
               private eventsService: EventsService,
@@ -53,7 +54,9 @@ export class ProfilePage implements OnInit, OnDestroy {
               private countryService: CountryService,
               private imageService: ImageService,
               private loadingCtrl: LoadingController,
-              private modalCtrl: ModalController) {
+              private modalCtrl: ModalController,
+              private translate: TranslateService) {
+    if (this.modalCtrl.getTop()) this.modalCtrl.dismiss();
   }
 
 
@@ -87,12 +90,13 @@ export class ProfilePage implements OnInit, OnDestroy {
       } else {
         this.ownProfile = false;
         this.loadedUserId = paramMap.get('userId');
-        this.userService.getUserById(this.loadedUserId).subscribe(
+        this.userService.getUserById(this.loadedUserId).pipe(take(1)).subscribe(
           user => {
             this.loadedUser = user;
             this.authService.user.pipe(take(1)).subscribe(currentUser => {
               if (currentUser) {
                 this.loggedUser = currentUser;
+                this.canAddToFriends();
                 this.ownProfile = currentUser.id === this.loadedUser.id;
                 this.userIsLoading = false;
                 this.fetchLoadedUserData();
@@ -103,7 +107,6 @@ export class ProfilePage implements OnInit, OnDestroy {
             });
           },
           error => {
-            console.log("getUserError", error);
             this.showALert();
           }
         );
@@ -113,7 +116,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.loggedUser = currentUser;
       });
 
-      this.countryService.fetchCountries().subscribe(countries => {
+      this.countryService.fetchCountries().pipe(take(1)).subscribe(countries => {
         if (countries) this.countries = countries;
       });
     });
@@ -125,12 +128,11 @@ export class ProfilePage implements OnInit, OnDestroy {
       this.gamesAreLoading = true;
       this.eventsAreLoading = true;
       this.userIsLoading = true;
-      this.userService.getUserById(this.loadedUserId).subscribe(user => {
+      this.userService.getUserById(this.loadedUserId).pipe(take(1)).subscribe(user => {
         this.loadedUser = user;
         this.userIsLoading = false;
         this.fetchLoadedUserData();
       }, error => {
-        console.log("getUserError", error);
         this.showALert();
       });
     } else {
@@ -139,25 +141,39 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   fetchLoadedUserData() {
-    this.authService.user.subscribe(currentUser => {
+    this.authService.user.pipe(take(1)).subscribe(currentUser => {
       this.loggedUser = currentUser;
+      this.canAddToFriends();
     });
 
-    this.gamesService.fetchOwnGames(this.loadedUserId).subscribe(games => {
-      this.loadedOwnGames = games;
+    this.gamesService.fetchOwnGames(this.loadedUserId).pipe(take(1)).subscribe(games => {
+      if (this.ownProfile) {
+        this.loadedOwnGames = games;
+      } else {
+        this.connectionService.getFriends(this.loggedUser.id).pipe(take(1)).subscribe(friends => {
+          this.loadedOwnGames = games.filter(game => game.itIsPublic
+            || game.userId === this.loggedUser.id
+            || friends.find(friend => friend.id === game.userId) !== undefined);
+        });
+      }
       this.gamesAreLoading = false;
     });
 
-    this.eventsService.fetchOwnEvents(this.loadedUserId).subscribe(events => {
-      this.loadedOwnEvents = events;
+    this.eventsService.fetchOwnEvents(this.loadedUserId).pipe(take(1)).subscribe(events => {
+      if (this.ownProfile) {
+        this.loadedOwnEvents = events;
+      } else {
+        this.connectionService.getFriends(this.loggedUser.id).pipe(take(1)).subscribe(friends => {
+          this.loadedOwnEvents = events.filter((event: Event) => event.isItPublic
+            || event.creatorId === this.loggedUser.id
+            || friends.find(friend => friend.id === event.creatorId) !== undefined);
+        });
+      }
       this.eventsAreLoading = false;
       this.fetchJoinedEvents();
     }, error => {
-      console.log(error);
       this.fetchJoinedEvents();
     });
-
-    this.canAddToFriends();
   }
 
   fetchJoinedEvents() {
@@ -165,6 +181,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       let observables = [];
       this.loadedUser.eventsUserSignedUpFor.forEach(eventId => {
         observables.push(this.eventsService.fetchEvent(eventId).pipe(
+          take(1),
           catchError((error) => {
             return of(null);
           }),
@@ -192,20 +209,20 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   editUsernameAlert() {
     this.alertCtrl.create({
-      header: "Enter your new username",
+      header: this.translate.currentLang === "hu" ? "Add meg a felhasználóneved" : "Enter your new username",
       inputs: [{
-        placeholder: "New username",
+        placeholder:this.translate.currentLang === "hu" ? "Új felhasználónév" : "New username",
         type: "text",
         name: "username",
         value: this.loggedUser.username
       }],
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
           role: "cancel"
         },
         {
-          text: "Save",
+          text: this.translate.currentLang === "hu" ? "Mentés" : "Save",
           handler: (event) => {
             this.updateUsername(event.username);
           }
@@ -229,34 +246,42 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   canAddToFriends() {
     this.connectionService.getFriends(this.loggedUser.id).pipe(take(1)).subscribe(friends => {
-      this.canAdd = !friends.includes(this.loadedUser)
+      let friend = friends ? friends.find(f => (f.id === this.loadedUser.id)) : undefined;
+      this.canAdd = (friend !== undefined) ? "friend" : "noFriend";
+      if (this.canAdd === "noFriend") {
+        this.connectionService.getRequests(this.loggedUser.id).pipe(take(1)).subscribe(requests => {
+          let find = requests ? requests.find(request => (request.senderId === this.loadedUser.id || request.receiverId === this.loadedUser.id)) : undefined;
+          if (find !== undefined) {
+            this.canAdd = "tagged";
+          }
+        });
+      }
     })
   }
 
   createRequest() {
     let request = new Request(null, this.loggedUser.id, this.loadedUser.id);
     this.connectionService.createRequest(request).pipe(take(1)).subscribe(f => {
-      console.log(f);
+      this.canAdd = "tagged";
     });
   }
 
   updateUsername(username: string) {
-    this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe()
+    this.userService.updateUser(this.loggedUser.id, null, username, null, null, null, null).pipe(take(1)).subscribe();
   }
 
   updatePicture(picture: string | File) {
     const imageFile = this.onImagePick(picture);
     if (imageFile) {
       this.loadingCtrl.create({
-        message: 'Creating new image...'
+        message: this.translate.currentLang === 'hu' ? 'Új kép készítése...' : 'Creating new image...'
       }).then(loadingEl => {
         loadingEl.present();
-        this.imageService.uploadImage(imageFile).pipe(switchMap(image => {
+        this.imageService.uploadImage(imageFile).pipe(take(1), switchMap(image => {
           return this.userService.updateUser(this.loggedUser.id, null, null, null, image.imageUrl, null, null).pipe(take(1));
         })).subscribe(res => {
           loadingEl.dismiss();
         }, error => {
-          console.log("error", error);
           loadingEl.dismiss();
         })
       });
@@ -266,32 +291,27 @@ export class ProfilePage implements OnInit, OnDestroy {
   deleteProfile() {
     //TODO: delete games and events
     this.authService.deleteAccount().subscribe(
-      resData => {
-        console.log("deleteAccount1", resData);
-      },
-      errRes => {
-        console.log("error", errRes.error.error.message);
-      });
-    this.userService.deleteUser(this.loadedUser.id).subscribe(resData => {
-        console.log("deleteAccount2", resData);
-      },
-      errRes => {
-        console.log("error", errRes.error.error.message);
-      });
+      resData => {},
+      errRes => {});
+    this.userService.deleteUser(this.loadedUser.id).pipe(take(1)).subscribe(res => {}, errRes => {});
   }
 
   startDeleteTheProfile() {
     this.alertCtrl
       .create({
-        header: 'Are you sure you want to delete your account?',
-        message: 'The events and games you created will not be available.',
+        header: this.translate.currentLang === "hu"
+          ? "Biztosan törölni szeretnéd a fiókod?"
+          : 'Are you sure you want to delete your account?',
+        message: this.translate.currentLang === "hu"
+          ? "Az események és a játékok, amiket csináltál, nem lesznek elérhetőek."
+          : 'The events and games you created will not be available.',
         buttons: [
           {
-            text: "Cancel",
+            text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
             role: "cancel",
           },
           {
-            text: "Delete",
+            text: this.translate.currentLang === "hu" ? "Törlés" : "Delete",
             role: "delete",
             handler: () => {
               this.deleteProfile();
@@ -312,10 +332,12 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.alertCtrl
       .create(
         {
-          header: 'An error occured',
-          message: 'User could not be fetched. Please try again later.',
+          header: this.translate.currentLang === "hu" ? "Hiba történt" : 'An error occured',
+          message: this.translate.currentLang === "hu"
+            ? "A felhasználót nem lehet lekérni. Kérem próbálja meg később."
+            : 'User could not be fetched. Please try again later.',
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === "hu" ? "Rendben" : 'Okay'), handler: () => {
               this.navCtrl.pop();
             }
           }]
@@ -357,13 +379,25 @@ export class ProfilePage implements OnInit, OnDestroy {
       try {
         imageFile = this.imageService.convertbase64toBlob(imageData);
       } catch (error) {
-        console.log("error", error);
+        this.showAlert(this.translate.currentLang === 'hu' ? 'Nem megfelelő fájlformátum' : error.message);
         return;
       }
     } else {
       imageFile = imageData
     }
     return imageFile;
+  }
+
+  showAlert(message: string) {
+    this.alertCtrl.create(
+      {
+        header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+        message: message,
+        buttons: [this.translate.currentLang === "hu" ? "Rendben" : 'Okay']
+      })
+      .then(alertEl => {
+        alertEl.present();
+      });
   }
 
   showSettings() {

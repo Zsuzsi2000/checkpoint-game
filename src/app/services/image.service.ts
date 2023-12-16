@@ -50,8 +50,10 @@ export class ImageService {
   convertbase64toBlob(imageData) {
     if (imageData.includes('png')) {
       return base64toBlob(imageData.replace('data:image/png;base64,', ''), 'image/png');
-    } else {
+    } else if (imageData.includes('jpeg')) {
       return base64toBlob(imageData.replace('data:image/jpeg;base64,', ''), 'image/jpeg');
+    } else {
+      return new Error("Wrong file type");
     }
   }
 }

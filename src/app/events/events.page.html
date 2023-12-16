@@ -11,6 +11,9 @@
       <ion-button (click)="toggleSorting()">
         <ion-icon name="swap-vertical"></ion-icon>
       </ion-button>
+      <ion-button (click)="showSettings()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -55,7 +58,7 @@
         <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byTypes)">{{ 'GAMES.TYPES' | translate }}</ion-button>
         <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byFavourites)" [disabled]="user === null">{{ 'GAMES.FAVOURITES' | translate }}</ion-button>
         <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.bySaved)" [disabled]="user === null">{{ 'EVENTS.SAVED' | translate }}</ion-button>
-        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byOwnCountry)" [disabled]="user === null">My {{ 'GAMES.MY_COUNTRY' | translate }}</ion-button>
+        <ion-button fill="outline" color="secondary" (click)="startFilter(FilteringMode.byOwnCountry)" [disabled]="user === null">{{ 'GAMES.MY_COUNTRY' | translate }}</ion-button>
       </ion-col>
     </ion-row>
     <ion-row class="ion-align-items-center" *ngIf=" filters.length > 0">

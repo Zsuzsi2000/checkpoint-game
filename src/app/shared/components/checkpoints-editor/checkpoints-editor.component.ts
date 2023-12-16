@@ -9,6 +9,7 @@ import {environment} from "../../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {map, switchMap} from "rxjs/operators";
 import {forkJoin, of} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -30,7 +31,8 @@ export class CheckpointsEditorComponent implements OnInit {
 
   constructor(private modalCtrl: ModalController,
               private http: HttpClient,
-              private alertController: AlertController) { }
+              private alertController: AlertController,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     if (this.locationType === LocationType.location || this.locationType === LocationType.description) {
@@ -76,17 +78,19 @@ export class CheckpointsEditorComponent implements OnInit {
   selectOnMap() {
     this.alertController
       .create({
-        header: 'Select checkpoints on map',
-        message: 'You can select checkpoints location by click, but after that you should edit this checkpoints.',
+        header: this.translate.currentLang === 'hu' ? 'Checkpointok kiválasztása térképről' : 'Select checkpoints on map',
+        message: this.translate.currentLang === 'hu'
+          ? 'A checkpointok helyszíneit kattintással lehet kiválasztani, de ezután be kell fejezni a szerkesztésüket.'
+          : 'You can select checkpoints location by click, but after that you should edit this checkpoints.',
         buttons: [
           {
-            text: 'Okay',
+            text: this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay',
             handler: () => {
               this.createCheckpointsMapModal();
             }
           },
           {
-            text: "Cancel",
+            text: this.translate.currentLang === 'hu' ? 'Vissza' : "Cancel",
             role: "cancel"
           }
         ]

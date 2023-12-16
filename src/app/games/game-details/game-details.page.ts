@@ -13,16 +13,16 @@ import {jsPDF} from "jspdf";
 import {Checkpoint} from "../../models/checkpoint.model";
 import {LocationIdentification} from "../../enums/LocationIdentification";
 import {ShareComponent} from "../../shared/components/share/share.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-game-details',
   templateUrl: './game-details.page.html',
   styleUrls: ['./game-details.page.scss'],
 })
-export class GameDetailsPage implements OnInit, OnDestroy {
+export class GameDetailsPage implements OnInit {
 
   game: Game;
-  gameSub: Subscription;
   isLoading = false;
   user: User;
   creator: User;
@@ -38,7 +38,8 @@ export class GameDetailsPage implements OnInit, OnDestroy {
               private authService: AuthService,
               private userService: UserService,
               private alertController: AlertController,
-              private router: Router) {
+              private router: Router,
+              private translate: TranslateService) {
   }
 
   ngOnInit() {
@@ -93,10 +94,11 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     this.alertController
       .create(
         {
-          header: 'An error occured',
-          message: 'Game could not be fetched. Please try again later.',
+          header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+          message: this.translate.currentLang === 'hu' ? 'A játék lekérése nem sikerült. Kérem próbálja újra később.'
+            : 'Game could not be fetched. Please try again later.',
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay'), handler: () => {
               this.router.navigate(['/', 'games']);
             }
           }]
@@ -108,15 +110,15 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   deleteGame(id: string) {
     this.alertController.create({
-      header: "Delete game",
-      message: "Are you sure you want to delete the game?",
+      header: this.translate.currentLang === 'hu' ? 'Játék törlése' : 'Delete game',
+      message: this.translate.currentLang === 'hu' ? 'Biztosan törölni szeretné a játékot?' :  "Are you sure you want to delete the game?",
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === 'hu' ? 'Vissza' : "Cancel",
           role: "cancel"
         },
         {
-          text: "Delete",
+          text: this.translate.currentLang === 'hu' ? 'Törlés' : "Delete",
           handler: () => {
             this.gamesService.deleteGame(id).subscribe(res => {
               this.router.navigate(['/', 'games']);
@@ -137,7 +139,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
     this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.user, game: this.game } }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
         if (modalData.data) {
-          console.log(modalData.data);
           this.router.navigate(['/', 'connections', 'chat', modalData.data]);
         }
       });
@@ -147,12 +148,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
 
   navigateToGameMode() {
     this.router.navigate(['/', 'game-mode'], { queryParams: { gameId: this.game.id }});
-  }
-
-  ngOnDestroy(): void {
-    if (this.gameSub) {
-      this.gameSub.unsubscribe();
-    }
   }
 
   getPdf() {
@@ -171,7 +166,6 @@ export class GameDetailsPage implements OnInit, OnDestroy {
         this.generatePDFFromQRCodes(base64DataUrls);
       })
       .catch(error => {
-        console.error('Error converting blobs to base64:', error);
         this.generatePDFFromAccessCodes();
       });
   }

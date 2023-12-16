@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
-import {AuthService} from "../../auth/auth.service";
+import {AuthService} from "../../../auth/auth.service";
 import {ModalController} from "@ionic/angular";
 import {take} from "rxjs/operators";
-import {UserService} from "../../services/user.service";
-import {Permissions} from "../../interfaces/UserData";
-import {User} from "../../models/user.model";
+import {UserService} from "../../../services/user.service";
+import {Permissions} from "../../../interfaces/UserData";
+import {User} from "../../../models/user.model";
 import {pipe} from "rxjs";
 
 @Component({
@@ -27,11 +27,13 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.permissions = this.user.permissions;
+    if (this.user) {
+      this.permissions = this.user.permissions;
+    }
   }
 
   back() {
-    if (this.permissions !== this.user.permissions) {
+    if (this.user && this.permissions !== this.user.permissions) {
       this.userService.updateUser(
         this.user.id,
         null,
@@ -45,7 +47,6 @@ export class SettingsComponent implements OnInit {
         null,
         this.permissions
       ).pipe(take(1)).subscribe((g) => {
-        console.log(g);
         this.modalCtrl.dismiss();
       });
     } else {
@@ -54,13 +55,11 @@ export class SettingsComponent implements OnInit {
   }
 
   switchLanguage(event) {
-    console.log(event);
     this.translate.use(event.detail.value);
     this.currentLanguage = this.translate.currentLang;
   }
 
   changePermission(permission: string, event) {
-    console.log(event.detail.checked, permission);
     if (permission == "message") {
       this.permissions.message = event.detail.checked;
     } else if (permission == "friendRequests") {
@@ -68,7 +67,6 @@ export class SettingsComponent implements OnInit {
     } else {
       this.permissions.eventReminder = event.detail.checked;
     }
-    console.log(this.permissions);
   }
 
   logout() {

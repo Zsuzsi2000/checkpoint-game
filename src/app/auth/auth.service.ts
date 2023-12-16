@@ -8,6 +8,7 @@ import {Preferences} from "@capacitor/preferences";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {UserData} from "../interfaces/UserData";
 import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 export interface AuthResponseData {
   kind: string;
@@ -56,7 +57,8 @@ export class AuthService implements OnDestroy {
   constructor(private http: HttpClient,
               private loadingCtrl: LoadingController,
               private alertCtrl: AlertController,
-              private router: Router) {
+              private router: Router,
+              private translate: TranslateService) {
   }
 
   signup(email: string, password: string) {
@@ -209,13 +211,13 @@ export class AuthService implements OnDestroy {
   verifyEmail(token: string): Observable<{ success: boolean, message: string }> {
     return new Observable<{ success: boolean, message: string }>((observer) => {
       this.isLoading = true;
-      this.loadingCtrl.create({keyboardClose: true, message: 'Sending an email to you...'}).then(loadingEl => {
+      this.loadingCtrl.create({keyboardClose: true, message: this.translate.currentLang === 'hu' ? 'Email küldése folyamatban' : 'Sending an email to you...'}).then(loadingEl => {
         loadingEl.present();
         let doItAgain = true;
 
         this.sendEmailVerification(token).pipe(
           switchMap(() => {
-            loadingEl.message = "Please verify your email";
+            loadingEl.message = this.translate.currentLang === 'hu' ? 'Kérem igazolja az email címét' : "Please verify your email";
 
             return interval(5000).pipe(
               switchMap((l) => {
@@ -230,30 +232,42 @@ export class AuthService implements OnDestroy {
               doItAgain = false;
               this.isLoading = false;
               loadingEl.dismiss();
-              this.showAlert("Email verification was successful!", "Email verified");
+              if (this.translate.currentLang === 'hu' ) {
+                this.showAlert("Email cím ellenőrzés sikeres volt!", "Email ellenőrizve");
+              } else {
+                this.showAlert("Email verification was successful!", "Email verified");
+              }
               observer.next({success: true, message: ""});
               observer.complete();
             }
           },
           errRes => {
             const code = errRes.error.error.message;
-            let message = 'Something went wrong, please try again.';
+            let message = this.translate.currentLang === 'hu'
+              ? 'Valami nem sikerült, kérem próbálja újra.'
+              : 'Something went wrong, please try again.';
 
             switch (code) {
               case "INVALID_ID_TOKEN": {
-                message = "The user's credential is no longer valid. The user must sign in again.";
+                message = this.translate.currentLang === 'hu'
+                  ? 'Újra be kell jelentkezni.'
+                  : "The user's credential is no longer valid. The user must sign in again.";
                 break;
               }
               case "USER_NOT_FOUND": {
-                message = "There is no user record corresponding to this identifier. The user may have been deleted.";
+                message = this.translate.currentLang === 'hu'
+                  ? 'A felhasználó törölve lett'
+                  : "There is no user record corresponding to this identifier. The user may have been deleted.";
                 break;
               }
               case "EMAIL_EXISTS": {
-                message = "The email address is already in use by another account.";
+                message = this.translate.currentLang === 'hu'
+                  ? 'Az email cím már használva van másik felhasználó által.'
+                  : "The email address is already in use by another account.";
                 break;
               }
             }
-            this.showAlert(message, "Email is not verified");
+            this.showAlert(message, this.translate.currentLang === 'hu' ? 'Nincs igazolva az email cím' :"Email is not verified");
             observer.next({success: false, message: message});
             observer.complete();
           }
@@ -276,7 +290,7 @@ export class AuthService implements OnDestroy {
       .create({
         header: header,
         message: message,
-        buttons: ['Okay']
+        buttons: [(this.translate.currentLang === "hu" ? "Rendben" : 'Okay')]
       })
       .then(alertEl => alertEl.present());
   }

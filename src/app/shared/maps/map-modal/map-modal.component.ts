@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, Renderer
 import {ModalController} from "@ionic/angular";
 import {environment} from "../../../../environments/environment";
 import {Coordinates} from "../../../interfaces/Location";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-map-modal',
@@ -20,7 +21,10 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
   googleMaps: any;
 
   constructor(private modalCtrl: ModalController,
-              private renderer: Renderer2) {}
+              private renderer: Renderer2,
+              private translate: TranslateService) {
+
+  }
 
   ngOnInit() {  }
 
@@ -29,9 +33,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
       .then(googleMaps => {
         this.init(googleMaps);
       })
-      .catch(err => {
-        console.log(err);
-      })
+      .catch(err => {})
   }
 
   init(googleMaps) {
@@ -58,7 +60,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
       const marker = new googleMaps.Marker({
         position: this.center,
         map: map,
-        title: 'Picked Location'
+        title: this.translate.currentLang === 'hu' ? 'Kiválasztott helyszín' : 'Picked Location'
       });
       marker.setMap(map);
     }

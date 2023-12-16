@@ -120,7 +120,7 @@ export class EditGamePage implements OnInit {
       return;
     }
     this.loadingCtrl.create({
-      message: 'Updating game...'
+      message: this.translate.currentLang === 'hu' ? 'Játék frissítése...' : 'Updating game...'
     }).then(loadingEl => {
       loadingEl.present();
       let checkpoints: Checkpoint[] = [];
@@ -157,7 +157,6 @@ export class EditGamePage implements OnInit {
             ? this.imageService.uploadImage(this.gameForm.get('mapUrl').value) : of(null);
         })).pipe(
         catchError(error => {
-          console.log('Error from uploadImage map:', error);
           return of(null);
         }),
         switchMap(uploadResponse => {
@@ -312,7 +311,7 @@ export class EditGamePage implements OnInit {
       try {
         imageFile = this.imageService.convertbase64toBlob(imageData);
       } catch (error) {
-        console.log("error", error);
+        this.showAlert(this.translate.currentLang === 'hu' ? 'Nem megfelelő fájlformátum' : error.message);
         return;
       }
     } else {
@@ -325,14 +324,27 @@ export class EditGamePage implements OnInit {
     this.gameForm.patchValue({ itIsPublic: event.detail.value === "true" });
   }
 
+  showAlert(message: string) {
+    this.alertController.create(
+      {
+        header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+        message: message,
+        buttons: [this.translate.currentLang === "hu" ? "Rendben" : 'Okay']
+      })
+      .then(alertEl => {
+        alertEl.present();
+      });
+  }
+
   showALert() {
     this.alertController
       .create(
         {
-          header: 'An error occured',
-          message: 'Game could not be fetched. Please try again later.',
+          header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+          message: this.translate.currentLang === 'hu' ? 'A játék lekérése nem sikerült. Kérem próbálja újra később.'
+            : 'Game could not be fetched. Please try again later.',
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay'), handler: () => {
               this.router.navigate(['/', 'games']);
             }
           }]

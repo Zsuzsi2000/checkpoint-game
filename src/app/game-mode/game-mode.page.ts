@@ -16,6 +16,7 @@ import {PlayerModel} from "../models/player.model";
 import {AlertController, LoadingController, ModalController, NavController} from "@ionic/angular";
 import {JoinOrCreateTeamComponent} from "../shared/components/join-or-create-team/join-or-create-team.component";
 import {take} from "rxjs/operators";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-game-mode',
@@ -47,7 +48,8 @@ export class GameModePage implements OnInit, OnDestroy {
               private alertCtrl: AlertController,
               private modalCtrl: ModalController,
               private navCtrl: NavController,
-              private loadingController: LoadingController) { }
+              private loadingController: LoadingController,
+              private translate: TranslateService) { }
 
   ngOnInit() {
   }
@@ -63,12 +65,12 @@ export class GameModePage implements OnInit, OnDestroy {
       });
     }
     if (this.activatedRoute.snapshot.queryParamMap.has('eventId')) {
-      this.eventsService.fetchEvent(this.activatedRoute.snapshot.queryParamMap.get('eventId')).subscribe(event => {
+      this.eventsService.fetchEvent(this.activatedRoute.snapshot.queryParamMap.get('eventId')).pipe(take(1)).subscribe(event => {
         if (event) {
           this.event = event;
           this.liveGameSettings = this.event.liveGameSettings;
           this.getEvent = true;
-          this.gamesService.fetchGame(event.gameId).subscribe(game => {
+          this.gamesService.fetchGame(event.gameId).pipe(take(1)).subscribe(game => {
             this.game = game;
             this.getGame = true;
             this.creator = true;
@@ -135,21 +137,21 @@ export class GameModePage implements OnInit, OnDestroy {
 
   enterAccessCode() {
     this.alertCtrl.create({
-      header: "Enter the access code",
+      header: this.translate.currentLang === "hu" ? "Add meg a hozzáférési kódot" : "Enter the access code",
       inputs: [{
-        placeholder: "Access code",
+        placeholder: this.translate.currentLang === "hu" ? "Hozzáférési kód" :  "Access code",
         type: "text",
         name: "accessCode",
       }],
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
           role: "cancel"
         },
         {
-          text: "Go",
+          text: this.translate.currentLang === "hu" ? "Mehet" : "Go",
           handler: (event) => {
-            this.liveGameService.fetchLiveGames().subscribe(liveGames => {
+            this.liveGameService.fetchLiveGames().pipe(take(1)).subscribe(liveGames => {
               if (liveGames) {
                 liveGames.forEach((liveGame: LiveGame) => {
                   if (liveGame.accessCode === event.accessCode) this.liveGame = liveGame;
@@ -177,13 +179,21 @@ export class GameModePage implements OnInit, OnDestroy {
         this.event = event;
         let signedUp = this.event.players.includes(this.user.id);
         if (!signedUp) {
-          this.showAlert("An error occured","You haven't joined this event");
+          if (this.translate.currentLang === 'hu') {
+            this.showAlert("Hiba történt","Nem csatlakoztál ehhez az eseményhez");
+          } else {
+            this.showAlert("An error occured","You haven't joined this event");
+          }
         } else {
           this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
             if (game) {
               this.game = game;
               if (this.liveGame.startDate) {
-                this.showAlert("The game has started","Unfortunately the game has already started");
+                if (this.translate.currentLang === 'hu') {
+                  this.showAlert("A játék elkezdődött","Sajnos a játék már elkezdődött");
+                } else {
+                  this.showAlert("The game has started","Unfortunately the game has already started");
+                }
               } else {
                 if (this.event.liveGameSettings.gameMode === GameMode.notSpecified) {
                   this.joinMulti();
@@ -206,12 +216,20 @@ export class GameModePage implements OnInit, OnDestroy {
           if (players) {
             let selectedPlayers = (players as PlayerModel[]).filter(p => p.liveGameId === this.liveGame.id);
             if (this.liveGame.startDate) {
-              this.showAlert("The game has started","Unfortunately the game has already started");
+              if (this.translate.currentLang === 'hu') {
+                this.showAlert("A játék elkezdődött","Sajnos a játék már elkezdődött");
+              } else {
+                this.showAlert("The game has started","Unfortunately the game has already started");
+              }
             } else {
               if (this.canJoin(selectedPlayers)) {
                 this.joinMulti();
               } else {
-                this.showAlert("No more place","The playces are sold out");
+                if (this.translate.currentLang === 'hu') {
+                  this.showAlert("Nincs több hely","Minden hely elfogyott");
+                } else {
+                  this.showAlert("No more place","The places are sold out");
+                }
               }
             }
           }
@@ -298,7 +316,7 @@ export class GameModePage implements OnInit, OnDestroy {
       accessCode,
       this.liveGameSettings.gameMode === GameMode.solo ? new Date() : null
     );
-    return this.liveGameService.createLiveGame(this.liveGame);
+    return this.liveGameService.createLiveGame(this.liveGame).pipe(take(1));
   }
 
   createPlayer(teamName: string, teamMembers: {id: string, name: string}[]) {
@@ -329,13 +347,17 @@ export class GameModePage implements OnInit, OnDestroy {
           }
         }
       }, error => {
-        this.showAlert('Failed', 'Something went wrong');
+        if (this.translate.currentLang === 'hu') {
+          this.showAlert("Nem sikerült","Valami rosszul alakult");
+        } else {
+          this.showAlert('Failed', 'Something went wrong');
+        }
       });
     });
   }
 
   updatePlayer(player: PlayerModel) {
-    this.loadingController.create({ keyboardClose: true, message: 'Update team...',  }).then(loadingEl => {
+    this.loadingController.create({ keyboardClose: true, message: this.translate.currentLang === 'hu' ? 'Csapat frissítése' : 'Update team...',  }).then(loadingEl => {
       loadingEl.present();
       this.liveGameService.updatePlayer(player).pipe(take(1)).subscribe(updatedPlayer => {
         if (updatedPlayer) {
@@ -344,7 +366,11 @@ export class GameModePage implements OnInit, OnDestroy {
           this.waiting = true;
         }
       }, error => {
-        this.showAlert('Failed', 'Something went wrong');
+        if (this.translate.currentLang === 'hu') {
+          this.showAlert("Nem sikerült","Valami rosszul alakult");
+        } else {
+          this.showAlert('Failed', 'Something went wrong');
+        }
       });
 
     });
@@ -357,7 +383,7 @@ export class GameModePage implements OnInit, OnDestroy {
           header: header,
           message: message,
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: this.translate.currentLang === 'hu' ? 'Rendben' :'Okay', handler: () => {
               this.router.navigate(['/','game-mode']);
             }
           }]

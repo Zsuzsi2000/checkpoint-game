@@ -6,7 +6,7 @@ import {LiveGameService} from "../../live-game.service";
 import {take} from "rxjs/operators";
 import {Game} from "../../../models/game.model";
 import {GamesService} from "../../../games/games.service";
-import {checkCustomElementSelectorForErrors} from "@angular/compiler-cli/src/ngtsc/annotations/component/src/diagnostics";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-checkpoints',
@@ -26,12 +26,13 @@ export class CheckpointsComponent implements OnInit {
   constructor(private modalCtrl: ModalController,
               private alertController: AlertController,
               private liveGameService: LiveGameService,
-              private gamesService: GamesService) { }
+              private gamesService: GamesService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     this.isLoading = true;
     if (this.liveGameId && this.playerId) {
-      this.liveGameService.fetchLiveGame(this.liveGameId).subscribe(liveGame => {
+      this.liveGameService.fetchLiveGame(this.liveGameId).pipe(take(1)).subscribe(liveGame => {
         this.liveGame = liveGame;
         this.gamesService.fetchGame(this.liveGame.gameId).pipe(take(1)).subscribe(game => {
           if (game) {
@@ -61,10 +62,10 @@ export class CheckpointsComponent implements OnInit {
   showALert() {
     this.alertController
       .create({
-        header: 'An error occured',
-        message: 'Checkpoints could not be fetched. Please try again later.',
+        header: this.translate.currentLang === "hu" ? "Hiba történt" : 'An error occured',
+        message: this.translate.currentLang === "hu" ? "A checkpointokat nem sikerült lekérni. Kérem próbálja meg még egyszer." : 'Checkpoints could not be fetched. Please try again later.',
         buttons: [{
-          text: 'Okay', handler: () => {
+          text: (this.translate.currentLang === "hu" ? "Rendben" : 'Okay'), handler: () => {
             this.modalCtrl.dismiss();
           }
         }]

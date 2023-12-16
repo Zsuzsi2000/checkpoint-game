@@ -85,7 +85,9 @@ export class GamePage implements OnInit, OnDestroy {
         this.handlePlayersAndUser();
         this.handleGameFetch();
       },
-      error => this.showALert('Game could not be fetched. Please try again later.', true)
+      error => this.showALert(this.translate.currentLang === "hu"
+        ? "A játékot nem sikerült lekérni. Kérem próbálja meg még egyszer."
+        :'Game could not be fetched. Please try again later.', true)
     );
   }
 
@@ -132,7 +134,9 @@ export class GamePage implements OnInit, OnDestroy {
             }
           }
         } else if (user === null && this.liveGame.liveGameSettings.gameMode !== GameMode.solo) {
-          this.showALert("You logged out, you can't continue the game", true);
+          this.showALert(this.translate.currentLang === "hu"
+            ? "Kijelentkeztél, így nem tudod folytatni a játékot"
+            : "You logged out, you can't continue the game", true);
           this.unsubscribeFromAll();
         } else {
           this.player = this.players.find(player => player.teamName === "Guest");
@@ -236,7 +240,7 @@ export class GamePage implements OnInit, OnDestroy {
   checkLocation() {
     this.loadingController.create({
       keyboardClose: true,
-      message: this.currentLanguage === 'hu' ? 'Helyszín ellenőrzése' : 'Check location...'}).then(loadingEl => {
+      message: this.currentLanguage === 'hu' ? 'Helyszín ellenőrzése...' : 'Check location...'}).then(loadingEl => {
       loadingEl.present();
       if (!Capacitor.isPluginAvailable('Geolocation')) {
         this.showALert(this.currentLanguage === 'hu' ? 'Nem lehet meghatározni a helyzeted.' : 'Unable to determine your location.');
@@ -377,9 +381,7 @@ export class GamePage implements OnInit, OnDestroy {
 
   finish() {
     this.unsubscribeFromAll();
-    this.router.navigate(['/', 'game-mode', 'end', this.liveGame.id], {queryParams: {playerId: this.playerId}}).catch(error => {
-      console.log(error)
-    });
+    this.router.navigate(['/', 'game-mode', 'end', this.liveGame.id], {queryParams: {playerId: this.playerId}}).catch();
   }
 
   goToNextCheckpoint() {
@@ -435,10 +437,10 @@ export class GamePage implements OnInit, OnDestroy {
   showALert(message: string, back: boolean = false) {
     this.alertController
       .create({
-        header: 'Unfortunately it did not work out',
+        header: this.translate.currentLang === 'hu' ? 'Sajnos nem sikerült' : 'Unfortunately it did not work out',
         message: message,
         buttons: [{
-          text: 'Okay', handler: () => {
+          text: (this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay'), handler: () => {
             if (back) this.router.navigate(['/', 'game-mode']);
           }
         }]

@@ -180,7 +180,8 @@ export class JoinOrCreateTeamComponent implements OnInit {
           this.modalCtrl.dismiss(this.player);
         }
       }, error => {
-        this.showAlert('Failed', 'Something went wrong');
+        this.showAlert(this.translate.currentLang === 'hu' ? 'Nem sikerült' : 'Failed',
+          this.translate.currentLang === 'hu' ? 'Valami nem sikerült' : 'Something went wrong');
       });
 
     });
@@ -203,7 +204,10 @@ export class JoinOrCreateTeamComponent implements OnInit {
     }
     player = new PlayerModel(null, this.liveGame.id, teamName, teamMembers, checkpointStates);
 
-    this.loadingController.create({ keyboardClose: true, message: 'Create team...',  }).then(loadingEl => {
+    this.loadingController.create({
+      keyboardClose: true,
+      message: this.translate.currentLang === 'hu' ? 'Csapat készítése...' :  'Create team...',
+    }).then(loadingEl => {
       loadingEl.present();
       this.liveGameService.createPlayer(player).pipe(take(1)).subscribe(createdPlayer => {
         if (createdPlayer) {
@@ -212,7 +216,8 @@ export class JoinOrCreateTeamComponent implements OnInit {
           this.modalCtrl.dismiss(this.player);
         }
       }, error => {
-        this.showAlert('Failed', 'Something went wrong');
+        this.showAlert(this.translate.currentLang === 'hu' ? 'Nem sikerült' : 'Failed',
+          this.translate.currentLang === 'hu' ? 'Valami nem sikerült' : 'Something went wrong');
       });
     });
   }
@@ -224,7 +229,7 @@ export class JoinOrCreateTeamComponent implements OnInit {
           header: header,
           message: message,
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay'), handler: () => {
               this.navCtrl.pop();
             }
           }]

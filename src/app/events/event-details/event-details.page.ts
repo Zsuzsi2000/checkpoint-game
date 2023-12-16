@@ -17,6 +17,7 @@ import {ChatType} from "../../enums/ChatType";
 import {Chat} from "../../models/chat.model";
 import {ConnectionsService} from "../../connections/connections.service";
 import {ShareComponent} from "../../shared/components/share/share.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-event-details',
@@ -27,7 +28,6 @@ export class EventDetailsPage implements OnInit {
 
   event: Event;
   game: Game;
-  eventSub: Subscription;
   isLoading = false;
   user: User;
   creator: User;
@@ -44,7 +44,8 @@ export class EventDetailsPage implements OnInit {
               private userService: UserService,
               private connectionsService: ConnectionsService,
               private alertController: AlertController,
-              private router: Router) {
+              private router: Router,
+              private translate: TranslateService) {
   }
 
   ngOnInit() {
@@ -108,10 +109,10 @@ export class EventDetailsPage implements OnInit {
     this.alertController
       .create(
         {
-          header: 'An error occured',
-          message: 'Event could not be fetched. Please try again later.',
+          header: this.translate.currentLang === "hu" ? 'Hiba történt' : 'An error occured',
+          message: this.translate.currentLang === "hu" ? 'Az eseményt sajnos nem sikerült lekérni. Kérem próbálja meg később' : 'Event could not be fetched. Please try again later.',
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === "hu" ? 'Rendben' :'Okay'), handler: () => {
               this.router.navigate(['/', 'events']);
             }
           }]
@@ -123,17 +124,17 @@ export class EventDetailsPage implements OnInit {
 
   deleteEvent(id: string) {
     this.alertController.create({
-      header: "Delete event",
-      message: "Are you sure you want to delete the event?",
+      header: this.translate.currentLang === "hu" ? 'Esemény törlése' : "Delete event",
+      message: this.translate.currentLang === "hu" ? 'Biztosan törölni szeretnéd az eseményt?' : "Are you sure you want to delete the event?",
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? 'Vissza' : "Cancel",
           role: "cancel"
         },
         {
-          text: "Delete",
+          text: this.translate.currentLang === "hu" ? 'Törlés' : "Delete",
           handler: () => {
-            this.eventsService.deleteEvent(id).subscribe(res => {
+            this.eventsService.deleteEvent(id).pipe(take(1)).subscribe(res => {
               this.router.navigate(['/', 'events']);
             });
           }
@@ -192,7 +193,7 @@ export class EventDetailsPage implements OnInit {
         if (this.event.joined && this.event.joined[0] && this.event.joined[0].teamMembers) {
           this.event.joined[0].teamMembers.push({id: this.user.id, name: this.user.username});
         } else {
-          this.event.joined = [{ teamName: "Team" , teamMembers: [{id: this.user.id, name: this.user.username}] }];
+          this.event.joined = [{ teamName: (this.translate.currentLang === "hu" ? "Csapat":"Team") , teamMembers: [{id: this.user.id, name: this.user.username}] }];
         }
         this.setJoinOrCancel(true);
         break;
@@ -263,13 +264,19 @@ export class EventDetailsPage implements OnInit {
           null,
           true,
           this.event.id,
-          join)
+          join).pipe(take(1));
       })).subscribe(response => {
       if (response) {
-        this.showAlert((join ? "Join" : "Cancel") + " was succesful",
-          join ? "You joined to " + this.event.name + " event" : "You have unsubscribed from " + this.event.name + " event");
+        this.showAlert((join
+          ? (this.translate.currentLang === 'hu' ? 'A csatlakozás sikerült' : "Join was succesful" )
+          : (this.translate.currentLang === 'hu' ? 'A visszavonás sikerült' :  "Cancel was succesful")),
+          (this.translate.currentLang === 'hu'
+            ? (join ? "Csatlakoztál a " + this.event.name + " eseményhez" : "Leiratkoztál a " + this.event.name + " eseményről")
+            : (join ? "You joined to " + this.event.name + " event" : "You have unsubscribed from " + this.event.name + " event")));
       } else {
-        this.showAlert("Something went wrong", (join ? "Join" : "Cancel") + " was unsuccesful.");
+        this.translate.currentLang === 'hu'
+          ? this.showAlert("Valami nem sikerült", (join ? "Csatlakozás" : "Leiratkozás") + " sikertelen volt.")
+          : this.showAlert("Something went wrong", (join ? "Join" : "Cancel") + " was unsuccesful.");
       }
     });
   }
@@ -294,7 +301,6 @@ export class EventDetailsPage implements OnInit {
     this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.user, event: this.event } }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
         if (modalData.data) {
-          console.log(modalData.data);
           this.router.navigate(['/', 'connections', 'chat', modalData.data]);
         }
       });
@@ -306,10 +312,10 @@ export class EventDetailsPage implements OnInit {
     this.alertController
       .create(
         {
-          header: 'An error occured',
-          message: 'Event could not be fetched. Please try again later.',
+          header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+          message: this.translate.currentLang === 'hu' ? 'Az eseményt nem sikerült lekérni. Kérem próbálja újra.' : 'Event could not be fetched. Please try again later.',
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay'), handler: () => {
               this.router.navigate(['/', 'events']);
             }
           }]
@@ -324,17 +330,11 @@ export class EventDetailsPage implements OnInit {
       {
         header: header,
         message: message,
-        buttons: ['Okay']
+        buttons: [(this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay')]
       })
       .then(alertEl => {
         alertEl.present();
       });
-  }
-
-  ngOnDestroy(): void {
-    if (this.eventSub) {
-      this.eventSub.unsubscribe();
-    }
   }
 
 }

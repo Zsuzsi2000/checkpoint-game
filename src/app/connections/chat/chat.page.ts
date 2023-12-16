@@ -71,7 +71,6 @@ export class ChatPage implements OnInit, AfterViewInit {
         })
       ).subscribe((chat => {
         if (chat && chat != this.chat) {
-          console.log(chat);
           this.updateChat(chat, false);
         }
       }));
@@ -98,7 +97,6 @@ export class ChatPage implements OnInit, AfterViewInit {
           })
         ).subscribe((chat => {
           if (chat && chat != this.chat) {
-            console.log(chat);
             this.updateChat(chat, false);
           }
         }));
@@ -135,9 +133,7 @@ export class ChatPage implements OnInit, AfterViewInit {
       })));
     });
 
-    forkJoin(observables).subscribe(users => {
-      console.log(users);
-    })
+    forkJoin(observables).subscribe();
   }
 
   settings() {
@@ -148,7 +144,7 @@ export class ChatPage implements OnInit, AfterViewInit {
     }
 
     this.alertCtrl.create({
-      header: "Set name",
+      header: this.translate.currentLang === "hu" ? "Név beállítása" : "Set name",
       inputs: [{
         type: "text",
         name: "name",
@@ -156,11 +152,11 @@ export class ChatPage implements OnInit, AfterViewInit {
       }],
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
           role: "cancel"
         },
         {
-          text: "Set new chat name",
+          text: this.translate.currentLang === "hu" ? "Új chat name beállítása" : "Set new chat name",
           handler: (event) => {
             this.updateName(event.name);
           }
@@ -175,10 +171,7 @@ export class ChatPage implements OnInit, AfterViewInit {
     this.modalCtrl.create({ component: CreateChatPage, componentProps: { user: this.user, existingChat: this.chat} }).then(modalEl => {
       modalEl.onDidDismiss().then(data => {
         if (data.data) {
-          console.log(data.data);
-          this.connectionService.updateChat(data.data).pipe(take(1)).subscribe(ch => {
-            console.log(ch);
-          })
+          this.connectionService.updateChat(data.data).pipe(take(1)).subscribe()
         }
       });
       modalEl.present();
@@ -197,13 +190,10 @@ export class ChatPage implements OnInit, AfterViewInit {
       chatName = names.join(';');
     }
     this.chat.name = chatName;
-    this.connectionService.updateChat(this.chat).pipe(take(1)).subscribe(ch => {
-      console.log(ch);
-    })
+    this.connectionService.updateChat(this.chat).pipe(take(1)).subscribe()
   }
 
   sendMessage(data) {
-    console.log(data);
     let message: Message = {
       text: data,
       user: this.user.id,
@@ -214,14 +204,12 @@ export class ChatPage implements OnInit, AfterViewInit {
     this.content.scrollToBottom();
     this.firstTimestamp = this.showedMessages[this.showedMessages.length - 1].timestamp;
     this.connectionService.updateChat(this.chat).pipe(take(1)).subscribe(ch => {
-      console.log(ch);
       this.newMessage.value = "";
     })
   }
 
   goTo(text: string) {
     let url = text.slice(8);
-    console.log(url);
     this.router.navigateByUrl(url);
   }
 
@@ -231,16 +219,12 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   loadMoreMessages(event: any) {
     if (event.target.scrollTop === 0) {
-      console.log(event)
       let olders: Message[] = this.chat.message.filter(m => m.timestamp < this.lastTimestamp);
-      console.log(olders);
-      console.log(this.chat.message, olders, this.showedMessages);
       if (olders.length > 3) {
         this.showedMessages.unshift(...olders.slice(-3));
       } else {
         this.showedMessages.unshift(...olders);
       }
-      console.log(this.chat.message, olders, this.showedMessages);
       this.lastTimestamp = this.showedMessages[0].timestamp;
     }
     setTimeout(() => {

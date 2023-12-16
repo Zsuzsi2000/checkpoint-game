@@ -32,11 +32,9 @@ export class CreateChatPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.existingChat, this.user)
     this.connectionsService.getFriends(this.user.id).pipe(take(1)).subscribe(f => {
       this.friends = (this.existingChat !== null) ? f.filter(friend => !this.existingChat.participants.includes(friend.id)) : f;
       this.filteredFriends = [...this.friends];
-      console.log(this.friends);
     });
     if (this.existingChat !== null) {
       this.chat = this.existingChat;
@@ -53,7 +51,7 @@ export class CreateChatPage implements OnInit {
   done() {
     this.chat.type = (this.chat.participants.length === 2) ? ChatType.personal : ChatType.group;
     this.chat.name = (this.chat.type === ChatType.personal) ? (this.user.username + ';' + this.addedUsers[0].username) : this.name;
-    this.connectionsService.createChat(this.chat).subscribe(id => {
+    this.connectionsService.createChat(this.chat).pipe(take(1)).subscribe(id => {
       this.modalCtrl.dismiss(id);
     });
   }

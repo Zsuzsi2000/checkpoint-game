@@ -59,7 +59,6 @@ export class ShareComponent implements OnInit {
     } else {
       text = '&#######/games/details/' + this.game.id;
     }
-    console.log(text);
     let newMessage: Message = {
       text: text,
       user: this.user.id,

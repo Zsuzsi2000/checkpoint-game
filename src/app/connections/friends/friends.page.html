@@ -4,6 +4,11 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>{{ 'CONNECTIONS.CONNECTIONS' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="showSettings()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

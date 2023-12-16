@@ -20,6 +20,7 @@ export class PickAThingComponent implements OnInit {
   constructor(private modalCtrl: ModalController,
               private translate: TranslateService) {
     this.currentLanguage = translate.currentLang;
+    this.title = this.currentLanguage === 'hu' ? 'Ország kiválasztása' : 'Select country';
   }
 
 

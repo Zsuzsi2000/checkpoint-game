@@ -10,14 +10,15 @@
       <ion-button *ngIf="ownProfile" (click)="startDeleteTheProfile()">
         <ion-icon name="trash"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="ownProfile" (click)="showSettings()">
+      <ion-button (click)="showSettings()">
         <ion-icon name="settings-outline"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="loggedUser && !ownProfile && canAdd" (click)="createRequest()">
+      <ion-button *ngIf="loggedUser && !ownProfile && canAdd === 'noFriend'" (click)="createRequest()">
         <ion-icon name="person-add"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-badge slot="end" *ngIf="loggedUser && !ownProfile && !canAdd">{{ "PROFILE.FRIEND" | translate }}</ion-badge>
+    <ion-badge slot="end" *ngIf="loggedUser && !ownProfile && canAdd === 'friend'">{{ "PROFILE.FRIEND" | translate }}</ion-badge>
+    <ion-badge slot="end" *ngIf="loggedUser && !ownProfile && canAdd === 'tagged'">{{ "PROFILE.TAGGED" | translate }}</ion-badge>
   </ion-toolbar>
 </ion-header>
 

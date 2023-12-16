@@ -8,6 +8,7 @@ import {Coordinates, Location} from "../../../interfaces/Location"
 import {of} from "rxjs";
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -26,7 +27,8 @@ export class LocationPickerComponent implements OnInit {
   constructor(private modalCtrl: ModalController,
               private http: HttpClient,
               private actionSheetCtrl: ActionSheetController,
-              private alertCtrl: AlertController) {
+              private alertCtrl: AlertController,
+              private translate: TranslateService) {
   }
 
   ngOnInit() {
@@ -36,10 +38,10 @@ export class LocationPickerComponent implements OnInit {
     let center = (this.location)
       ? { lat: this.location.lat, lng: this.location.lng }
       : (this.center ? { lat: this.center.lat, lng: this.center.lng } : { lat: 47, lng: 19});
-    this.actionSheetCtrl.create({ header: "Please choose", buttons: [
-        { text: 'Auto-Locate', handler: () => { this.locateUser() } },
-        { text: 'Pick On Map', handler: () => { this.openMap(center) } },
-        { text: 'Cancel', role: 'cancel' }
+    this.actionSheetCtrl.create({ header: this.translate.currentLang === "hu" ? "Kérem válasszon" : "Please choose", buttons: [
+        { text: this.translate.currentLang === "hu" ? "Automatikus helymeghatározás" : 'Auto-Locate', handler: () => { this.locateUser() } },
+        { text: this.translate.currentLang === "hu" ? "Kiválasztás térképről" : 'Pick On Map', handler: () => { this.openMap(center) } },
+        { text: this.translate.currentLang === "hu" ? "Vissza" : 'Cancel', role: 'cancel' }
       ]}).then(actionEl => {
         actionEl.present();
     });
@@ -111,16 +113,15 @@ export class LocationPickerComponent implements OnInit {
 
   private getMapImage(lat: number, lng: number, zoom: number) {
     return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
-    &markers=color:red%7Clabel:Location%7C${lat},${lng}&key=${environment.googleMapsAPIKey}`
-    //&signature=YOUR_SIGNATURE ??
+    &markers=color:red%7Clabel:Location%7C${lat},${lng}&key=${environment.googleMapsAPIKey}`;
   }
 
   private showErrorAlert() {
     this.alertCtrl
       .create({
-        header: 'Could not fetch location',
-        message: 'Please use the map to pick a location!',
-        buttons: ['Okay']
+        header: this.translate.currentLang === "hu" ? "Nem sikerült meghatározni a helyszínt" : 'Could not fetch location',
+        message: this.translate.currentLang === "hu" ? "Kérem használja a térképet a helyszín kiválasztásához" : 'Please use the map to pick a location!',
+        buttons: [(this.translate.currentLang === "hu" ? "Rendben" : 'Okay')]
       })
       .then(alertEl => alertEl.present());
   }

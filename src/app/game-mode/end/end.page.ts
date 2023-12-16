@@ -1,10 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {
   ActivatedRoute,
-  NavigationCancel,
-  NavigationEnd,
-  NavigationError,
-  NavigationStart,
   Router
 } from "@angular/router";
 import {LiveGameService} from "../live-game.service";
@@ -15,6 +11,7 @@ import {GamesService} from "../../games/games.service";
 import {Game} from "../../models/game.model";
 import {AuthService} from "../../auth/auth.service";
 import {forkJoin, interval, of, Subscription} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-end',
@@ -41,7 +38,8 @@ export class EndPage implements OnInit {
               private router: Router,
               private gameService: GamesService,
               private alertController: AlertController,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private translate: TranslateService) {
   }
 
   ngOnInit() {
@@ -111,15 +109,15 @@ export class EndPage implements OnInit {
         if (this.game.bests) {
           if (this.game.bests.score < this.player.score && this.game.quiz) {
             this.game.bests.score = this.player.score;
-            this.congratulations('score');
+            this.congratulations(this.translate.currentLang === 'hu' ? 'pont' : 'score');
           }
           if (this.game.bests.duration > this.player.duration) {
             this.game.bests.duration = this.player.duration;
-            this.congratulations('duration');
+            this.congratulations(this.translate.currentLang === 'hu' ? 'idő' : 'duration');
           }
           if (this.game.bests.checkpointDuration > this.player.checkpointsDuration && this.game.quiz) {
             this.game.bests.checkpointDuration = this.player.checkpointsDuration;
-            this.congratulations('checkpoints duration');
+            this.congratulations(this.translate.currentLang === 'hu' ? 'válaszadás idő' : 'duration of response');
           }
         } else {
           this.game.bests = {
@@ -138,12 +136,14 @@ export class EndPage implements OnInit {
   }
 
   congratulations(type: string) {
-    let message = "You set a new " + type + " record!";
+    let message = (this.translate.currentLang === "hu")
+      ? "Új " + type + " rekordot értél el!"
+      : "You set a new " + type + " record!";
 
     this.alertController.create({
-      header: "Congratulations!",
+      header: this.translate.currentLang === "hu" ? "Gratulálunk!" : "Congratulations!",
       message: message,
-      buttons: ["Thanks"]
+      buttons: [this.translate.currentLang === "hu" ? "Köszönöm" : "Thanks"]
     }).then(
       alertEl => alertEl.present()
     );
@@ -173,19 +173,19 @@ export class EndPage implements OnInit {
 
   addRating() {
     this.alertController.create({
-      header: "Give a rating or write your opinion",
+      header: this.translate.currentLang === "hu" ? "Adj egy értékelést vagy írd le a véleményed" : "Give a rating or write your opinion",
       inputs: [{
-        placeholder: "Rating",
+        placeholder: this.translate.currentLang === "hu" ? "Értékelés" : "Rating",
         type: "text",
         name: "rating",
       }],
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
           role: "cancel"
         },
         {
-          text: "Go",
+          text: this.translate.currentLang === "hu" ? "Mehet" : "Go",
           handler: (event) => {
             if (this.game.ratings) {
               this.game.ratings.push({username: this.userName, text: event.rating});
@@ -245,6 +245,5 @@ export class EndPage implements OnInit {
   ionViewDidLeave() {
     if (this.playersSub) this.playersSub.unsubscribe();
   }
-
 
 }

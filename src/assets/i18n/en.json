@@ -208,7 +208,8 @@
       "FRIEND_REQUESTS": "Friend requests",
       "EVENT_REMINDER": "Event reminder"
     },
-    "FRIEND": "Friend"
+    "FRIEND": "Friend",
+    "TAGGED": "Requested"
   },
   "CONNECTIONS": {
     "CONNECTIONS": "Connections",
@@ -253,8 +254,8 @@
       "INFO": "Info",
       "SAVE_THE_CHECKPOINTS": "Save the checkpoint"
     },
-    "TAKE_PICTURE": "Take other picture",
-    "TAKE_OTHER_PICTURE": "Take picture",
+    "TAKE_PICTURE": "Take picture",
+    "TAKE_OTHER_PICTURE": "Take other picture",
     "PICK_NEW_IMAGE": "Pick new image",
     "SELECT_NEW_CH_ON_MAP": "Select new checkpoints on map",
     "SELECT_LOCATION": "Select location",

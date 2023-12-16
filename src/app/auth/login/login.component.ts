@@ -35,17 +35,18 @@ export class LoginComponent implements OnInit {
 
   login(email: string, password: string) {
     this.isLoading = true;
-    let idToken = "";
     let authRes: AuthResponseData;
     this.loadingCtrl
-      .create({keyboardClose: true, message: 'Logging in...'})
+      .create({keyboardClose: true, message: this.translate.currentLang === 'hu' ? 'Bejelentkezés...' : 'Logging in...'})
       .then(loadingEl => {
         loadingEl.present();
         this.authService.login(email, password).pipe(
+          take(1),
           switchMap((authResponseData: AuthResponseData) => {
             authRes = authResponseData;
             if (authResponseData.idToken) {
               return this.authService.getUserData(authResponseData.idToken).pipe(
+                take(1),
                 map((resData: { kind: any, users: any }) => {
                   const emailVerified = (resData.users[0] && resData.users[0].emailVerified) ? resData.users[0].emailVerified : false;
                   if (!emailVerified) {
@@ -73,22 +74,22 @@ export class LoginComponent implements OnInit {
             (errRes) => {
               loadingEl.dismiss();
               if (errRes === 'EMAIL_IS_NOT_VERIFIED') {
-                this.showAlertWithOtherButtons("The email has not been verified yet.", authRes);
+                this.showAlertWithOtherButtons(this.translate.currentLang === "hu" ? "Az email cím még nem lett ellenőrizve" : "The email has not been verified yet.", authRes);
               } else {
                 const code = errRes.error.error.message;
-                let message = 'Could not sign you up, please try again.';
+                let message = this.translate.currentLang === 'hu' ? 'Nem sikerült beregisztrálni, kérem próbálja újra.' : 'Could not sign you up, please try again.';
                 switch (code) {
                   case 'EMAIL_EXISTS':
-                    message = 'This email address exists already!';
+                    message = this.translate.currentLang === 'hu' ? 'Ez az email cím már létezik.' : 'This email address exists already!';
                     break;
                   case 'EMAIL_NOT_FOUND':
-                    message = "E-Mail address could not be found.";
+                    message = this.translate.currentLang === 'hu' ? 'Az email cím nem található.' : "E-Mail address could not be found.";
                     break;
                   case 'INVALID_PASSWORD':
-                    message = "This password is not correct.";
+                    message = this.translate.currentLang === 'hu' ? 'A jelszó nem megfelelő.' : "This password is not correct.";
                     break;
                   case 'INVALID_LOGIN_CREDENTIALS':
-                    message = "This e-mail address or this password is not correct.";
+                    message = this.translate.currentLang === 'hu' ? 'Az email cím vagy a jelszó nem megfelelő.' : "This e-mail address or this password is not correct.";
                     break;
                 }
                 this.showAlert(message);
@@ -124,7 +125,7 @@ export class LoginComponent implements OnInit {
 
   setNewPasswordAlert() {
     this.alertCtrl.create({
-      header: "Enter your email address",
+      header: this.translate.currentLang === "hu" ? "Add meg az email címed" : "Enter your email address",
       inputs: [{
         placeholder: "Email",
         type: "text",
@@ -132,11 +133,11 @@ export class LoginComponent implements OnInit {
       }],
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
           role: "cancel"
         },
         {
-          text: "Get a new password",
+          text: this.translate.currentLang === "hu" ? "Új jelszó beállítása" : "Get a new password",
           handler: (event) => {
             this.setNewPassword(event.email);
           }
@@ -150,8 +151,12 @@ export class LoginComponent implements OnInit {
   setNewPassword(email: string) {
     this.authService.sendPasswordResetEmail(email).subscribe(
       resData => {
-        this.showAlert("You can set a new password if you follow the instructions in the email",
-          "Password change email has been sent");
+        this.showAlert(this.translate.currentLang === "hu"
+          ? "Be tudsz állítani egy új jelszót, ha követed az emailben kapott utasításokat."
+          : "You can set a new password if you follow the instructions in the email.",
+          this.translate.currentLang === "hu"
+            ? "A jelszó megváltoztató email el lett küldve"
+            : "Password change email has been sent");
       },
       errRes => {
         this.showAlert(errRes.error.error.message);
@@ -174,12 +179,12 @@ export class LoginComponent implements OnInit {
     this.authService.verifyEmail(authRes.idToken).pipe(take(1)).subscribe();
   }
 
-  private showAlert(message: string, header: string = "Authentication failed") {
+  private showAlert(message: string, header: string = this.translate.currentLang === "hu" ? "Autentikáció nem sikerült" : "Authentication failed") {
     this.alertCtrl
       .create({
         header: header,
         message: message,
-        buttons: ['Okay']
+        buttons: [this.translate.currentLang === "hu" ? 'Rendben' : 'Okay']
       })
       .then(alertEl => alertEl.present());
   }
@@ -187,15 +192,15 @@ export class LoginComponent implements OnInit {
   private showAlertWithOtherButtons(message: string, authRes: AuthResponseData) {
     this.alertCtrl
       .create({
-        header: 'Authentication failed',
+        header: this.translate.currentLang === "hu" ? "Autentikáció nem sikerült" : 'Authentication failed',
         message: message,
         buttons: [
           {
-            text: "Cancel",
+            text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
             role: "cancel"
           },
           {
-            text: "Verify",
+            text: this.translate.currentLang === "hu" ? "Ellenőrzés" : "Verify",
             role: "verify",
             handler: () => {
               this.verifyEmail(authRes);

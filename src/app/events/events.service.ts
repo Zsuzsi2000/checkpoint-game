@@ -114,9 +114,7 @@ export class EventsService {
         newEvent.id = id;
         this._events.next([...this._events.getValue(), newEvent]);
         let newChat = new Chat(null, newEvent.name, newEvent.id, newEvent.players,[], ChatType.eventGroup);
-        this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(chat => {
-          console.log(chat);
-        })
+        this.connectionsService.createChat(newChat).pipe(take(1)).subscribe()
       })
     );
   }
@@ -154,14 +152,10 @@ export class EventsService {
             let chat = chats.find(chat => chat.eventId === updatedEvents[updatedEventIndex].id);
             if (chat === undefined) {
               let newChat = new Chat(null, updatedEvents[updatedEventIndex].name, updatedEvents[updatedEventIndex].id, updatedEvents[updatedEventIndex].players,[], ChatType.eventGroup);
-              this.connectionsService.createChat(newChat).pipe(take(1)).subscribe(id => {
-                console.log(id);
-              })
+              this.connectionsService.createChat(newChat).pipe(take(1)).subscribe()
             } else {
               chat.participants = updatedEvents[updatedEventIndex].players;
-              this.connectionsService.updateChat(chat).pipe(take(1)).subscribe(id => {
-                console.log(id);
-              })
+              this.connectionsService.updateChat(chat).pipe(take(1)).subscribe()
             }
           }
         })

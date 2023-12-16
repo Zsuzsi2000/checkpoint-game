@@ -18,14 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private authSub: Subscription;
   private previousAuthState = false;
   public appPages;
-  //   [
-  //   { title: 'Games', url: '/games', icon: 'dice' },
-  //   { title: 'Events', url: '/events', icon: 'calendar' },
-  //   { title: 'Profile', url: '/profile', icon: 'person' },
-  //   { title: 'Connections', url: '/connections', icon: 'people' },
-  //   { title: 'Authentication', url: '/auth', icon: 'log-in' },
-  //   { title: 'Game mode', url: '/game-mode', icon: 'game-controller' },
-  // ];
+  langSub: Subscription;
 
   constructor(private authService: AuthService,
               private router: Router,
@@ -36,9 +29,9 @@ export class AppComponent implements OnInit, OnDestroy {
         SplashScreen.hide();
       }
     });
-    translate.setDefaultLang('en');
-    translate.use('en');
-    let hu = translate.currentLang === 'hu';
+    this.translate.setDefaultLang('hu');
+    this.translate.use('hu');
+    let hu = this.translate.currentLang === 'hu';
     this.appPages = [
         { title: hu ? 'Játékok' : 'Games', url: '/games', icon: 'dice' },
         { title: hu ? 'Események' :'Events', url: '/events', icon: 'calendar' },
@@ -58,11 +51,26 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     App.addListener('appStateChange', this.checkAuthOnResume.bind(this));
+
+    this.langSub = this.translate.onLangChange.subscribe(lang => {
+      let hu = this.translate.currentLang === 'hu';
+      this.appPages = [
+        { title: hu ? 'Játékok' : 'Games', url: '/games', icon: 'dice' },
+        { title: hu ? 'Események' :'Events', url: '/events', icon: 'calendar' },
+        { title: hu ? 'Profil' : 'Profile', url: '/profile', icon: 'person' },
+        { title: hu ? 'Kapcsolatok' : 'Connections', url: '/connections', icon: 'people' },
+        { title: hu ? 'Autentikáció' : 'Authentication', url: '/auth', icon: 'log-in' },
+        { title: hu ? 'Játékmód' : 'Game mode', url: '/game-mode', icon: 'game-controller' },
+      ];
+    })
   }
 
   ngOnDestroy(): void {
     if (this.authSub) {
       this.authSub.unsubscribe();
+    }
+    if (this.langSub) {
+      this.langSub.unsubscribe();
     }
   }
 

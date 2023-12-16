@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePageRoutingModule } from './profile-routing.module';
 import { ProfilePage } from './profile.page';
 import {SharedModule} from "../shared/shared.module";
-import {SettingsComponent} from "./settings/settings.component";
 import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
@@ -17,6 +16,6 @@ import {TranslateModule} from "@ngx-translate/core";
     SharedModule,
     TranslateModule
   ],
-  declarations: [ProfilePage, SettingsComponent]
+  declarations: [ProfilePage]
 })
 export class ProfilePageModule {}

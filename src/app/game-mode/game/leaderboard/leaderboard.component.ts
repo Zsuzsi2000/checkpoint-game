@@ -4,6 +4,7 @@ import {AlertController, ModalController} from "@ionic/angular";
 import {LiveGameService} from "../../live-game.service";
 import {LiveGame} from "../../../models/liveGame";
 import {take} from "rxjs/operators";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-leaderboard',
@@ -20,12 +21,13 @@ export class LeaderboardComponent implements OnInit {
 
   constructor(private modalCtrl: ModalController,
               private alertController: AlertController,
-              private liveGameService: LiveGameService) { }
+              private liveGameService: LiveGameService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     this.isLoading = true;
     if (this.liveGameId) {
-      this.liveGameService.fetchLiveGame(this.liveGameId).subscribe(liveGame => {
+      this.liveGameService.fetchLiveGame(this.liveGameId).pipe(take(1)).subscribe(liveGame => {
         this.liveGame = liveGame;
         this.liveGameService.fetchPlayers().pipe(take(1)).subscribe(players => {
           players.forEach(player => {
@@ -59,10 +61,10 @@ export class LeaderboardComponent implements OnInit {
   showALert() {
     this.alertController
       .create({
-        header: 'An error occured',
-        message: 'Leaderboard could not be fetched. Please try again later.',
+        header: this.translate.currentLang === "hu" ? "Hiba történt" : 'An error occured',
+        message: this.translate.currentLang === "hu" ? "A ranglistát nem sikerült lekérni. Kérem próbálja meg még egyszer." :'Leaderboard could not be fetched. Please try again later.',
         buttons: [{
-          text: 'Okay', handler: () => {
+          text: (this.translate.currentLang === "hu" ? "Rendben" : 'Okay'), handler: () => {
             this.modalCtrl.dismiss();
           }
         }]

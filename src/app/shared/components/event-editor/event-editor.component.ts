@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {LoadingController, ModalController} from "@ionic/angular";
+import {AlertController, LoadingController, ModalController} from "@ionic/angular";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ImageService} from "../../../services/image.service";
 import {GameMode} from "../../../enums/GameMode";
@@ -9,7 +9,6 @@ import {catchError, switchMap, take} from "rxjs/operators";
 import {LiveGameSettings} from "../../../models/liveGameSettings";
 import {EventsService} from "../../../events/events.service";
 import {of} from "rxjs";
-import {ISODateString} from "@capacitor/core";
 import {TranslateService} from "@ngx-translate/core";
 
 
@@ -39,7 +38,8 @@ export class EventEditorComponent implements OnInit {
               private authService: AuthService,
               private eventsService: EventsService,
               private imageService: ImageService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private alertController: AlertController) {
     this.currentLanguage = translate.currentLang;
   }
 
@@ -89,7 +89,7 @@ export class EventEditorComponent implements OnInit {
       return;
     }
     this.loadingCtrl.create({
-      message: 'Creating event...'
+      message: this.translate.currentLang === 'hu' ? 'Esemény készítése...' : 'Creating event...'
     }).then(loadingEl => {
       loadingEl.present();
 
@@ -139,13 +139,25 @@ export class EventEditorComponent implements OnInit {
       try {
         imageFile = this.imageService.convertbase64toBlob(imageData);
       } catch (error) {
-        console.log("error", error);
+        this.showAlert(this.translate.currentLang === 'hu' ? 'Nem megfelelő fájlformátum' : error.message);
         return;
       }
     } else {
       imageFile = imageData
     }
     this.imageFile = imageFile;
+  }
+
+  showAlert(message: string) {
+    this.alertController.create(
+      {
+        header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+        message: message,
+        buttons: [this.translate.currentLang === "hu" ? "Rendben" : 'Okay']
+      })
+      .then(alertEl => {
+        alertEl.present();
+      });
   }
 
   setDate(event) {

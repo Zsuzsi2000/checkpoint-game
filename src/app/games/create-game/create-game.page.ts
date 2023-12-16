@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import {GamesService} from "../games.service";
 import {CountryService} from "../../services/country.service";
-import {IonModal, LoadingController, ModalController} from "@ionic/angular";
+import {AlertController, IonModal, LoadingController, ModalController} from "@ionic/angular";
 import {ActivatedRoute, Router} from "@angular/router";
 import {catchError, map, switchMap, take} from "rxjs/operators";
 import {Location} from "../../interfaces/Location";
@@ -39,7 +39,8 @@ export class CreateGamePage implements OnInit {
               private loadingCtrl: LoadingController,
               private activatedRoute: ActivatedRoute,
               private modalCtrl: ModalController,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private alertController: AlertController) {
     this.currentLanguage = this.translate.currentLang;
   }
 
@@ -92,7 +93,7 @@ export class CreateGamePage implements OnInit {
       return;
     }
     this.loadingCtrl.create({
-      message: 'Creating game...'
+      message: this.translate.currentLang === 'hu' ? 'Játék készítése...' : 'Creating game...'
     }).then(loadingEl => {
       loadingEl.present();
       let checkpoints: Checkpoint[] = [];
@@ -163,7 +164,6 @@ export class CreateGamePage implements OnInit {
   }
 
   setLocationType(event) {
-    console.log(event, (+event.detail.value) as LocationType);
     this.gameForm.patchValue({ locationType: ((+event.detail.value) as LocationType) });
   }
 
@@ -256,12 +256,24 @@ export class CreateGamePage implements OnInit {
       try {
         imageFile = this.imageService.convertbase64toBlob(imageData);
       } catch (error) {
-        console.log("error", error);
+        this.showAlert(this.translate.currentLang === 'hu' ? 'Nem megfelelő fájlformátum' : error.message);
         return;
       }
     } else {
       imageFile = imageData;
     }
     return imageFile;
+  }
+
+  showAlert(message: string) {
+    this.alertController.create(
+      {
+        header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+        message: message,
+        buttons: [this.translate.currentLang === "hu" ? "Rendben" : 'Okay']
+      })
+      .then(alertEl => {
+        alertEl.present();
+      });
   }
 }

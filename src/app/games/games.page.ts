@@ -13,6 +13,8 @@ import {PickThingsComponent} from "../shared/components/pick-things/pick-things.
 import {User} from "../models/user.model";
 import {Router} from "@angular/router";
 import {TranslateService} from "@ngx-translate/core";
+import {SettingsComponent} from "../shared/components/settings/settings.component";
+import {ConnectionsService} from "../connections/connections.service";
 
 
 @Component({
@@ -55,8 +57,11 @@ export class GamesPage implements OnInit, OnDestroy {
               private modalCtrl: ModalController,
               private router: Router,
               private translate: TranslateService,
-              private countryService: CountryService) {
+              private countryService: CountryService,
+              private connectionsService: ConnectionsService) {
     this.currentLanguage = translate.currentLang;
+    this.types = (this.currentLanguage === "hu") ? ["Kvíz", "Tanulós"] : ["Quiz", "Learning"];
+
   }
 
   ngOnInit() {
@@ -74,17 +79,31 @@ export class GamesPage implements OnInit, OnDestroy {
     ]).subscribe(([games, user]) => {
       if (user) {
         this.user = user;
-        this.loadedGames = games.filter(game => game.itIsPublic || game.userId === user.id);
-        this.actualGames = this.loadedGames;
-        this.filtersObject.favourites = this.filters.includes("Favourites") ? this.user.favouriteGames : [];
-        this.filtersObject.ownCountry = this.filters.includes("Own country") ? this.user.country : null;
-        this.filterGames();
+        this.connectionsService.getFriends(this.user.id).pipe(take(1)).subscribe(friends => {
+          if (friends) {
+            this.loadedGames = games.filter(game => game.itIsPublic
+                || game.userId === user.id
+                || friends.find(friend => friend.id === game.userId) !== undefined);
+          } else {
+            this.loadedGames = games.filter(game => game.itIsPublic || game.userId === user.id);
+          }
+          this.actualGames = this.loadedGames;
+          this.filtersObject.favourites = this.filters.includes(this.translate.currentLang === "hu" ? "Kedvencek" : "Favourites") ? this.user.favouriteGames : [];
+          this.filtersObject.ownCountry = this.filters.includes(this.translate.currentLang === "hu" ? "Saját ország" : "Own country") ? this.user.country : null;
+          this.filterGames();
+        }, error => {
+          this.loadedGames = games.filter(game => game.itIsPublic || game.userId === user.id);
+          this.actualGames = this.loadedGames;
+          this.filtersObject.favourites = this.filters.includes(this.translate.currentLang === "hu" ? "Kedvencek" : "Favourites") ? this.user.favouriteGames : [];
+          this.filtersObject.ownCountry = this.filters.includes(this.translate.currentLang === "hu" ? "Saját ország" : "Own country") ? this.user.country : null;
+          this.filterGames();
+        });
       } else {
         this.user = null;
         this.loadedGames = games.filter(game => game.itIsPublic);
         this.actualGames = this.loadedGames;
-        this.deleteFilter("Favourites");
-        this.deleteFilter("Own country");
+        this.deleteFilter(this.translate.currentLang === "hu" ? "Kedvencek" : "Favourites");
+        this.deleteFilter(this.translate.currentLang === "hu" ? "Saját ország" : "Own country");
       }
     });
 
@@ -103,6 +122,12 @@ export class GamesPage implements OnInit, OnDestroy {
     this.isLoading = true;
     this.gamesService.fetchGames().subscribe(() => {
       this.isLoading = false;
+    });
+  }
+
+  showSettings() {
+    this.modalCtrl.create({component: SettingsComponent, componentProps: { user: this.user }}).then(modalEl => {
+      modalEl.present();
     });
   }
 
@@ -149,9 +174,9 @@ export class GamesPage implements OnInit, OnDestroy {
   }
 
   deleteFilter(item: string) {
-    if (item === "Favourites") {
+    if (item === (this.translate.currentLang === "hu" ? "Kedvencek" : "Favourites")) {
       this.filtersObject.favourites = [];
-    } else if (item === "Own country") {
+    } else if (item === (this.translate.currentLang === "hu" ? "Saját ország" : "Own country")) {
       this.filtersObject.ownCountry = null;
     } else {
       this.filtersObject.countries = this.filtersObject.countries.filter(c =>  c !== item );
@@ -193,15 +218,15 @@ export class GamesPage implements OnInit, OnDestroy {
   startFilter(mode: FilteringMode) {
     switch (mode) {
       case FilteringMode.byCategories: {
-        this.openModal(mode,'Choose from categories', this.categories.map(cat => { return cat.name }), this.filtersObject.categories );
+        this.openModal(mode,(this.translate.currentLang === "hu" ? "Válassz kategóriát" :'Choose from categories'), this.categories.map(cat => { return cat.name }), this.filtersObject.categories );
         break;
       }
       case FilteringMode.byCountries: {
-        this.openModal(mode,'Choose from countries', this.countries, this.filtersObject.countries );
+        this.openModal(mode,(this.translate.currentLang === "hu" ? "Válassz országot" :'Choose from countries'), this.countries, this.filtersObject.countries );
         break;
       }
       case FilteringMode.byTypes: {
-        this.openModal(mode,'Choose from types', this.types, this.filtersObject.types );
+        this.openModal(mode,(this.translate.currentLang === "hu" ? "Válassz típust" :'Choose from types'), this.types, this.filtersObject.types );
         break;
       }
       case FilteringMode.byFavourites: {
@@ -227,7 +252,11 @@ export class GamesPage implements OnInit, OnDestroy {
       .filter(g => (this.filtersObject.categories.length > 0) ? this.filtersObject.categories.includes(g.category) : g)
       .filter(g => (this.filtersObject.countries.length > 0)
         ? (this.filtersObject.countries.includes(g.country) || (this.filtersObject.countries.includes("Anywhere") && g.locationType === LocationType.anywhere)) : g)
-      .filter(g => (this.filtersObject.types.length > 0) ? this.filtersObject.types.includes((g.quiz) ? "Quiz" : "Learning") : g)
+      .filter(g => (this.filtersObject.types.length > 0)
+        ? this.filtersObject.types.includes((g.quiz)
+          ? (this.translate.currentLang === "hu" ? "Kvíz" : "Quiz")
+          : (this.translate.currentLang === "hu" ? "Tanulós" : "Learning"))
+        : g)
       .filter(g => (this.filtersObject.favourites.length > 0) ? this.filtersObject.favourites.includes(g.id) : g)
       .filter(g => (this.filtersObject.ownCountry) ? this.filtersObject.ownCountry === g.country : g)
       .filter(g => this.filter === "" ? g : g.name.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
@@ -241,8 +270,8 @@ export class GamesPage implements OnInit, OnDestroy {
     this.filters = this.filtersObject.countries.concat(
       this.filtersObject.categories,
       this.filtersObject.types,
-      (this.filtersObject.favourites.length > 0) ? ["Favourites"] : [],
-      (this.filtersObject.ownCountry !== null) ? ["Own country"] : []);
+      (this.filtersObject.favourites.length > 0) ? [(this.translate.currentLang === "hu" ? "Kedvencek" : "Favourites")] : [],
+      (this.filtersObject.ownCountry !== null) ? [(this.translate.currentLang === "hu" ? "Saját ország" : "Own country")] : []);
   }
 
   ngOnDestroy(): void {

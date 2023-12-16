@@ -3,6 +3,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AlertController, NavController} from "@ionic/angular";
 import {EventsService} from "../events.service";
 import {Event} from "../../models/event.model";
+import {TranslateService} from "@ngx-translate/core";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-edit-event',
@@ -19,7 +21,8 @@ export class EditEventPage implements OnInit {
               private navCtrl: NavController,
               private alertCtrl: AlertController,
               private eventsService: EventsService,
-              private router: Router) { }
+              private router: Router,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => {
@@ -27,7 +30,7 @@ export class EditEventPage implements OnInit {
         this.showALert();
       }
 
-      this.eventsService.fetchEvent(paramMap.get('eventId')).subscribe(event => {
+      this.eventsService.fetchEvent(paramMap.get('eventId')).pipe(take(1)).subscribe(event => {
         if (event) {
           this.event = event;
           this.gameId = this.event.gameId;
@@ -43,18 +46,18 @@ export class EditEventPage implements OnInit {
     if (res) {
       this.router.navigate(['/', 'events', 'details', this.event.id])
     } else {
-      this.showALert('Something went wrong while editing the event');
+      this.showALert(this.translate.currentLang === "hu" ? 'Valami rosszul sikerült az esemény szerkesztésekor' : 'Something went wrong while editing the event');
     }
   }
 
-  showALert(message: string = 'Event could not be fetched.') {
+  showALert(message: string = this.translate.currentLang === "hu" ? 'Az eseményt nem sikerült lekérni.' : 'Event could not be fetched.') {
     this.alertCtrl
       .create(
         {
-          header: 'An error occured',
+          header:  this.translate.currentLang === "hu" ? 'Hiba történt' :  'An error occured',
           message: message,
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === "hu" ? 'Rendben' :  'Okay'), handler: () => {
               this.navCtrl.pop();
             }
           }]

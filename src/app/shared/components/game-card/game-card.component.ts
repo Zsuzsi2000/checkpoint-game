@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {GamesService} from "../../../games/games.service";
 import {LocationType} from "../../../enums/LocationType";
 import {ShareComponent} from "../share/share.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-game-card',
@@ -27,7 +28,8 @@ export class GameCardComponent implements OnInit {
   constructor(private alertCtrl: AlertController,
               private router: Router,
               private gamesService: GamesService,
-              private modalCtrl: ModalController) { }
+              private modalCtrl: ModalController,
+              private translate: TranslateService) { }
 
   ngOnInit() {}
 
@@ -37,15 +39,15 @@ export class GameCardComponent implements OnInit {
 
   deleteGame(id: string) {
     this.alertCtrl.create({
-      header: "Delete game",
-      message: "Are you sure you want to delete the game?",
+      header: this.translate.currentLang === 'hu' ? 'Játék törlése' : "Delete game",
+      message: this.translate.currentLang === 'hu' ? 'Biztosan törölni szeretnéd a játékot?' :  "Are you sure you want to delete the game?",
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === 'hu' ? 'Vissza' :  "Cancel",
           role: "cancel"
         },
         {
-          text: "Delete",
+          text: this.translate.currentLang === 'hu' ? 'Törlés' :  "Delete",
           handler: () => {
             this.gamesService.deleteGame(id).subscribe(res => {
               this.gamesService.fetchOwnGames(this.loggedUser.id).subscribe(games => {
@@ -75,7 +77,6 @@ export class GameCardComponent implements OnInit {
     this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.loggedUser, game: this.game } }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
         if (modalData.data) {
-          console.log(modalData.data);
           this.router.navigate(['/', 'connections', 'chat', modalData.data]);
         }
       });

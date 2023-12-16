@@ -4,7 +4,7 @@ import {Coordinates} from "../../../interfaces/Location";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Checkpoint} from "../../../models/checkpoint.model";
 import {AlertController, NavController} from "@ionic/angular";
-import {Preferences} from "@capacitor/preferences";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -25,7 +25,8 @@ export class EditCheckpointsPage implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private navCtrl: NavController,
-              private alertController: AlertController) {
+              private alertController: AlertController,
+              private translate: TranslateService) {
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('gameId')) {
         this.navCtrl.pop();
@@ -67,10 +68,10 @@ export class EditCheckpointsPage implements OnInit {
     this.alertController
       .create(
         {
-          header: 'An error occured',
-          message: 'Game could not be fetched. Please try again later.',
+          header: this.translate.currentLang === 'hu' ? 'Hiba történt' : 'An error occured',
+          message: this.translate.currentLang === 'hu' ? 'A játékot nem sikerült lekérni. Kérem próbálja újra később.' : 'Game could not be fetched. Please try again later.',
           buttons: [{
-            text: 'Okay', handler: () => {
+            text: (this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay'), handler: () => {
               this.router.navigate(['/', 'games']);
             }
           }]

@@ -11,6 +11,7 @@ import {ChatType} from "../../enums/ChatType";
 import {Chat} from "../../models/chat.model";
 import {Router} from "@angular/router";
 import {TranslateService} from "@ngx-translate/core";
+import {SettingsComponent} from "../../shared/components/settings/settings.component";
 
 @Component({
   selector: 'app-friends',
@@ -47,6 +48,12 @@ export class FriendsPage implements OnInit {
     })
   }
 
+  showSettings() {
+    this.modalCtrl.create({component: SettingsComponent, componentProps: { user: this.user }}).then(modalEl => {
+      modalEl.present();
+    });
+  }
+
   filtering(event) {
     this.filter = event.target.value;
     this.filteredFriends = this.friends.filter(g => this.filter === "" ? g : g.username.toLocaleLowerCase().includes(this.filter.toLocaleLowerCase()));
@@ -70,15 +77,15 @@ export class FriendsPage implements OnInit {
   deleteConnection(id: string) {
     this.alertCtrl
       .create({
-        header: 'Delete friend',
-        message: 'Are you sure you want to delete your friend?',
+        header: this.translate.currentLang === 'hu' ? 'Barát törlése' : 'Delete friend',
+        message: this.translate.currentLang === 'hu' ? 'Biztosan törölni szeretnéd a barátok közül?' : 'Are you sure you want to delete your friend?',
         buttons: [
           {
-            text: "Cancel",
+            text: this.translate.currentLang === 'hu' ? 'Vissza' : "Cancel",
             role: "cancel",
           },
           {
-            text: "Delete",
+            text:this.translate.currentLang === 'hu' ? 'Törlés' : "Delete",
             role: "delete",
             handler: () => {
               this.delete(id);
@@ -94,7 +101,6 @@ export class FriendsPage implements OnInit {
       let connect = connections.find(c => (c.userOneId === id || c.userTwoId === id));
       if (connect !== undefined) {
         this.connectionsService.deleteConnection(connect.id).pipe(take(1)).subscribe(f => {
-          console.log(f);
           this.updateFriends();
         });
       }

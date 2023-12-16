@@ -208,7 +208,8 @@
       "FRIEND_REQUESTS": "Barát kérelmek",
       "EVENT_REMINDER": "Esemény emlékeztető"
     },
-    "FRIEND": "Barát"
+    "FRIEND": "Barát",
+    "TAGGED": "Bejelölt"
   },
   "CONNECTIONS": {
     "CONNECTIONS": "Kapcsolatok",
@@ -253,8 +254,8 @@
       "INFO": "Infó",
       "SAVE_THE_CHECKPOINTS": "Checkpoint mentése"
     },
-    "TAKE_PICTURE": "Másik kép választása",
-    "TAKE_OTHER_PICTURE": "Kép választása",
+    "TAKE_PICTURE": "Kép választása",
+    "TAKE_OTHER_PICTURE": "Másik kép választása",
     "PICK_NEW_IMAGE": "Új kép választása",
     "SELECT_NEW_CH_ON_MAP": "Új checkpointok választása térképről",
     "SELECT_LOCATION": "Helyszín kiválasztása",

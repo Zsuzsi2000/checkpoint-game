@@ -44,7 +44,7 @@
 <!--        </ion-accordion-group>-->
 <!--      </ion-col>-->
 <!--    </ion-row>-->
-    <ion-row class="ion-align-items-center ion-justify-content-center">
+    <ion-row class="ion-align-items-center ion-justify-content-center" *ngIf="user">
       <ion-col class="ion-align-items-center ion-justify-content-center" size-md="10">
         <ion-button class="white-back" (click)="logout()">{{ 'AUTH.LOGOUT' | translate }}</ion-button>
       </ion-col>

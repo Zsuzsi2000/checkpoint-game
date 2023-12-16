@@ -22,6 +22,7 @@ import {RouterModule} from "@angular/router";
 import {GameCardComponent} from "./components/game-card/game-card.component";
 import {QRCodeModule} from "angularx-qrcode";
 import {TranslateModule} from "@ngx-translate/core";
+import {SettingsComponent} from "./components/settings/settings.component";
 
 
 
@@ -42,7 +43,8 @@ import {TranslateModule} from "@ngx-translate/core";
     JoinOrCreateTeamComponent,
     EventCardComponent,
     GameCardComponent,
-    ShareComponent
+    ShareComponent,
+    SettingsComponent
   ],
   imports: [
     CommonModule,
@@ -71,7 +73,8 @@ import {TranslateModule} from "@ngx-translate/core";
     JoinOrCreateTeamComponent,
     EventCardComponent,
     GameCardComponent,
-    ShareComponent
+    ShareComponent,
+    SettingsComponent
   ]
 })
 export class SharedModule { }

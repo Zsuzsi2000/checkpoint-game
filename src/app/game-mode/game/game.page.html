@@ -46,8 +46,8 @@
                         [placeholder]="currentLanguage === 'hu' ? 'Írd ide a válaszod' : 'Enter your answer'"
                       ></ion-input>
                     </ion-item>
-                    <ion-item *ngIf="actualCheckpoint.quiz.answers.length === 1 && correctAnswer !== null && !correctAnswer" class="bad-answer button-border">
-                      <ion-label>{{ actualCheckpoint.quiz.answers[0] }}</ion-label>
+                    <ion-item *ngIf="actualCheckpoint.quiz.answers.length === 1 && correctAnswer !== null && !correctAnswer" class="good-answer button-border ion-margin-top">
+                      <ion-label>{{ actualCheckpoint.quiz.answers[0].answer }}</ion-label>
                     </ion-item>
                     <ng-container *ngIf="actualCheckpoint.quiz.answers.length > 1">
                       <ion-button *ngFor="let answer of actualCheckpoint.quiz.answers"

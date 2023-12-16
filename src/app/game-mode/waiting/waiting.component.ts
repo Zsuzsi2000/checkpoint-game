@@ -9,6 +9,7 @@ import {Router} from "@angular/router";
 import {LoadingController, ModalController} from "@ionic/angular";
 import {ShareComponent} from "../../shared/components/share/share.component";
 import {User} from "../../models/user.model";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-waiting',
@@ -29,7 +30,8 @@ export class WaitingComponent implements OnInit {
   constructor(private liveGameService: LiveGameService,
               private router: Router,
               private loadingController: LoadingController,
-              private modalCtrl: ModalController) { }
+              private modalCtrl: ModalController,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     this.playersSub = interval(3000).pipe(
@@ -60,7 +62,7 @@ export class WaitingComponent implements OnInit {
 
   startTheGame() {
     if (this.creator) {
-      this.loadingController.create({ keyboardClose: true, message: 'Start event...',  }).then(loadingEl => {
+      this.loadingController.create({ keyboardClose: true, message: this.translate.currentLang === "hu" ? "Esemény indítása..." : 'Start event...',  }).then(loadingEl => {
         loadingEl.present();
         this.liveGame.startDate = new Date();
         this.liveGameService.updateLiveGame(this.liveGame).pipe(take(1)).subscribe(updatedLiveGame => {
@@ -68,10 +70,7 @@ export class WaitingComponent implements OnInit {
             loadingEl.dismiss();
             this.router.navigate(['/', 'game-mode', 'game', this.liveGame.id]);
           }
-        }, error => {
-          console.log(error);
-        });
-
+        }, error => {});
       });
     }
   }
@@ -88,11 +87,7 @@ export class WaitingComponent implements OnInit {
 
   shareAccessCode() {
     this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.creatorObject, accessCode: this.liveGame.accessCode } }).then(modalEl => {
-      modalEl.onDidDismiss().then(modalData => {
-        if (modalData.data) {
-          console.log(modalData.data);
-        }
-      });
+      modalEl.onDidDismiss().then(modalData => {});
       modalEl.present();
     });
   }

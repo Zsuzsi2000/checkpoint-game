@@ -119,7 +119,6 @@ export class ConnectionsService {
         return this.http.get<{ [key: string]: RequestData }>(`https://checkpoint-game-399d6-default-rtdb.europe-west1.firebasedatabase.app/requests.json?auth=${token}`);
       }),
       switchMap(data => {
-        console.log(data)
         const requests: Request[] = [];
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
@@ -130,7 +129,6 @@ export class ConnectionsService {
             ));
           }
         }
-        console.log(requests);
         return of(requests);
       }),
       tap(requests => {
@@ -416,24 +414,6 @@ export class ConnectionsService {
         return unknownUsers;
       })
     );
-
-
-    //
-    // let friends: UserData[] = [];
-    // let unknownUsers: UserData[] = [];
-    //
-    // return this.getFriends(id).pipe(
-    //   take(1),
-    //   switchMap(f => {
-    //     friends = f;
-    //     return this.userService.fetchUsers().pipe(take(1));
-    //   }),
-    //   take(1),
-    //   map((users: UserData[]) => {
-    //     unknownUsers = users.filter(user => !friends.includes(user) && user.id !== id);
-    //     return unknownUsers;
-    //   })
-    // );
   }
 
 }

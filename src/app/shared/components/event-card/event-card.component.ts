@@ -16,6 +16,7 @@ import {UserData} from "../../../interfaces/UserData";
 import {Chat} from "../../../models/chat.model";
 import {ChatType} from "../../../enums/ChatType";
 import {ConnectionsService} from "../../../connections/connections.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-event-card',
@@ -38,7 +39,8 @@ export class EventCardComponent implements OnInit {
               private eventsService: EventsService,
               private userService: UserService,
               private router: Router,
-              private connectionsService: ConnectionsService) { }
+              private connectionsService: ConnectionsService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
     if (this.loggedUser) {
@@ -172,10 +174,19 @@ export class EventCardComponent implements OnInit {
           join)
       })).subscribe(response => {
       if (response) {
-        this.showAlertWithCustomParameters((join ? "Join" : "Cancel") + " was succesful",
-          join ? "You joined to " + event.name + " event" : "You have unsubscribed from " + event.name + " event");
+        if (this.translate.currentLang === 'hu') {
+          this.showAlertWithCustomParameters((join ? "Csatlakozás" : "Leiratkozás") + " sikeres volt.",
+            join ? "Csatlakoztál a " + event.name + " eseményhez" : "Leiratkoztál a " + event.name + " eseményről");
+        } else {
+          this.showAlertWithCustomParameters((join ? "Join" : "Cancel") + " was succesful",
+            join ? "You joined to " + event.name + " event" : "You have unsubscribed from " + event.name + " event");
+        }
       } else {
-        this.showAlertWithCustomParameters("Something went wrong", (join ? "Join" : "Cancel") + " was unsuccesful.");
+        if (this.translate.currentLang === 'hu') {
+          this.showAlertWithCustomParameters("Valami nem sikerült", (join ? "Csatlakozás" : "Leiratkozás") + " sikertelen volt.");
+        } else {
+          this.showAlertWithCustomParameters("Something went wrong", (join ? "Join" : "Cancel") + " was unsuccesful.");
+        }
       }
     });
   }
@@ -200,7 +211,6 @@ export class EventCardComponent implements OnInit {
     this.modalCtrl.create({ component: ShareComponent, componentProps: { user: this.loggedUser, event: this.event } }).then(modalEl => {
       modalEl.onDidDismiss().then(modalData => {
         if (modalData.data) {
-          console.log(modalData.data);
           this.router.navigate(['/', 'connections', 'chat', modalData.data]);
         }
       });
@@ -210,15 +220,15 @@ export class EventCardComponent implements OnInit {
 
   deleteEvent(id: string) {
     this.alertCtrl.create({
-      header: "Delete event",
-      message: "Are you sure you want to delete the event?",
+      header: this.translate.currentLang === "hu" ? "Esemény törlése" :  "Delete event",
+      message:  this.translate.currentLang === "hu" ? "Biztosan törölni szeretnéd az eseményt?" :  "Are you sure you want to delete the event?",
       buttons: [
         {
-          text: "Cancel",
+          text: this.translate.currentLang === "hu" ? "Vissza" : "Cancel",
           role: "cancel"
         },
         {
-          text: "Delete",
+          text: this.translate.currentLang === "hu" ? "Törlés" : "Delete",
           handler: () => {
             this.eventsService.deleteEvent(id).subscribe(res => {
               this.router.navigate(['/', 'events']);
@@ -247,7 +257,7 @@ export class EventCardComponent implements OnInit {
       {
         header: header,
         message: message,
-        buttons: ['Okay']
+        buttons: [(this.translate.currentLang === 'hu' ? 'Rendben' : 'Okay')]
       })
       .then(alertEl => {
         alertEl.present();

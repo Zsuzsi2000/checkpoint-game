@@ -5,6 +5,11 @@ ion-toolbar {
   ion-icon {
     color: white;
   }
+
+  ion-badge {
+    --background: white;
+    --color: black;
+  }
 }
 
 ion-spinner {

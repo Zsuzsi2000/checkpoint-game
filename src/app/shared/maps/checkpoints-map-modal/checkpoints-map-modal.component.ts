@@ -18,7 +18,6 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
   coordinates: Coordinates[] = [];
   clickListener: any;
   markerClickListeners: any[] = [];
-  // markerDragListeners: any[] = [];
   googleMaps: any;
   map: any;
   infoWindow: any;
@@ -38,9 +37,7 @@ export class CheckpointsMapModalComponent implements OnInit, AfterViewInit {
         // });
         this.init(googleMaps);
       })
-      .catch(err => {
-        console.log(err);
-      })
+      .catch(err => {})
   }
 
   init(googleMaps) {

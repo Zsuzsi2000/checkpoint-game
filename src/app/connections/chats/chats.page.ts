@@ -10,6 +10,7 @@ import {User} from "../../models/user.model";
 import {CreateChatPage} from "./create-chat/create-chat.page";
 import {Router} from "@angular/router";
 import {TranslateService} from "@ngx-translate/core";
+import {SettingsComponent} from "../../shared/components/settings/settings.component";
 
 @Component({
   selector: 'app-chats',
@@ -47,6 +48,12 @@ export class ChatsPage implements OnInit {
     })
   }
 
+  showSettings() {
+    this.modalCtrl.create({component: SettingsComponent, componentProps: { user: this.user }}).then(modalEl => {
+      modalEl.present();
+    });
+  }
+
   updateChats() {
     this.connectionsService.getChats(this.user.id).pipe(take(1)).subscribe(f => {
       this.chats = f;
@@ -74,15 +81,15 @@ export class ChatsPage implements OnInit {
   deleteChat(chat: Chat) {
     this.alertCtrl
       .create({
-        header: 'Delete chat',
-        message: 'Are you sure you want to delete this chat?',
+        header: this.translate.currentLang === 'hu' ? 'Csevegés törlése' : 'Delete chat',
+        message: this.translate.currentLang === 'hu' ? 'Biztosan töröni szeretnéd ezt a csevegést?' : 'Are you sure you want to delete this chat?',
         buttons: [
           {
-            text: "Cancel",
+            text: this.translate.currentLang === 'hu' ? 'Vissza' : "Cancel",
             role: "cancel",
           },
           {
-            text: "Delete",
+            text: this.translate.currentLang === 'hu' ? 'Törlés' : "Delete",
             role: "delete",
             handler: () => {
               this.delete(chat);
@@ -96,14 +103,12 @@ export class ChatsPage implements OnInit {
   delete(chat: Chat) {
     if (chat.type === ChatType.personal) {
       this.connectionsService.deleteChat(chat.id).pipe(take(1)).subscribe(chat => {
-        console.log(chat);
         this.updateChats();
       });
     } else {
       let updatedChat = chat;
       updatedChat.participants = updatedChat.participants.filter(user => this.user.id !== user);
       this.connectionsService.updateChat(updatedChat).pipe(take(1)).subscribe(chat => {
-        console.log(chat);
         this.updateChats();
       })
     }
