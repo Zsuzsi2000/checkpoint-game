@@ -210,8 +210,7 @@ export class CheckpointsEditorComponent implements OnInit {
 
 
   private getMapImageFromLocations(center: Coordinates, coords: Coordinates[], zoom: number) {
-    let longUrl = `https://maps.googleapis.com/maps/api/staticmap
-    ?center=${center.lat},${center.lng}&zoom=${zoom}&size=500x300&maptype=roadmap`;
+    let longUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${center.lat},${center.lng}&zoom=${zoom}&size=500x300&maptype=roadmap`;
     coords.forEach((coord, index) => {
       let color = (index === 0) ? 'red' : 'blue';
       let nextUrlPart = `&markers=color:${color}%7Clabel:${index}%7C${coord.lat},${coord.lng}`;
